@@ -22,7 +22,6 @@ const AddNew = () => {
 
   return (
     <CRow>
-      VIII
       <CCol>
         <CCard>
           <CCardHeader>
