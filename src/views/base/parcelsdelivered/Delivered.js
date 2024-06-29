@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import {
   CRow,
   CCol,
@@ -10,12 +10,89 @@ import {
   CTabList,
   CTabPanel,
   CTabs,
+  CLink,
+  CButton,
+  CTableDataCell,
+  CPagination,
+  CPaginationItem,
+  CTableHeaderCell,
+  CTableRow,
+  CTableHead,
+  CTable,
+  CTableBody,
+  CContainer,
 } from '@coreui/react'
 import { DocsExample } from '../../../components'
 
 const Navs = () => {
+
+  const [data, setData] = useState([])
+
   return (
-    <div></div>
+    <CCard className='mb-4'>
+      <CCardHeader>
+        <strong>Parcel List</strong>
+      </CCardHeader>
+      <CCardBody>
+        <CContainer className='py-3'>
+          <div className="d-grid gap-2 d-md-flex justify-content-md-end">
+            <CButton href='' className='me-md-2' color='primary' variant='outline'>+AddNew</CButton>
+          </div>
+        </CContainer>
+        <CRow className=''>
+          <CCol >
+            <div className=''>
+              <label>
+                Show
+                <input type='number' className='w-25'/>
+                entries
+              </label>
+            </div>
+          </CCol>
+
+          <CCol >
+            <div className=''>
+              <label>Search: </label>
+                <input type='text' className='w-50'/>
+            </div>
+          </CCol>
+        </CRow>
+
+        <CTable>
+          <CTableHead>
+            <CTableRow>
+              <CTableHeaderCell scope='col'>#</CTableHeaderCell>
+              <CTableHeaderCell scope='col'>Reference Number</CTableHeaderCell>
+              <CTableHeaderCell scope='col'>Sender Name</CTableHeaderCell>
+              <CTableHeaderCell scope='col'>Recipient Name</CTableHeaderCell>
+              <CTableHeaderCell scope='col'>Status</CTableHeaderCell>
+              <CTableHeaderCell scope='col'>Action</CTableHeaderCell>
+            </CTableRow>
+          </CTableHead>
+          <CTableBody>
+            {data.map((parcel,index) => {
+              return <CTableRow key={index}>
+                <CTableDataCell> {index+1} </CTableDataCell>
+                <CTableDataCell> {parcel.referenceNumber} </CTableDataCell>
+                <CTableDataCell> {parcel.senderName} </CTableDataCell>
+                <CTableDataCell> {parcel.recipientName} </CTableDataCell>
+                <CTableDataCell> {parcel.status} </CTableDataCell>
+                <CTableDataCell> 
+                  <CLink to={`/read?id=${parcel.referenceNumber}`} className='btn btn-success rounded-0'>view</CLink>
+                  <CLink to={`/edit?id=${parcel.referenceNumber}`} className='btn btn-primary rounded-0'>Edit</CLink>
+                  <CButton onClick={(referenceNumber) => alert('Successfully Deleted')} className='btn btn-danger rounded-0'>Delete</CButton>
+                </CTableDataCell>
+              </CTableRow>
+            })}          
+          </CTableBody>
+        </CTable>
+        <CPagination align='end' aria-label='Page navigation'>
+          <CPaginationItem>Previous</CPaginationItem>
+          <CPaginationItem>1</CPaginationItem>
+          <CPaginationItem>Next</CPaginationItem>
+        </CPagination>
+      </CCardBody>
+    </CCard>
     // <CRow>
     //   <CCol xs={12}>
     //     <CCard className="mb-4">

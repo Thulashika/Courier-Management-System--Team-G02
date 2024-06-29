@@ -10,6 +10,10 @@ import {
   CAccordionBody,
   CAccordionHeader,
   CAccordionItem,
+  CForm,
+  CFormLabel,
+  CFormInput,
+  CButton,
 } from '@coreui/react'
 import { DocsExample } from '../../../components'
 
@@ -27,69 +31,83 @@ const AddNew = () => {
           <CCardHeader>
             <strong>New Branch</strong>
           </CCardHeader>
-          <form>
-            <div className="mb-2">
-              <label htmlFor="">Branch Address</label>
-              <input
-                type="text"
-                id="address"
-                className="form-control"
+          <CForm className="row g-3">
+            <CRow className="mb-5"></CRow>
+            <CRow className="mb-3">
+              <CFormLabel htmlFor="inputCode">Branch Code</CFormLabel>
+              <CCol xs="auto">
+                <CFormInput 
+                type='text' 
+                id='code' 
+                className='form-control'
                 onChange={(e) => setBranch({ ...branch, [e.target.id]: e.target.value })}
-              />
-              <span>
-                <label htmlFor="">City</label>
-                <input
-                  type="text"
-                  id="City"
-                  className="form-control"
-                  onChange={(e) => setBranch({ ...branch, City: e.target.value })}
                 />
-              </span>
-            </div>
-            <div className="mb-2">
-              <label htmlFor="">Thana</label>
-              <input
-                type="text"
-                id="Thana"
-                className="form-control"
-                onChange={(e) => setBranch({ ...branch, Thana: e.target.value })}
-              />
-
-              <span>
-                <label htmlFor="">Zip Code/ Postal Code</label>
-                <input
-                  type="text"
-                  id="Code"
-                  className="form-control"
-                  onChange={(e) => setBranch({ ...branch, Code: e.target.value })}
+              </CCol>
+            </CRow>
+            <CRow className="mb-3">
+              <CFormLabel htmlFor="inputAddress">Branch Address</CFormLabel>
+              <CCol xs="auto">
+                <CFormInput 
+                type='text' 
+                id='address'
+                className='form-control'
+                onChange={(e) => setBranch({ ...branch, Address: e.target.value })}
                 />
-              </span>
-            </div>
-            <div className="mb-2">
-              <label htmlFor="">Country</label>
-              <input
-                type="text"
-                id="Country"
-                className="form-control"
+              </CCol>
+            </CRow>
+            <CRow className="mb-3">
+              <CFormLabel htmlFor="inputCity">City</CFormLabel>
+              <CCol xs="auto">
+                <CFormInput 
+                type='text' 
+                id='city'
+                className='form-control'
+                onChange={(e) => setBranch({ ...branch, City: e.target.value })}
+                />
+              </CCol>
+            </CRow>
+            <CRow className="mb-3">
+              <CFormLabel htmlFor="inputAddress">Zip Code/ Postal Code</CFormLabel>
+              <CCol xs="auto">
+                <CFormInput 
+                type='text' 
+                id='zipCode'
+                className='form-control'
+                onChange={(e) => setBranch({ ...branch, Code: e.target.value })}
+                />
+              </CCol>
+            </CRow>
+            <CRow className="mb-3">
+              <CFormLabel htmlFor="inputAddress">Country</CFormLabel>
+              <CCol xs="auto">
+                <CFormInput 
+                type='text' 
+                id='country'
+                className='form-control'
                 onChange={(e) => setBranch({ ...branch, Country: e.target.value })}
-              />
-              <span>
-                <label htmlFor="">Contact #</label>
-                <input
-                  type="number"
-                  id="Contact"
-                  className="form-control"
-                  onChange={(e) => setBranch({ ...branch, Contact: e.target.value })}
                 />
-              </span>
-            </div>
-            <button type="submit" className="btn btn-success bg-primary">
-              Save
-            </button>
-            <button type="submit" className="btn btn-success bg-primary">
-              Cancel
-            </button>
-          </form>
+              </CCol>
+            </CRow>
+            <CRow className="mb-3">
+              <CFormLabel htmlFor="inputAddress">Contact Number</CFormLabel>
+              <CCol xs="auto">
+                <CFormInput 
+                type='text' 
+                id='city'
+                className='form-control'
+                onChange={(e) => setBranch({ ...branch, Contact: e.target.value })}
+                />
+              </CCol>
+            </CRow>
+            <CRow>
+              <CCol xs='auto'>
+                <CButton color='primary' type='submit' className='mb-3'>Save</CButton>
+              </CCol>
+              <CCol xs='auto'>
+                <CButton color='secondary' type='submit' className='mb-3'>Cancel</CButton>
+              </CCol>
+            </CRow>
+          </CForm>
         </CCard>
       </CCol>
     </CRow>

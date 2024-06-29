@@ -1,5 +1,21 @@
-import React from 'react'
-import { CCard, CCardBody, CCol, CCardHeader, CRow } from '@coreui/react'
+import React, { useEffect, useRef, useState } from 'react'
+import { 
+  CCard, 
+  CCardBody, 
+  CCol, 
+  CCardHeader, 
+  CRow, 
+  CButton, 
+  CTable, 
+  CTableBody, 
+  CTableHead, 
+  CTableRow,
+  CTableHeaderCell,
+  CTableDataCell,
+  CLink
+} from '@coreui/react'
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 import {
   CChartBar,
   CChartDoughnut,
@@ -8,13 +24,103 @@ import {
   CChartPolarArea,
   CChartRadar,
 } from '@coreui/react-chartjs'
+import { CDatePicker } from '@coreui/react-pro';
 import { DocsCallout } from '../../components'
 
 const Reports = () => {
   const random = () => Math.round(Math.random() * 100)
 
+  const datePickerRef1 = useRef(null);
+  const datePickerRef2 = useRef(null);
+
+  const [data, setData] = useState([])
+  const [startDate, setStartDate] = useState(new Date());
+
+  useEffect(() => {
+    // Focus the first date picker to open the calendar on render
+    if (datePickerRef1.current && datePickerRef1.current.querySelector('input')) {
+      datePickerRef1.current.querySelector('input').focus();
+    }
+  }, []);
+
   return (
-    <div></div>
+
+    <CCard className='mb-4'>
+      <CCardHeader>Reports</CCardHeader>
+      <CCardBody>
+        <CRow>
+          <CCol>
+            <label>Status</label>
+            <select>
+              <option>All</option>
+              <option>Item Accepted by Courier</option>
+              <option>Collected</option>
+              <option>Shipped</option>
+              <option>In-Transit</option>
+              <option>Arrived At Destination</option>
+              <option>Out for Delivery</option>
+              <option>Ready to Pickup</option>
+              <option>Delivered</option>
+              <option>Unsuccessfull Delivery Attempt</option>
+            </select>
+          </CCol>
+          <CCol>
+            <DatePicker selected={startDate} onChange={(date) => setStartDate(date)}/>
+          </CCol>
+        </CRow>
+        
+        {/* <label>From</label>
+        <CDatePicker date="2022/2/16" label="Date Picker" locale="en-US" /> 
+
+        <label>To</label>
+        <CDatePicker date="2022/2/16" label="Date Picker" locale="en-US" />  */}
+
+        {/* <div className="row">
+          <div ref={datePickerRef1} className="col-sm-6 col-lg-5 mb-3 mb-sm-0">
+            <CDatePicker label="From" locale="en-US"/>
+          </div>
+          <div className="col-sm-6 col-lg-5">
+            <div ref={datePickerRef2}>
+            <CDatePicker date="2022/2/16" label="To" locale="en-US"/>
+            </div>
+          </div>
+        </div> */}
+
+        <CButton color="info">View Report</CButton>
+      </CCardBody>
+      <CCardBody>
+        <div className="d-grid gap-2 d-md-flex justify-content-md-end">
+          <CButton color='success' className="me-md-2">Print</CButton>
+        </div>
+
+        <CTable>
+          <CTableHead>
+            <CTableRow>
+              <CTableHeaderCell scope='col'>#</CTableHeaderCell>
+              <CTableHeaderCell scope='col'>Date</CTableHeaderCell>
+              <CTableHeaderCell scope='col'>Sender</CTableHeaderCell>
+              <CTableHeaderCell scope='col'>Recipient</CTableHeaderCell>
+              <CTableHeaderCell scope='col'>Amount</CTableHeaderCell>
+              <CTableHeaderCell scope='col'>Status</CTableHeaderCell>
+            </CTableRow>
+          </CTableHead>
+          <CTableBody>
+            {data.map((report,index) => {
+              return <CTableRow key={index}>
+                <CTableDataCell> {index+1} </CTableDataCell>
+                <CTableDataCell> {report.date} </CTableDataCell>
+                <CTableDataCell> {report.sender} </CTableDataCell>
+                <CTableDataCell> {report.recipient} </CTableDataCell>
+                <CTableDataCell> {report.amount} </CTableDataCell>
+                <CTableDataCell> {report.status} </CTableDataCell>
+              </CTableRow>
+            })}          
+          </CTableBody>
+        </CTable>
+      </CCardBody>
+    </CCard>
+     
+    
     // <CRow>
     //   <CCol xs={12}>
     //     <DocsCallout

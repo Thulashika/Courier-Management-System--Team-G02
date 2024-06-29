@@ -47,107 +47,103 @@ const _nav = [
   //   name: 'Components',
   // },
   {
-    component: CNavGroup,
+    component: CNavItem,
     name: 'Branch',
     to: '/branch',
     icon: <CIcon icon={cilPuzzle} customClassName="nav-icon" />,
-    items: [
-      {
-        component: CNavItem,
-        name: 'AddNew',
-        to: '/branch/new_branch',
-      },
-      {
-        component: CNavItem,
-        name: 'List',
-        to: '/branch/branch',
-      },
-    ],
+    // items: [
+      // {
+      //   component: CNavItem,
+      //   name: 'AddNew',
+      //   to: '/branch/new_branch',
+      // },
+      // {
+      //   component: CNavItem,
+      //   name: 'List',
+      //   to: '/branch/branch',
+      // },
+    // ],
   },
   {
-    component: CNavGroup,
+    component: CNavItem,
     name: 'BranchStaff',
     to: '/branch_staff',
     icon: <CIcon icon={cilCursor} customClassName="nav-icon" />,
-    items: [
-      {
-        component: CNavItem,
-        name: 'AddNew',
-        to: '/branchstaff/new_branchstaff',
-      },
-      {
-        component: CNavItem,
-        name: 'List',
-        to: '/branchstaff/branch_staff',
-      },
-    ],
+    // items: [
+    //   {
+    //     component: CNavItem,
+    //     name: 'AddNew',
+    //     to: '/branchstaff/new_branchstaff',
+    //   },
+    //   {
+    //     component: CNavItem,
+    //     name: 'List',
+    //     to: '/branchstaff/branch_staff',
+    //   },
+    // ],
   },
   {
-    component: CNavGroup,
+    component: CNavItem,
     name: 'Parcels',
+    to: '/parcels',
     icon: <CIcon icon={cilNotes} customClassName="nav-icon" />,
-    items: [
-      {
-        component: CNavItem,
-        name: 'AddNew',
-        to: '/parcels/new_parcels',
-      },
-      {
-        component: CNavItem,
-        name: 'List All',
-        to: '/parcels/parcel_list',
-      },
-      {
-        component: CNavItem,
-        name: 'Item Accepted by Counter',
-        to: '/parcels/accepted',
-      },
-      {
-        component: CNavItem,
-        name: 'Collected',
-        to: '/parcels/collected',
-      },
-      {
-        component: CNavItem,
-        name: 'Shipped',
-        to: '/parcels/shipped',
-      },
-      {
-        component: CNavItem,
-        name: 'In-Transit',
-        to: '/parcels/in_transit',
-      },
-      {
-        component: CNavItem,
-        name: 'Arrived At Destination',
-        to: '/parcels/arrived',
-      },
-      {
-        component: CNavItem,
-        name: 'Out for Delivery',
-        to: '/parcels/delivery',
-      },
-      {
-        component: CNavItem,
-        name: 'Ready to Pickup',
-        to: '/parcels/ready',
-      },
-      {
-        component: CNavItem,
-        name: 'Delivered',
-        to: '/parcels/delivered',
-      },
-      {
-        component: CNavItem,
-        name: 'Picked-up',
-        to: '/parcels/picked',
-      },
-      {
-        component: CNavItem,
-        name: 'Unsuccessfull Delivery Attempt',
-        to: '/parcels/unsuccessfull',
-      },
-    ],
+    // items: [
+    //   {
+    //     component: CNavItem,
+    //     name: 'AddNew',
+    //     to: '/parcels/new_parcels',
+    //   },
+    //   {
+    //     component: CNavItem,
+    //     name: 'List All',
+    //     to: '/parcels/parcel_list',
+    //   },
+    //   {
+    //     component: CNavItem,
+    //     name: 'Item Accepted by Counter',
+    //     to: '/parcels/accepted',
+    //   },
+    //   {
+    //     component: CNavItem,
+    //     name: 'Collected',
+    //     to: '/parcels/collected',
+    //   },
+    //   {
+    //     component: CNavItem,
+    //     name: 'Shipped',
+    //     to: '/parcels/shipped',
+    //   },
+    //   {
+    //     component: CNavItem,
+    //     name: 'In-Transit',
+    //     to: '/parcels/in_transit',
+    //   },
+    //   {
+    //     component: CNavItem,
+    //     name: 'Arrived At Destination',
+    //     to: '/parcels/arrived',
+    //   },
+    //   {
+    //     component: CNavItem,
+    //     name: 'Out for Delivery',
+    //     to: '/parcels/delivery',
+    //   },
+    //   {
+    //     component: CNavItem,
+    //     name: 'Delivered',
+    //     to: '/parcels/delivered',
+    //   },
+    //   {
+    //     component: CNavItem,
+    //     name: 'Picked-up',
+    //     to: '/parcels/picked',
+    //   },
+    //   {
+    //     component: CNavItem,
+    //     name: 'Unsuccessfull Delivery Attempt',
+    //     to: '/parcels/unsuccessfull',
+    //   },
+    // ],
   },
   {
     component: CNavItem,

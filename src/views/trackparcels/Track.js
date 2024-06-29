@@ -1,5 +1,5 @@
 import React from 'react'
-import { CCard, CCardBody, CCol, CCardHeader, CRow } from '@coreui/react'
+import { CCard, CCardBody, CCol, CCardHeader, CRow, CContainer, CCloseButton, CToast, CToastHeader, CToastBody} from '@coreui/react'
 import {
   CChartBar,
   CChartDoughnut,
@@ -14,7 +14,33 @@ const Track = () => {
   const random = () => Math.round(Math.random() * 100)
 
   return (
-    <div></div>
+    <CCard>
+      <CRow>
+        <CCol xs={12}>
+          <CCardHeader>
+            <strong>Track</strong>
+          </CCardHeader>
+          <CCardBody>
+            <CContainer>
+              <label>Enter Tracking Number</label>
+              <input/>
+                {/* <button type='button' className='btn-close me-2 m-auto'></button> */}
+                <CCloseButton dark  className="text-reset"/>
+                <button className='btn btn-primary'>search</button>         
+            </CContainer>
+
+            <CContainer>
+              <p>Item accepted by Courier</p>
+              <p>Collected</p>
+              <p>In-Transit</p>
+              <p>Shipped</p>
+              <p>Delivered</p>
+            </CContainer>
+          </CCardBody>
+        </CCol>
+      </CRow>
+    </CCard>
+    
     // <CRow>
     //   <CCol xs={12}>
     //     <DocsCallout
