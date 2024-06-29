@@ -1,5 +1,6 @@
-import React from 'react'
+import React, { useState } from 'react'
 import {
+  CButton,
   CCard,
   CCardBody,
   CCardHeader,
@@ -7,13 +8,23 @@ import {
   CCarouselCaption,
   CCarouselItem,
   CCol,
+  CLink,
+  CPagination,
+  CPaginationItem,
   CRow,
+  CTable,
+  CTableBody,
+  CTableDataCell,
+  CTableHead,
+  CTableHeaderCell,
+  CTableRow,
 } from '@coreui/react'
 import { DocsExample } from '../../../components'
 
 import AngularImg from '../../../assets/images/angular.jpg'
 import ReactImg from '../../../assets/images/react.jpg'
 import VueImg from '../../../assets/images/vue.jpg'
+import { Link } from 'react-router-dom'
 
 const slidesLight = [
   'data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%22800%22%20height%3D%22400%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20800%20400%22%20preserveAspectRatio%3D%22none%22%3E%3Cdefs%3E%3Cstyle%20type%3D%22text%2Fcss%22%3E%23holder_1607923e7e2%20text%20%7B%20fill%3A%23AAA%3Bfont-weight%3Anormal%3Bfont-family%3AHelvetica%2C%20monospace%3Bfont-size%3A40pt%20%7D%20%3C%2Fstyle%3E%3C%2Fdefs%3E%3Cg%20id%3D%22holder_1607923e7e2%22%3E%3Crect%20width%3D%22800%22%20height%3D%22400%22%20fill%3D%22%23F5F5F5%22%3E%3C%2Frect%3E%3Cg%3E%3Ctext%20x%3D%22285.9296875%22%20y%3D%22217.75625%22%3EFirst%20slide%3C%2Ftext%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E',
@@ -22,8 +33,121 @@ const slidesLight = [
 ]
 
 const StaffList = () => {
+
+  const [data, setData] = useState([])
+
+  const handleClick = (id) => {
+      alert('Successfully Deleted')
+  }
+
   return (
-    <div></div>
+    // <div>
+    // <h3>Staff List</h3>
+    // <div>
+    //     <div>
+    //         <div className='d-flex justify-content-end'>
+    //         <Link to='/' className='btn btn-sm btn-primary'>+ Add New</Link>
+    //         </div>
+    //         <label> Show <input type='number' className='w-25'/> entries </label>
+    //         <label> Search: <input type='text'/></label>
+
+    //         <table className='table'>
+    //             <thead>
+    //                 <tr>
+    //                     <th> Id </th>
+    //                     <th> Staff </th>
+    //                     <th> Email </th>
+    //                     <th> Branch </th>
+    //                     <th> Action </th>
+    //                 </tr>
+    //             </thead>
+    //             <tbody>
+    //                 {data.map((staff, index) => {
+    //                     return <tr key={index}>
+    //                         <td> {index+1} </td>
+    //                         <td> {staff.name} </td>
+    //                         <td> {staff.email} </td>
+    //                         <td> {staff.branch} </td>
+    //                         <td>
+    //                             <Link to={`/edit?id=${staff.id}`} className='bi bi-pencil-square btn btn-sm btn-primary'/>
+    //                             <button className='bi bi-trash-fill btn btn-sm btn-danger' onClick={() => handleClick(staff.id)}/>
+    //                         </td>
+    //                     </tr>
+    //                 })}
+    //             </tbody>
+    //         </table>
+    //         <text>Showing {``} to {``} of {} entries</text>
+    //         <button>Previous</button>
+    //         <button>Next</button>
+    //     </div>
+    // </div>
+    // </div>
+
+    <CRow>
+      <CCol xs={12}>
+        <CCard className='mb-4'>
+          <CCardHeader>
+            <strong>Staff List</strong>
+          </CCardHeader>
+          <CCardBody>
+            <CRow className="mb-3">
+              {/* <CLink to='/' className='d-flex justify-content-end btn btn-sm btn-primary'>+AddNew</CLink> */}
+              <div className='d-flex justify-content-end'>
+                  <Link to='/branch_staff/new_branchstaff' className='btn btn-sm btn-primary'>Add New</Link>
+              </div>
+            </CRow>
+
+            <CRow className="mb-3">
+              <CCol md={6}>
+                <label> Show <input type='number' className='w-25'/> entries </label>
+              </CCol>
+              <CCol md={6}>
+                <label> Search: <input type='text'/></label>
+              </CCol>
+            </CRow>
+
+            <CRow className="mb-3">
+              <CTable>
+                <CTableHead>
+                  <CTableRow>
+                    <CTableHeaderCell scope='col'>Id</CTableHeaderCell>
+                    <CTableHeaderCell scope='col'>Staff Name</CTableHeaderCell>
+                    <CTableHeaderCell scope='col'>Email</CTableHeaderCell>
+                    <CTableHeaderCell scope='col'>Branch</CTableHeaderCell>
+                    <CTableHeaderCell scope='col'>Telephone Number</CTableHeaderCell>
+                    <CTableHeaderCell scope='col'>Action</CTableHeaderCell>
+                  </CTableRow>
+                </CTableHead>
+                <CTableBody>
+                {data.map((staff, index) => {
+                  return <CTableRow key={index}>
+                      <CTableDataCell> {index+1} </CTableDataCell>
+                      <CTableDataCell> {staff.name} </CTableDataCell>
+                      <CTableDataCell> {staff.email} </CTableDataCell>
+                      <CTableDataCell> {staff.branch} </CTableDataCell>
+                      <CTableDataCell> {staff.telephoneNo} </CTableDataCell>
+                      <CTableDataCell>
+                        <Link to={`/edit?id=${staff.id}`} className='bi bi-pencil-square btn btn-sm btn-primary'/>
+                          <CButton className='bi bi-trash-fill btn btn-sm btn-danger' onClick={() => handleClick(staff.id)}/>
+                      </CTableDataCell>
+                    </CTableRow>
+                  })}
+                </CTableBody>
+              </CTable>
+            </CRow>
+            
+            <CRow>
+              <CPagination align='end' aria-label='Page navigation'>
+                <CPaginationItem>Previous</CPaginationItem>
+                <CPaginationItem>1</CPaginationItem>
+                <CPaginationItem>Next</CPaginationItem>
+              </CPagination>
+            </CRow>
+          </CCardBody>
+        </CCard>
+      </CCol>
+    </CRow>
+
     // <CRow>
     //   <CCol xs={12}>
     //     <CCard className="mb-4">

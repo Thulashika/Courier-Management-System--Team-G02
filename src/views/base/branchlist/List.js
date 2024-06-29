@@ -14,14 +14,19 @@ import {
   CTableRow,
   CTableHeaderCell,
   CTableBody,
+  CButton,
+  CFormLabel,
+  CTableDataCell,
 } from '@coreui/react'
 import { DocsExample } from '../../../components'
 import { Link } from 'react-router-dom'
+import { data } from 'autoprefixer'
+import CIcon from '@coreui/icons-react'
+import { cilPencil, cilTrash } from '@coreui/icons'
 
 const List = () => {
 
   const [data,setData] = useState([])
-  const [count, setCount] = useState(0)
 
   const handleClick = (code) => {
     alert('Successfully Deleted')
@@ -78,24 +83,65 @@ const List = () => {
     <CRow>
       <CCol>
         <CCard>
-          <CHeader>Hi</CHeader>
+          <CHeader>
+            <strong>Branch List</strong>
+            </CHeader>
           <CCardBody>
-            <CTable>
-              <CTableHead>
-                <CTableRow>
-                  <CTableHeaderCell>#</CTableHeaderCell>
-                  <CTableHeaderCell>#</CTableHeaderCell>
-                  <CTableHeaderCell>#</CTableHeaderCell>
-                </CTableRow>
-              </CTableHead>
-              <CTableBody>
-                <CTableRow>
-                  <CTableHeaderCell>1</CTableHeaderCell>
-                  <CTableHeaderCell>1</CTableHeaderCell>
-                  <CTableHeaderCell>1</CTableHeaderCell>
-                </CTableRow>
-              </CTableBody>
-            </CTable>
+            <CRow className="mb-3">
+              <div className='d-flex justify-content-end'>
+                <Link to='/branch/new_branch' className='btn btn-sm btn-primary'>Add New</Link>
+              </div>
+            </CRow>
+
+            <CRow className="mb-3">
+              <CCol sm={6}>
+                <label> Show <input type='number' className='w-25'/></label>
+              </CCol>
+              <CCol sm={6}>
+                <label>Search: <input type='text'/> </label>
+              </CCol>
+            </CRow>
+
+            <CRow className="mb-3">
+              <CTable>
+                <CTableHead>
+                  <CTableRow>
+                    <CTableHeaderCell scope='col'>Id</CTableHeaderCell>
+                    <CTableHeaderCell scope='col'>Branch Code</CTableHeaderCell>
+                    <CTableHeaderCell scope='col'>Branch Address</CTableHeaderCell>
+                    <CTableHeaderCell scope='col'>City</CTableHeaderCell>
+                    <CTableHeaderCell scope='col'>Country</CTableHeaderCell>
+                    <CTableHeaderCell scope='col'>Contact Number</CTableHeaderCell>
+                    <CTableHeaderCell scope='col'>Action</CTableHeaderCell>
+                  </CTableRow>
+                </CTableHead>
+                <CTableBody>
+                  {data.map((branch, index) => {
+                      <CTableRow key={index}>
+                      <CTableDataCell>{index+1}</CTableDataCell>
+                      <CTableDataCell>{branch.code}</CTableDataCell>
+                      <CTableDataCell>{branch.address}</CTableDataCell>
+                      <CTableDataCell>{branch.city}</CTableDataCell>
+                      <CTableDataCell>{branch.country}</CTableDataCell>
+                      <CTableDataCell>{branch.contact}</CTableDataCell>
+                      <CTableDataCell>
+                        <Link to={`/edit?id=${branch.code}`}>
+                        <CButton color='primary' size='sm'>
+                          <CIcon content={cilPencil}/>
+                        </CButton>
+                        </Link>
+                        <CButton
+                        color='danger'
+                        size='sm'
+                        onClick={() => handleClick(branch.code)}>
+                          <CIcon content={cilTrash}/>
+                        </CButton>
+                      </CTableDataCell>
+                    </CTableRow>
+                  })}
+                </CTableBody>
+              </CTable>
+            </CRow>
           </CCardBody>
         </CCard>
       </CCol>

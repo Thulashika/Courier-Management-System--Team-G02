@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import {
   CButton,
   CCard,
@@ -18,14 +18,145 @@ import {
   CNavLink,
   CCol,
   CRow,
+  CForm,
+  CFormInput,
+  CFormSelect,
 } from '@coreui/react'
 import { DocsExample } from '../../../components'
 
 import ReactImg from '../../../assets/images/react.jpg'
 
 const AddNewStaff = () => {
+  const [staff, setStaff] = useState({
+    fName:'',
+    lName:'',
+    branch:'',
+    telephone_number:'',
+    email:'',
+    password:''
+})
   return (
-    <div></div>
+    <CRow>
+        <CCol xs={12}>
+            <CCard style={{ width: '18rem' }}>
+                <CCardHeader>
+                    <strong>New Staff</strong>
+                </CCardHeader>
+                <CCardBody>
+                    <CForm className="row g-3">
+                        <CRow className="mb-3">
+                            <CFormInput
+                            type='text'
+                            label='First Name'
+                            id='FName'
+                            onChange={(e) => setStaff({...staff,fName:e.target.value})}
+                            />
+                        </CRow>
+                        <CRow className="mb-3">
+                            <CFormInput
+                            type='text'
+                            label='Last Name'
+                            id='LName'
+                            onChange={(e) => setStaff({...staff,lName:e.target.value})}
+                            />
+                        </CRow>
+                        <CRow className="mb-3">
+                            <CFormSelect
+                            type='text'
+                            label='Branch'
+                            id='Branch'
+                            >
+                                <option selected='' value=''>
+                                    Open this select menu
+                                </option>
+                                <option value='Jaffna'>Jaffna</option>
+                                <option value='Kandy'>Kandy</option>
+                                <option value='Mannar'>Mannar</option>
+                                <option value='Galle'>Galle</option>
+                                <option value='Trinco'>Trinco</option>
+                            </CFormSelect>
+                        </CRow>
+                        <CRow className="mb-3">
+                            <CFormInput
+                            type='text'
+                            label='Telephone Number'
+                            id='Telephone Number'
+                            onChange={(e) => setStaff({...staff,telephone_number:e.target.value})}
+                            />
+                        </CRow>
+                        <CRow className="mb-3">
+                            <CFormInput
+                            type='text'
+                            label='Email'
+                            id='Email'
+                            onChange={(e) => setStaff({...staff,email:e.target.value})}
+                            />
+                        </CRow>
+                        <CRow className="mb-3">
+                            <CFormInput
+                            type='text'
+                            label='Password'
+                            id='Password'
+                            onChange={(e) => setStaff({...staff,password:e.target.value})}
+                            />
+                        </CRow>
+
+                        <CRow className="mb-3">
+                            <CCol xs={4} className='position-relative'>
+                                <CButton color='primary' type='submit'>
+                                    Save
+                                </CButton>
+                            </CCol>
+                            <CCol xs={4} className='position-relative'>
+                                <CButton color='secondary' type='submit'>
+                                    Cancel
+                                </CButton>
+                            </CCol>
+                        </CRow>
+                    </CForm>
+                </CCardBody>
+            </CCard>
+        </CCol>
+    </CRow>
+//     <div>
+//     <h3>New Staff</h3>
+//     <div>
+//         <div>
+//             <form>
+//                 <div className='mb-2'>
+//                     <label>First Name</label>
+//                     <input type='text' id='FName' onChange={(e) => setStaff({...staff,fName:e.target.value})}/>
+//                 </div>
+//                 <div className='mb-2'>
+//                     <label>Last Name</label>
+//                     <input type='text' id='LName' onChange={(e) => setStaff({...staff,lName:e.target.value})}/>
+//                 </div>
+//                 <div className='mb-2'>
+//                     <label htmlFor='branch'>Branch</label>
+//                     <select required id='branch' className='w-25'>
+//                         <option value=''>Please select here</option>
+//                         <option value='Jaffna'>Jaffna</option>
+//                         <option value='Kandy'>Kandy</option>
+//                         <option value='Mannar'>Mannar</option>
+//                         <option value='Galle'>Galle</option>
+//                         <option value='Trinco'>Trinco</option>
+//                     </select>
+//                 </div>
+//                 <div className='mb-2'>
+//                     <label>Email</label>
+//                     <input type='text' id='Email' onChange={(e) => setStaff({...staff,email:e.target.value})}/>
+//                 </div>
+//                 <div className='mb-2'>
+//                     <label>Password</label>
+//                     <input type='text' id='Password' onChange={(e) => setStaff({...staff,password:e.target.value})}/>
+//                 </div>
+
+//                 <button type='submit'>Save</button>
+//                 <button type='submit'>Cancel</button>
+//             </form>
+//         </div>
+//     </div>
+// </div>
     // <CRow>
     //   <CCol xs={12}>
     //     <CCard className="mb-4">
