@@ -106,11 +106,11 @@ const List = () => {
               <CTable>
                 <CTableHead>
                   <CTableRow>
-                    <CTableHeaderCell scope='col'>Id</CTableHeaderCell>
+                    <CTableHeaderCell scope='col'>No</CTableHeaderCell>
                     <CTableHeaderCell scope='col'>Branch Code</CTableHeaderCell>
+                    <CTableHeaderCell scope='col'>Branch Name</CTableHeaderCell>
                     <CTableHeaderCell scope='col'>Branch Address</CTableHeaderCell>
                     <CTableHeaderCell scope='col'>City</CTableHeaderCell>
-                    <CTableHeaderCell scope='col'>Country</CTableHeaderCell>
                     <CTableHeaderCell scope='col'>Contact Number</CTableHeaderCell>
                     <CTableHeaderCell scope='col'>Action</CTableHeaderCell>
                   </CTableRow>

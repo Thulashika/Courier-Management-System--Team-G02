@@ -12,7 +12,9 @@ import {
   CTableRow,
   CTableHeaderCell,
   CTableDataCell,
-  CLink
+  CLink,
+  CFormLabel,
+  CFormSelect
 } from '@coreui/react'
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -26,6 +28,8 @@ import {
 } from '@coreui/react-chartjs'
 import { CDatePicker } from '@coreui/react-pro';
 import { DocsCallout } from '../../components'
+import CIcon from '@coreui/icons-react';
+import { cilPrint } from '@coreui/icons';
 
 const Reports = () => {
   const random = () => Math.round(Math.random() * 100)
@@ -48,10 +52,10 @@ const Reports = () => {
     <CCard className='mb-4'>
       <CCardHeader>Reports</CCardHeader>
       <CCardBody>
-        <CRow>
-          <CCol>
-            <label>Status</label>
-            <select>
+        <CRow className="mb-3">
+          <CCol xs={3}>
+            <CFormLabel className="col-sm-2 col-form-label">Status</CFormLabel>
+            <CFormSelect className="mb-3">
               <option>All</option>
               <option>Item Accepted by Courier</option>
               <option>Collected</option>
@@ -62,41 +66,36 @@ const Reports = () => {
               <option>Ready to Pickup</option>
               <option>Delivered</option>
               <option>Unsuccessfull Delivery Attempt</option>
-            </select>
+            </CFormSelect>
           </CCol>
-          <CCol>
-            <DatePicker selected={startDate} onChange={(date) => setStartDate(date)}/>
+          <CCol xs={3}>
+            <CFormLabel>From</CFormLabel>
+            <DatePicker placeholderText='Date' selected={startDate} onChange={(date) => setStartDate(date)}/>
+          </CCol>
+          <CCol xs={3}>
+            <CFormLabel>To</CFormLabel>
+            <DatePicker placeholderText='Date' selected={startDate} onChange={(date) => setStartDate(date)}/>
+          </CCol>
+          <CCol xs={3}>
+            <CButton color="info">View Report</CButton>
           </CCol>
         </CRow>
-        
-        {/* <label>From</label>
-        <CDatePicker date="2022/2/16" label="Date Picker" locale="en-US" /> 
-
-        <label>To</label>
-        <CDatePicker date="2022/2/16" label="Date Picker" locale="en-US" />  */}
-
-        {/* <div className="row">
-          <div ref={datePickerRef1} className="col-sm-6 col-lg-5 mb-3 mb-sm-0">
-            <CDatePicker label="From" locale="en-US"/>
-          </div>
-          <div className="col-sm-6 col-lg-5">
-            <div ref={datePickerRef2}>
-            <CDatePicker date="2022/2/16" label="To" locale="en-US"/>
-            </div>
-          </div>
-        </div> */}
-
-        <CButton color="info">View Report</CButton>
       </CCardBody>
+
       <CCardBody>
-        <div className="d-grid gap-2 d-md-flex justify-content-md-end">
-          <CButton color='success' className="me-md-2">Print</CButton>
-        </div>
+        <CRow className="mb-3">
+          <div className="d-grid gap-2 d-md-flex justify-content-md-end">
+            <CButton color='success' className="me-md-2">
+              <CIcon icon={cilPrint} />
+              Print
+            </CButton>
+          </div>
+        </CRow>
 
         <CTable>
           <CTableHead>
             <CTableRow>
-              <CTableHeaderCell scope='col'>#</CTableHeaderCell>
+              <CTableHeaderCell scope='col'>Id</CTableHeaderCell>
               <CTableHeaderCell scope='col'>Date</CTableHeaderCell>
               <CTableHeaderCell scope='col'>Sender</CTableHeaderCell>
               <CTableHeaderCell scope='col'>Recipient</CTableHeaderCell>

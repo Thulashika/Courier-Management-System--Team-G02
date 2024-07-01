@@ -45,6 +45,17 @@ const AddNew = () => {
               </CCol>
             </CRow>
             <CRow className="mb-3">
+              <CFormLabel htmlFor="inputCode">Branch Name</CFormLabel>
+              <CCol xs="auto">
+                <CFormInput 
+                type='text' 
+                id='name' 
+                className='form-control'
+                onChange={(e) => setBranch({ ...branch, [e.target.id]: e.target.value })}
+                />
+              </CCol>
+            </CRow>
+            <CRow className="mb-3">
               <CFormLabel htmlFor="inputAddress">Branch Address</CFormLabel>
               <CCol xs="auto">
                 <CFormInput 
@@ -74,17 +85,6 @@ const AddNew = () => {
                 id='zipCode'
                 className='form-control'
                 onChange={(e) => setBranch({ ...branch, Code: e.target.value })}
-                />
-              </CCol>
-            </CRow>
-            <CRow className="mb-3">
-              <CFormLabel htmlFor="inputAddress">Country</CFormLabel>
-              <CCol xs="auto">
-                <CFormInput 
-                type='text' 
-                id='country'
-                className='form-control'
-                onChange={(e) => setBranch({ ...branch, Country: e.target.value })}
                 />
               </CCol>
             </CRow>

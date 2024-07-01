@@ -196,10 +196,12 @@ const ParcelList = () => {
             <CTable>
               <CTableHead>
                 <CTableRow>
-                  <CTableHeaderCell scope='col'>Id</CTableHeaderCell>
+                  <CTableHeaderCell scope='col'>No</CTableHeaderCell>
                   <CTableHeaderCell scope='col'>Reference Number</CTableHeaderCell>
                   <CTableHeaderCell scope='col'>Sender Name</CTableHeaderCell>
+                  <CTableHeaderCell scope='col'>Sender Date</CTableHeaderCell>
                   <CTableHeaderCell scope='col'>Recipient Name</CTableHeaderCell>
+                  <CTableHeaderCell scope='col'>Recipient Date</CTableHeaderCell>
                   <CTableHeaderCell scope='col'>Status</CTableHeaderCell>
                   <CTableHeaderCell scope='col'>Action</CTableHeaderCell>
                 </CTableRow>

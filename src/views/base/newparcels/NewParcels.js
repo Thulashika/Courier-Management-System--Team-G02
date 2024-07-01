@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { CButton, CCard, CCardBody, CCardHeader, CCol, CCollapse, CHeader, CRow, CTable, CTableBody, CTableDataCell, CTableHead, CTableHeaderCell, CTableRow } from '@coreui/react'
+import { CButton, CCard, CCardBody, CCardHeader, CCol, CCollapse, CDropdown, CDropdownItem, CDropdownMenu, CDropdownToggle, CFormInput, CFormSelect, CHeader, CInputGroup, CInputGroupText, CRow, CTable, CTableBody, CTableDataCell, CTableHead, CTableHeaderCell, CTableRow } from '@coreui/react'
 import { DocsExample } from '../../../components'
 
 const NewParcels = () => {
@@ -10,23 +10,160 @@ const NewParcels = () => {
 
   return (
     <CRow>
-      <CCol>
         <CHeader>
           <strong>New Parcel</strong>
         </CHeader>
         <CCard className='mb-4'>
           <CCardHeader>
-            <div className='row'>
-              <div className='col'>
+            <CRow className="justify-content-around">
+              <CCol xs={6}>
                 <strong>Sender Information</strong>
-              </div>
-              <div className='col'>
+              </CCol>
+              <CCol xs={6}>
                 <strong>Recipient Information</strong>
-              </div>
-            </div>
+              </CCol>
+            </CRow>
           </CCardHeader>
           <CCardBody>
-            <div className='row'>
+            <CRow>
+              <CCol xs={6}>
+                <CInputGroup className="mb-3">
+                  <CInputGroupText>Name</CInputGroupText>
+                  <CFormInput placeholder='First Name'/>
+                  <CFormInput placeholder='Last Name'/>
+                </CInputGroup>
+              </CCol>
+              <CCol xs={6}>
+                <CInputGroup className="mb-3">
+                  <CInputGroupText>Name</CInputGroupText>
+                  <CFormInput placeholder='First Name'/>
+                  <CFormInput placeholder='Last Name'/>
+                </CInputGroup>
+              </CCol>
+            </CRow>
+
+            <CRow>
+              <CCol xs={6}>
+                <CInputGroup className="mb-3">
+                  <CInputGroupText>Address</CInputGroupText>
+                  <CFormInput/>
+                </CInputGroup>
+              </CCol>
+              <CCol xs={6}>
+                <CInputGroup className="mb-3">
+                  <CInputGroupText>Address</CInputGroupText>
+                  <CFormInput/>
+                </CInputGroup>
+              </CCol>
+            </CRow>
+
+            <CRow>
+              <CCol xs={6}>
+                <CInputGroup className="mb-3">
+                  <CInputGroupText>Contact Number</CInputGroupText>
+                  <CFormInput/>
+                </CInputGroup>
+              </CCol>
+              <CCol xs={6}>
+                <CInputGroup className="mb-3">
+                  <CInputGroupText>Contact Number</CInputGroupText>
+                  <CFormInput/>
+                </CInputGroup>
+              </CCol>
+            </CRow>
+
+            <CRow>
+              <CCol xs={6}>
+                <CInputGroup className="mb-3">
+                  <CInputGroupText>Date</CInputGroupText>
+                  <CFormInput/>
+                </CInputGroup>
+              </CCol>
+              <CCol xs={6}>
+                <CInputGroup className="mb-3">
+                  <CInputGroupText>Date</CInputGroupText>
+                  <CFormInput/>
+                </CInputGroup>
+              </CCol>
+            </CRow>
+
+            <CRow>
+              <CCol xs={6}>
+                <CInputGroup className="mb-3">
+                <CInputGroupText>Branch Processed</CInputGroupText>
+                  <CFormSelect>
+                    <option selected>Please select here</option>
+                    <option value='Jaffna'>Jaffna</option>
+                    <option value='Kandy'>Kandy</option>
+                    <option value='Mannar'>Mannar</option>
+                    <option value='Galle'>Galle</option>
+                    <option value='Trinco'>Trinco</option>
+                  </CFormSelect>
+                </CInputGroup>
+              </CCol>
+              <CCol xs={6}>
+                <CInputGroup className="mb-3">
+                <CInputGroupText>Pickup Branch</CInputGroupText>
+                  <CFormSelect>
+                    <option selected>Please select here</option>
+                    <option value='Jaffna'>Jaffna</option>
+                    <option value='Kandy'>Kandy</option>
+                    <option value='Mannar'>Mannar</option>
+                    <option value='Galle'>Galle</option>
+                    <option value='Trinco'>Trinco</option>
+                  </CFormSelect>
+                </CInputGroup>
+              </CCol>
+            </CRow>
+
+            <CRow>
+              <CCardBody>
+                <strong>Parcel Details</strong>
+                <CRow>
+                  <CTable bordered>
+                    <CTableHead>
+                      <CTableRow>
+                        <CTableHeaderCell scope='col'>weight</CTableHeaderCell>
+                        <CTableHeaderCell scope='col'>Height</CTableHeaderCell>
+                        <CTableHeaderCell scope='col'>Delivery Charge</CTableHeaderCell>
+                        <CTableHeaderCell scope='col'>Total Amount</CTableHeaderCell>
+                        <CTableHeaderCell scope='col'>Due Amount</CTableHeaderCell>
+                      </CTableRow>
+                    </CTableHead>
+                  <CTableBody>
+                    <CTableRow>
+                      <CTableDataCell><CFormInput/></CTableDataCell>
+                      <CTableDataCell><CFormInput/></CTableDataCell>
+                      <CTableDataCell><CFormInput/></CTableDataCell>
+                      <CTableDataCell><CFormInput/></CTableDataCell>
+                      <CTableDataCell><CFormInput/></CTableDataCell>
+                    </CTableRow>
+                    <CTableRow>
+                      <CTableDataCell colSpan={3}></CTableDataCell>                    
+                      <CTableDataCell>Total</CTableDataCell>
+                      <CTableDataCell>value</CTableDataCell>
+                    </CTableRow>
+                  </CTableBody>
+                  </CTable>                  
+                </CRow>
+              </CCardBody>
+            </CRow>
+
+            <CRow>
+              <div className='d-grid gap-2 d-md-flex justify-content-md-end'>
+                <CButton href='' color='primary' className='me-md-2'>Add Item</CButton>
+              </div>
+            </CRow>
+
+            <CRow>
+              <div className="d-grid gap-2 d-md-block">
+                <CButton href='' color='primary' className='me-md-2'>Save</CButton>
+                <CButton href='' color='secondary' className='me-md-2'>Cancel</CButton>
+              </div>
+            </CRow>
+
+            
+            {/* <div className='row'>
               <div className='col'>
                 <label>Name</label>
                 <input className='w-100'/>
@@ -91,9 +228,9 @@ const NewParcels = () => {
                   <option value='Trinco'>Trinco</option>
                 </select>
               </div>
-            </div>
+            </div> */}
 
-            <div>
+            {/* <div>
               <p className='font-monospace'>Parcel Details</p>
               <CTable bordered>
                 <CTableHead>
@@ -125,18 +262,17 @@ const NewParcels = () => {
             </div>
             <div className='d-grid gap-2 d-md-flex justify-content-md-end'>
               <CButton href='' color='primary' className='me-md-2'>Add Item</CButton>
-            </div>
+            </div> */}
           </CCardBody>
 
-          <div className='d-grid gap-2 mx-auto'>
+          {/* <div className='d-grid gap-2 mx-auto'>
             <span>
               <CButton href='' color='primary' className='me-md-2'>Save</CButton>
               <CButton href='' color='secondary' className='me-md-2'>Cancel</CButton>
             </span>
-          </div>
+          </div> */}
 
         </CCard>
-      </CCol>
     </CRow>
 
     // <CRow>

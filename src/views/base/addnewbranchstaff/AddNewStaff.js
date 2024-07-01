@@ -79,10 +79,26 @@ const AddNewStaff = () => {
                         <CRow className="mb-3">
                             <CFormInput
                             type='text'
-                            label='Telephone Number'
-                            id='Telephone Number'
+                            label='Contact Number'
+                            id='Contact Number'
                             onChange={(e) => setStaff({...staff,telephone_number:e.target.value})}
                             />
+                        </CRow>
+                        <CRow className="mb-3">
+                            <CFormSelect
+                            type='text'
+                            label='Position'
+                            id='Position'
+                            >
+                                <option selected='' value=''>
+                                    Open this select menu
+                                </option>
+                                <option value='Manager'>Manager</option>
+                                <option value='Staff'>Staff</option>
+                                {/* <option value='Mannar'>Mannar</option>
+                                <option value='Galle'>Galle</option>
+                                <option value='Trinco'>Trinco</option> */}
+                            </CFormSelect>
                         </CRow>
                         <CRow className="mb-3">
                             <CFormInput

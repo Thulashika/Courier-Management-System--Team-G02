@@ -29,10 +29,11 @@ const Login = () => {
                     <h1>Login</h1>
                     <p className="text-body-secondary">Sign In to your account</p>
                     <CInputGroup className="mb-3">
-                      <CInputGroupText>
+                      {/* <CInputGroupText>
                         <CIcon icon={cilUser} />
-                      </CInputGroupText>
-                      <CFormInput placeholder="Username" autoComplete="username" />
+                      </CInputGroupText> */}
+                      <CInputGroupText>@</CInputGroupText>
+                      <CFormInput placeholder="Email" autoComplete="email" />
                     </CInputGroup>
                     <CInputGroup className="mb-4">
                       <CInputGroupText>

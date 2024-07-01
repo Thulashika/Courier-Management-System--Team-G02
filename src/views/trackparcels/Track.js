@@ -1,5 +1,5 @@
 import React from 'react'
-import { CCard, CCardBody, CCol, CCardHeader, CRow, CContainer, CCloseButton, CToast, CToastHeader, CToastBody} from '@coreui/react'
+import { CCard, CCardBody, CCol, CCardHeader, CRow, CContainer, CCloseButton, CToast, CToastHeader, CToastBody, CButton, CHeader, CFormLabel, CFormInput} from '@coreui/react'
 import {
   CChartBar,
   CChartDoughnut,
@@ -14,29 +14,37 @@ const Track = () => {
   const random = () => Math.round(Math.random() * 100)
 
   return (
-    <CCard>
-      <CRow>
+    <CCard >
+      <CRow className="mb-3">
         <CCol xs={12}>
           <CCardHeader>
             <strong>Track</strong>
           </CCardHeader>
-          <CCardBody>
-            <CContainer>
-              <label>Enter Tracking Number</label>
-              <input/>
-                {/* <button type='button' className='btn-close me-2 m-auto'></button> */}
-                <CCloseButton dark  className="text-reset"/>
-                <button className='btn btn-primary'>search</button>         
-            </CContainer>
-
-            <CContainer>
-              <p>Item accepted by Courier</p>
-              <p>Collected</p>
-              <p>In-Transit</p>
-              <p>Shipped</p>
-              <p>Delivered</p>
-            </CContainer>
-          </CCardBody>
+          <CRow className="mb-3"/>
+          <CRow className="mb-3 text-center">
+            <CFormLabel htmlFor="inputTrackingNumber" className="col-sm-4 col-form-label">Enter Tracking Number</CFormLabel>
+            <CCol sm={4}>
+              <CFormInput type="Tracking Number" id="inputTrackingNumber"/>
+            </CCol>
+            <CCol sm={4}>
+              <CButton color='primary' href=''>Search</CButton>
+            </CCol>
+          </CRow>
+          <CRow className="mb-3 text-center">
+            <p>Item accepted by Courier</p>
+          </CRow>
+          <CRow className="mb-3 text-center">
+            <p>Collected</p>
+          </CRow>
+          <CRow className="mb-3 text-center">
+            <p>Shipped</p>
+          </CRow>
+          <CRow className="mb-3 text-center">
+            <p>In-Transit</p>
+          </CRow>
+          <CRow className="mb-3 text-center">
+            <p>Delivered</p>
+          </CRow>
         </CCol>
       </CRow>
     </CCard>
