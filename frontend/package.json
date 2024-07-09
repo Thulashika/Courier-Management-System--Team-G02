@@ -67,7 +67,7 @@
     "resolve-url-loader": "^5.0.0",
     "sass": "^1.77.5",
     "sass-loader": "^14.2.1",
-    "vite": "^5.2.13"
+    "web-vitals": "^2.1.4"
   },
   "eslintConfig": {
     "extends": [
