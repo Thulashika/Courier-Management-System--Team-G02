@@ -1,10 +1,14 @@
 import { element } from 'prop-types'
 import React from 'react'
+// import Findus from './views/findus/Findus'
+// import Contactus from './views/contactus/Contactus'
 // import Ourservices from './views/OurServices/Ourservices'
 
 const Dashboard = React.lazy(() => import('./views/dashboard/Dashboard'))
 const Home = React.lazy(() => import('./views/home/Home'))
 const Ourservices = React.lazy(() => ('./views/OurServices/Ourservices'))
+const Contactus = React.lazy(() => ('./views/contactus/Contactus'))
+const Findus = React.lazy(() => ('./views/findus/Findus'))
 
 // Branch
 const AddNew = React.lazy(() => import('./views/base/addnewbranch/AddNew'))
@@ -53,7 +57,9 @@ const routes = [
   { path: '/track_parcels', name: 'Track Parcels', element: TrackParcels },
   { path: '/reports', name: 'Reports', element: Reports },
   { path: '/user', name: 'User', element: Home },
-  // { path: '/ourservices', name: 'Ourservices', element: Ourservices}
+  // { path: '/ourservices', name: 'Ourservices', element: Ourservices},
+  // { path: '/contactus', name: 'Contactus', element: Contactus},
+  // { path: '/findus', name: 'Findus', element: Findus}
 ]
 
 export default routes
