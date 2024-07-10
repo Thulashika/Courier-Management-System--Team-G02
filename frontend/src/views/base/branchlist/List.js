@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   CBreadcrumb,
   CBreadcrumbItem,
@@ -17,19 +17,38 @@ import {
   CButton,
   CFormLabel,
   CTableDataCell,
+  CFormInput,
 } from '@coreui/react'
 import { DocsExample } from '../../../components'
 import { Link } from 'react-router-dom'
 import { data } from 'autoprefixer'
 import CIcon from '@coreui/icons-react'
 import { cilPencil, cilTrash } from '@coreui/icons'
+import axios from 'axios'
 
 const List = () => {
 
   const [data,setData] = useState([])
 
+  useEffect(() => {
+    getAll()
+  },[])
+
+  const getAll = () => {
+    axios('http://localhost:6431/viewBranch', {
+      method:'GET'
+    }).then(res => {
+      setData(res.data)
+    })
+  }
+
   const handleClick = (code) => {
-    alert('Successfully Deleted')
+    axios(`http://localhost:6431/deleteBranch/${code}`, {
+      method:'DELETE'
+    }).then(res => {
+      alert('Successfully Deleted')
+      getAll()
+    })
   }
 
   return (
@@ -95,18 +114,18 @@ const List = () => {
 
             <CRow className="mb-3">
               <CCol sm={6}>
-                <label> Show <input type='number' className='w-25'/></label>
+                <CFormInput label='Show' type='number' className='w-25'/>
               </CCol>
               <CCol sm={6}>
-                <label>Search: <input type='text'/> </label>
+                <CFormInput label='Search:' type='text' className='w-50'/>
               </CCol>
             </CRow>
 
             <CRow className="mb-3">
-              <CTable>
+              <CTable className='table' bordered>
                 <CTableHead>
                   <CTableRow>
-                    <CTableHeaderCell scope='col'>No</CTableHeaderCell>
+                    <CTableHeaderCell scope='col'>Id</CTableHeaderCell>
                     <CTableHeaderCell scope='col'>Branch Code</CTableHeaderCell>
                     <CTableHeaderCell scope='col'>Branch Name</CTableHeaderCell>
                     <CTableHeaderCell scope='col'>Branch Address</CTableHeaderCell>
@@ -117,24 +136,24 @@ const List = () => {
                 </CTableHead>
                 <CTableBody>
                   {data.map((branch, index) => {
-                      <CTableRow key={index}>
+                    return <CTableRow key={index}>
                       <CTableDataCell>{index+1}</CTableDataCell>
-                      <CTableDataCell>{branch.code}</CTableDataCell>
-                      <CTableDataCell>{branch.address}</CTableDataCell>
+                      <CTableDataCell>{branch.branchCode}</CTableDataCell>
+                      <CTableDataCell>{branch.branchName}</CTableDataCell>
+                      <CTableDataCell>{branch.branchAddress}</CTableDataCell>
                       <CTableDataCell>{branch.city}</CTableDataCell>
-                      <CTableDataCell>{branch.country}</CTableDataCell>
-                      <CTableDataCell>{branch.contact}</CTableDataCell>
+                      <CTableDataCell>{branch.contactNumber}</CTableDataCell>
                       <CTableDataCell>
-                        <Link to={`/edit?id=${branch.code}`}>
+                        <Link to={`/updateBranch?code=${branch.branchCode}`}>
                         <CButton color='primary' size='sm'>
-                          <CIcon content={cilPencil}/>
+                          <CIcon icon={cilPencil}/>
                         </CButton>
                         </Link>
                         <CButton
                         color='danger'
                         size='sm'
-                        onClick={() => handleClick(branch.code)}>
-                          <CIcon content={cilTrash}/>
+                        onClick={() => handleClick(branch.branchCode)}>
+                          <CIcon icon={cilTrash}/>
                         </CButton>
                       </CTableDataCell>
                     </CTableRow>

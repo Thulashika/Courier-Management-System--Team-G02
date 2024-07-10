@@ -114,7 +114,7 @@ const StaffList = () => {
                     <CTableHeaderCell scope='col'>Staff Name</CTableHeaderCell>
                     <CTableHeaderCell scope='col'>Email</CTableHeaderCell>
                     <CTableHeaderCell scope='col'>Branch</CTableHeaderCell>
-                    <CTableHeaderCell scope='col'>Telephone Number</CTableHeaderCell>
+                    <CTableHeaderCell scope='col'>Contact Number</CTableHeaderCell>
                     <CTableHeaderCell scope='col'>Action</CTableHeaderCell>
                   </CTableRow>
                 </CTableHead>
@@ -125,7 +125,7 @@ const StaffList = () => {
                       <CTableDataCell> {staff.name} </CTableDataCell>
                       <CTableDataCell> {staff.email} </CTableDataCell>
                       <CTableDataCell> {staff.branch} </CTableDataCell>
-                      <CTableDataCell> {staff.telephoneNo} </CTableDataCell>
+                      <CTableDataCell> {staff.contactNo} </CTableDataCell>
                       <CTableDataCell>
                         <Link to={`/edit?id=${staff.id}`} className='bi bi-pencil-square btn btn-sm btn-primary'/>
                           <CButton className='bi bi-trash-fill btn btn-sm btn-danger' onClick={() => handleClick(staff.id)}/>

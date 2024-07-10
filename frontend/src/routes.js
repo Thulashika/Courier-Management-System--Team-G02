@@ -1,4 +1,4 @@
-import { element } from 'prop-types'
+import { element, exact } from 'prop-types'
 import React from 'react'
 
 const Dashboard = React.lazy(() => import('./views/dashboard/Dashboard'))
@@ -7,6 +7,7 @@ const Home = React.lazy(() => import('./views/home/Home'))
 // Branch
 const AddNew = React.lazy(() => import('./views/base/addnewbranch/AddNew'))
 const List = React.lazy(() => import('./views/base/branchlist/List'))
+const UpdateBranch = React.lazy(() => import('./views/base/updateBranch/UpdateBranch'))
 
 // BranchStaff
 const AddNewStaff = React.lazy(() => import('./views/base/addnewbranchstaff/AddNewStaff'))
@@ -34,6 +35,7 @@ const routes = [
   { path: '/', exact: true, name: 'Home' },
   { path: '/dashboard', name: 'Dashboard', element: Dashboard },
   { path: '/branch/new_branch', name: 'New Branch', element: AddNew },
+  { path: '/branch/updateBranch', exact: true, name: 'Update Branch', element: UpdateBranch },
   { path: '/branch', name: 'Branch', element: List },
   { path: '/branch_staff/new_branchstaff', name: 'New Staff', element: AddNewStaff },
   { path: '/branch_staff', name: 'Branch Staff', element: StaffList },
