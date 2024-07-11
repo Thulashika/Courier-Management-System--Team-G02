@@ -141,9 +141,6 @@ app.post('/userLogin', async (req,res) => {
     });
 })
 
-
-// const server = http.createServer(branch)
-
 app.post('/createBranch', (req,res) => {
     const createBranchQuery = 'insert into branch(`branchCode`, `branchName`, `branchAddress`, `city`, `contactNumber`, `zipCode`) values(?)'
 
@@ -256,6 +253,83 @@ app.put('/updateBranch/:branchCode', (req,res) => {
             return res.status(500).json(err)
         }
         return res.status(201).send({statusCode:201, statusMessage:'Updated Successfully'})
+    })
+})
+
+app.post('/createParcel', (req,res) => {
+    const createParcelQuery = 'insert into parcel(referenceNumber, senderName, senderDate, recipientName, recipientDate, status) values(?)'
+
+    const values = [
+        req.body.referenceNumber,
+        req.body.senderName,
+        req.body.senderDate,
+        req.body.recipientName,
+        req.body.recipientDate,
+        req.body.status
+    ]
+
+    if(!values.every(value => value !== undefined && value !== '')) {
+        return res.status(400).json({error: 'All fields are required'})
+    }
+
+    // Validate zip code (assuming it should be a 5-digit number)
+    const RNRegex = /^(?:P)?[0-9]{4}$/; 
+    if (!RNRegex.test(req.body.referenceNumber)){
+        return res.status(400).json({ message: 'Invalid reference Number' });
+    }
+
+    const isValidName = (senderName,recipientName) => {
+        const regex = /^[A-Za-z\s]{1,50}$/; // Example: letters and spaces, max length 50
+        return regex.test(req.body.senderName, req.body.recipientName);
+    };
+
+    if(!isValidName) {
+        return res.status(400).json({error: 'Invalid name'})
+    }
+
+    const Nameregex = /^[A-Za-z\s]{1,50}$/; // Example: letters and spaces, max length 50
+
+    if(!Nameregex.test(req.body.senderName)) {
+        return res.status(400).json({error: 'Invalid sender name'})
+    }
+
+    if(!Nameregex.test(req.body.recipientName)) {
+        return res.status(400).json({error: 'Invalid recipient name'})
+    }
+    
+    // const isValidDate = (senderDate, recipientDate) => {
+    //     const regex = /^\d{4}-\d{2}-\d{2}$/; // Example: YYYY-MM-DD format
+    //     return regex.test(senderDate, recipientDate) && !isNaN(new Date(senderDate, recipientDate).getTime());
+    // };
+
+    // if(!isValidDate) {
+    //     return res.status(400).json({error: 'Invalid date'})
+    // }
+
+    const Dateregex = /^\d{4}-\d{2}-\d{2}$/; // Example: YYYY-MM-DD format
+
+    if(!Dateregex.test(req.body.senderDate) && !isNaN(new Date(senderDate).getTime())) {
+        return res.status(400).json({error: 'Invalid sender date'})
+    }
+
+    if(!Dateregex.test(req.body.recipientDate) && !isNaN(new Date(recipientDate).getTime())) {
+        return res.status(400).json({error: 'Invalid recipient date'})
+    }
+
+    const validStatuses = ['Item accepted by Courier', 'Collected', 'Shipped', 'In-Transit', 'Delivered']; // Example statuses
+
+    if(!validStatuses.includes(req.body.status)){
+        return res.status(400).json({error: 'Invalid status'})
+    }
+
+    db.query(createParcelQuery, [values], (err,data) => {
+        if(err) {
+            if(err.errno === 1062) {
+                return res.status(500).json({statusCode:500, statusMessage:'Duplicate entry'})
+            }            
+            return res.status(500).json(err)
+        }
+        return res.status(201).json({statusCode:201, statusMessage: 'Created Successfully'})
     })
 })
 
