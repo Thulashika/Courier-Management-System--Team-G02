@@ -36,6 +36,16 @@ const _nav = [
   //   to: '/theme/colors',
   //   icon: <CIcon icon={cilDrop} customClassName="nav-icon" />,
   // },
+  // {
+  //   component: CNavItem,
+  //   name: 'Typography',
+  //   to: '/theme/typography',
+  //   icon: <CIcon icon={cilPencil} customClassName="nav-icon" />,
+  // },
+  // {
+  //   component: CNavTitle,
+  //   name: 'Components',
+  // },
   {
     component: CNavItem,
     name: 'Branch',
@@ -65,25 +75,45 @@ const _nav = [
     name: 'Reports',
     to: '/reports',
     icon: <CIcon icon={cilStar} customClassName="nav-icon" />,
+    // items: [
+    //   {
+    //     component: CNavItem,
+    //     name: 'CoreUI Free',
+    //     to: '/icons/coreui-icons',
+    //     badge: {
+    //       color: 'success',
+    //       text: 'NEW',
+    //     },
+    //   },
+    // ],
   },
-  {
-    component: CNavItem,
-    name: 'Ourservices',
-    icon: <CIcon icon={cilBell} customClassName="nav-icon" />,
-    to: '/ourservices'
-  },
-  {
-    component: CNavItem,
-    name: 'Contactus',
-    icon: <CIcon icon={cilBell} customClassName="nav-icon" />,
-    to: '/contactus'
-  },
-  {
-    component: CNavItem,
-    name: 'Findus',
-    icon: <CIcon icon={cilBell} customClassName="nav-icon" />,
-    to: '/findus'
-  },
+  // {
+  //   component: CNavGroup,
+  //   name: 'Notifications',
+  //   icon: <CIcon icon={cilBell} customClassName="nav-icon" />,
+  //   items: [
+  //     {
+  //       component: CNavItem,
+  //       name: 'Alerts',
+  //       to: '/notifications/alerts',
+  //     },
+  //     {
+  //       component: CNavItem,
+  //       name: 'Badges',
+  //       to: '/notifications/badges',
+  //     },
+  //     {
+  //       component: CNavItem,
+  //       name: 'Modal',
+  //       to: '/notifications/modals',
+  //     },
+  //     {
+  //       component: CNavItem,
+  //       name: 'Toasts',
+  //       to: '/notifications/toasts',
+  //     },
+  //   ],
+  // },
   // {
   //   component: CNavItem,
   //   name: 'Widgets',

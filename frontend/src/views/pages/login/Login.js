@@ -17,50 +17,65 @@ import CIcon from '@coreui/icons-react'
 import { cilLockLocked, cilUser } from '@coreui/icons'
 import axios from 'axios'
 
-function useQuery() {
-  const {search} = useLocation()
-  return React.useMemo (() => new URLSearchParams(search), [search])
-}
+import { Icon } from 'react-icons-kit';
+import { eyeOff } from 'react-icons-kit/feather/eyeOff';
+import { eye } from 'react-icons-kit/feather/eye';
+
+// function useQuery() {
+//   const {search} = useLocation()
+//   return React.useMemo (() => new URLSearchParams(search), [search])
+// }
 
 const Login = () => {
+
+  const [visible, setVisible] =  useState(false)
+  const [error, setError] = useState('')
+  const [isValid, setIsValid] = useState(true);
+
 
   const [user, setUser] = useState({
     email:'',
     password:''
   })
 
-  const query = useQuery()
-
+  // const query = useQuery()
 
   const navigate = useNavigate();
 
   const handleSubmit = (e)=> {
     e.preventDefault()
+    setError('')
+    setIsValid(true)
 
-    axios(`http://localhost:6431/userLogin/${query.get('id')}`, {
-      data: user,
-      method: 'POST'
-    }).then(res => {
-      if(res.ok){
-        console.log(res.json)
-        navigate('/')
-      }
-      else {
-        console.error(res.json.message)
-        // alert("Not Login successfully")
-      }
-    }).catch(err => {
-      alert("Not Login successfully")
-    })
+    if (!user.password || user.password.length < 4 || user.password.length > 10) {
+      setError('Password must be between 4 and 10 characters')
+      setIsValid(false)
+      return;
+    }
 
-    // const result = response.json();
-    // if (response.ok) {
-    //   // Handle successful login, e.g., store token
-    //   console.log(result);
-    // } else {
-    //   // Handle login error
-    //   console.error(result.message);
-    // }
+    if(isValid) {
+      axios(`http://localhost:6431/userLogin`, {
+        data: user,
+        method: 'POST'
+      }).then(res => {
+        if(res.data.statusCode === 200){
+          navigate('/')
+        } else {
+          alert("Not Login successfully")
+        }
+      }).catch(err => {
+        alert("Login not successfully")
+      })
+
+      // const result = response.json();
+      // if (response.ok) {
+      //   // Handle successful login, e.g., store token
+      //   console.log(result);
+      // } else {
+      //   // Handle login error
+      //   console.error(result.message);
+      // }
+    }
   }
 
   return (
@@ -75,32 +90,38 @@ const Login = () => {
                   <CForm onSubmit={handleSubmit}>
                     <h1>Login</h1>
                     <p className="text-body-secondary">Sign In to your account</p>
+
                     <CInputGroup className="mb-3">
                       <CInputGroupText>@</CInputGroupText>
                       <CFormInput 
+                        id='Email'
                         type='email' 
                         placeholder="Email" 
                         autoComplete="email" 
                         required
                         onChange={(e) => setUser({...user, email:e.target.value})}
                         />
-                      {/* <CInputGroupText>
-                        <CIcon icon={cilUser} />
-                      </CInputGroupText>
-                      <CFormInput type='text' placeholder="User name" autoComplete="userName" required/> */}
                     </CInputGroup>
+
                     <CInputGroup className="mb-4">
                       <CInputGroupText>
                         <CIcon icon={cilLockLocked} />
                       </CInputGroupText>
                       <CFormInput
-                        type="password"
+                        type={visible ? 'text' : 'password'}
                         placeholder="Password"
                         autoComplete="current-password"
                         required
                         onChange={(e) => setUser({...user, password:e.target.value})}
                       />
+                      <CInputGroupText>
+                      <CButton onClick={() => setVisible(!visible)}>
+                        {visible ? <Icon icon={eye} size={20} /> : <Icon icon={eyeOff} size={20} />} 
+                      </CButton>
+                    </CInputGroupText>
                     </CInputGroup>
+                    {!isValid && error === 'Password must be between 4 and 10 characters' && <p>{error}</p>}
+
                     <CRow>
                       <CCol xs={6}>
                         <CButton type='submit' color="primary" className="px-4">
@@ -116,6 +137,7 @@ const Login = () => {
                   </CForm>
                 </CCardBody>
               </CCard>
+
               <CCard className="text-white bg-primary py-5" style={{ width: '44%' }}>
                 <CCardBody className="text-center">
                   <div>

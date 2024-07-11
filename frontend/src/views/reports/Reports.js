@@ -14,7 +14,8 @@ import {
   CTableDataCell,
   CLink,
   CFormLabel,
-  CFormSelect
+  CFormSelect,
+  CFormInput
 } from '@coreui/react'
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -54,7 +55,8 @@ const Reports = () => {
       <CCardBody>
         <CRow className="mb-3">
           <CCol xs={3}>
-            <CFormLabel className="col-sm-2 col-form-label">Status</CFormLabel>
+            <CFormLabel >Status</CFormLabel>
+            {/* className="col-sm-2 col-form-label" */}
             <CFormSelect className="mb-3">
               <option>All</option>
               <option>Item Accepted by Courier</option>
@@ -69,12 +71,14 @@ const Reports = () => {
             </CFormSelect>
           </CCol>
           <CCol xs={3}>
-            <CFormLabel>From</CFormLabel>
-            <DatePicker placeholderText='Date' selected={startDate} onChange={(date) => setStartDate(date)}/>
+            {/* <CFormLabel>From</CFormLabel> */}
+            <CFormInput label='From' type='date'/>
+            {/* <DatePicker placeholderText='Date' selected={startDate} onChange={(date) => setStartDate(date)}/> */}
           </CCol>
           <CCol xs={3}>
-            <CFormLabel>To</CFormLabel>
-            <DatePicker placeholderText='Date' selected={startDate} onChange={(date) => setStartDate(date)}/>
+            {/* <CFormLabel>To</CFormLabel> */}
+            <CFormInput label='To' type='date'/>
+            {/* <DatePicker placeholderText='Date' selected={startDate} onChange={(date) => setStartDate(date)}/> */}
           </CCol>
           <CCol xs={3}>
             <CButton color="info">View Report</CButton>
