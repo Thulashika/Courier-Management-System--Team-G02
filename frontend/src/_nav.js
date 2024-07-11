@@ -74,18 +74,25 @@ const _nav = [
     component: CNavItem,
     name: 'Reports',
     to: '/reports',
-    icon: <CIcon icon={cilStar} customClassName="nav-icon" />,
-    // items: [
-    //   {
-    //     component: CNavItem,
-    //     name: 'CoreUI Free',
-    //     to: '/icons/coreui-icons',
-    //     badge: {
-    //       color: 'success',
-    //       text: 'NEW',
-    //     },
-    //   },
-    // ],
+    icon: <CIcon icon={cilStar} customClassName="nav-icon" />
+  },
+  {
+    component: CNavItem,
+    name: 'Ourservices',
+    icon: <CIcon icon={cilBell} customClassName="nav-icon" />,
+    to: '/ourservices'
+  },
+  {
+    component: CNavItem,
+    name: 'Contactus',
+    icon: <CIcon icon={cilBell} customClassName="nav-icon" />,
+    to: '/contactus'
+  },
+  {
+    component: CNavItem,
+    name: 'Findus',
+    icon: <CIcon icon={cilBell} customClassName="nav-icon" />,
+    to: '/findus'
   },
   // {
   //   component: CNavGroup,
