@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useState } from 'react'
 import { 
   CCard, 
   CCardBody, 
@@ -12,41 +12,88 @@ import {
   CTableRow,
   CTableHeaderCell,
   CTableDataCell,
-  CLink,
   CFormLabel,
   CFormSelect,
   CFormInput
 } from '@coreui/react'
-import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import {
-  CChartBar,
-  CChartDoughnut,
-  CChartLine,
-  CChartPie,
-  CChartPolarArea,
-  CChartRadar,
-} from '@coreui/react-chartjs'
-import { CDatePicker } from '@coreui/react-pro';
-import { DocsCallout } from '../../components'
 import CIcon from '@coreui/icons-react';
 import { cilPrint } from '@coreui/icons';
+import axios from 'axios';
 
 const Reports = () => {
-  const random = () => Math.round(Math.random() * 100)
 
-  const datePickerRef1 = useRef(null);
-  const datePickerRef2 = useRef(null);
+  const [fromDate, setFromDate] = useState('');
+  const [toDate, setToDate] = useState('');
+  const [status, setStatus] = useState('All')
+  const [data, setData] = useState([]);
+  const [showReport, setShowReport] = useState(false);
 
-  const [data, setData] = useState([])
-  const [startDate, setStartDate] = useState(new Date());
+  const handleViewReport = (e) => {
+    // e.preventDefult()
 
-  useEffect(() => {
-    // Focus the first date picker to open the calendar on render
-    if (datePickerRef1.current && datePickerRef1.current.querySelector('input')) {
-      datePickerRef1.current.querySelector('input').focus();
+    if (!fromDate || !toDate || !status) {
+      alert("Please select a date range and status.");
+      return;
     }
-  }, []);
+
+    // const sampleData = [
+    //   {
+    //     date: '2024-07-01',
+    //     sender: 'John Doe',
+    //     recipient: 'Jane Doe',
+    //     amount: 100,
+    //     status: 'Delivered'
+    //   },
+    //   {
+    //     date: '2024-07-02',
+    //     sender: 'Alice',
+    //     recipient: 'Bob',
+    //     amount: 150,
+    //     status: 'Shipped'
+    //   },
+    //   // Add more sample data if needed
+    // ];
+
+    // const filteredData = sampleData.filter(item => {
+    //   const itemDate = new Date(item.date)
+    //   const from = new Date(fromDate)
+    //   const to = new Date(toDate)
+
+    //   return (
+    //     (status === 'All' || item.status === status) && 
+    //     itemDate >= from &&
+    //     itemDate <= to
+    //   )
+    // })
+
+    // setData(filteredData);
+    // setShowReport(true);
+
+//     try {
+//       const response = await axios.get('http://localhost:6431/report', {
+//         params: {
+//           fromDate,
+//           toDate,
+//           status,
+//         },
+//       });
+//       setData(response.data);
+//       setShowReport(true);
+//     } catch (error) {
+//       console.error('Error fetching data:', error);
+//     }
+//   };
+
+    axios('http://localhost:6431/report', {
+      method: 'GET'
+    }).then(res => {
+      setData(res.data)
+      setShowReport(true)
+    }).catch(err => {
+      console.error('Error fetching data:', err)
+    })
+}
 
   return (
 
@@ -57,229 +104,93 @@ const Reports = () => {
           <CCol xs={3}>
             <CFormLabel >Status</CFormLabel>
             {/* className="col-sm-2 col-form-label" */}
-            <CFormSelect className="mb-3">
+            <CFormSelect 
+              className="mb-3" 
+              value={status} 
+              onChange={(e) => setStatus(e.target.value)}
+            >
               <option>All</option>
-              <option>Item Accepted by Courier</option>
+              <option>Accepted</option>
               <option>Collected</option>
               <option>Shipped</option>
               <option>In-Transit</option>
-              <option>Arrived At Destination</option>
-              <option>Out for Delivery</option>
-              <option>Ready to Pickup</option>
               <option>Delivered</option>
-              <option>Unsuccessfull Delivery Attempt</option>
             </CFormSelect>
           </CCol>
-          <CCol xs={3}>
-            {/* <CFormLabel>From</CFormLabel> */}
-            <CFormInput label='From' type='date'/>
-            {/* <DatePicker placeholderText='Date' selected={startDate} onChange={(date) => setStartDate(date)}/> */}
-          </CCol>
-          <CCol xs={3}>
-            {/* <CFormLabel>To</CFormLabel> */}
-            <CFormInput label='To' type='date'/>
-            {/* <DatePicker placeholderText='Date' selected={startDate} onChange={(date) => setStartDate(date)}/> */}
-          </CCol>
-          <CCol xs={3}>
-            <CButton color="info">View Report</CButton>
-          </CCol>
-        </CRow>
-      </CCardBody>
 
-      <CCardBody>
-        <CRow className="mb-3">
+          <CCol xs={3}>
+            <CFormInput 
+              label='From' 
+              type='date' 
+              value={fromDate}
+              onChange={(e) => setFromDate(e.target.value)}
+            />
+          </CCol>
+
+          <CCol xs={3}>
+            <CFormInput 
+              label='To' 
+              type='date'
+              value={toDate}
+              onChange={(e) => setToDate(e.target.value)}
+              min={fromDate}
+            />
+          </CCol>
+
+          <CCol xs={3}>
           <div className="d-grid gap-2 d-md-flex justify-content-md-end">
-            <CButton color='success' className="me-md-2">
-              <CIcon icon={cilPrint} />
-              Print
+            <CButton 
+              color="info"
+              onClick={() => handleViewReport()}>
+                View Report
             </CButton>
-          </div>
+            </div>
+          </CCol>
         </CRow>
-
-        <CTable>
-          <CTableHead>
-            <CTableRow>
-              <CTableHeaderCell scope='col'>Id</CTableHeaderCell>
-              <CTableHeaderCell scope='col'>Date</CTableHeaderCell>
-              <CTableHeaderCell scope='col'>Sender</CTableHeaderCell>
-              <CTableHeaderCell scope='col'>Recipient</CTableHeaderCell>
-              <CTableHeaderCell scope='col'>Amount</CTableHeaderCell>
-              <CTableHeaderCell scope='col'>Status</CTableHeaderCell>
-            </CTableRow>
-          </CTableHead>
-          <CTableBody>
-            {data.map((report,index) => {
-              return <CTableRow key={index}>
-                <CTableDataCell> {index+1} </CTableDataCell>
-                <CTableDataCell> {report.date} </CTableDataCell>
-                <CTableDataCell> {report.sender} </CTableDataCell>
-                <CTableDataCell> {report.recipient} </CTableDataCell>
-                <CTableDataCell> {report.amount} </CTableDataCell>
-                <CTableDataCell> {report.status} </CTableDataCell>
-              </CTableRow>
-            })}          
-          </CTableBody>
-        </CTable>
       </CCardBody>
-    </CCard>
+
+    {showReport && (
+       <CCardBody>
+       <CRow className="mb-3">
+         <div className="d-grid gap-2 d-md-flex justify-content-md-end">
+           <CButton 
+             color='success' 
+             className="me-md-2"
+             onClick={() => window.print()}>
+             <CIcon icon={cilPrint} />
+             Print
+           </CButton>
+         </div>
+       </CRow>
+
+       <CTable>
+         <CTableHead>
+           <CTableRow>
+             <CTableHeaderCell scope='col'>Id</CTableHeaderCell>
+             <CTableHeaderCell scope='col'>Date</CTableHeaderCell>
+             <CTableHeaderCell scope='col'>Sender</CTableHeaderCell>
+             <CTableHeaderCell scope='col'>Recipient</CTableHeaderCell>
+             <CTableHeaderCell scope='col'>Amount</CTableHeaderCell>
+             <CTableHeaderCell scope='col'>Status</CTableHeaderCell>
+           </CTableRow>
+         </CTableHead>
+         <CTableBody>
+           {data && data.map((report,index) => {
+             return <CTableRow key={index}>
+               <CTableDataCell> {index+1} </CTableDataCell>
+               <CTableDataCell> {report.date} </CTableDataCell>
+               <CTableDataCell> {report.sender} </CTableDataCell>
+               <CTableDataCell> {report.recipient} </CTableDataCell>
+               <CTableDataCell> {report.amount} </CTableDataCell>
+               <CTableDataCell> {report.status} </CTableDataCell>
+             </CTableRow>
+           })}          
+         </CTableBody>
+       </CTable>
+     </CCardBody>
+    )}
      
-    
-    // <CRow>
-    //   <CCol xs={12}>
-    //     <DocsCallout
-    //       name="Chart"
-    //       href="components/chart"
-    //       content="React wrapper component for Chart.js 3.0, the most popular charting library."
-    //     />
-    //   </CCol>
-    //   <CCol xs={6}>
-    //     <CCard className="mb-4">
-    //       <CCardHeader>Bar Chart</CCardHeader>
-    //       <CCardBody>
-    //         <CChartBar
-    //           data={{
-    //             labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
-    //             datasets: [
-    //               {
-    //                 label: 'GitHub Commits',
-    //                 backgroundColor: '#f87979',
-    //                 data: [40, 20, 12, 39, 10, 40, 39, 80, 40],
-    //               },
-    //             ],
-    //           }}
-    //           labels="months"
-    //         />
-    //       </CCardBody>
-    //     </CCard>
-    //   </CCol>
-    //   <CCol xs={6}>
-    //     <CCard className="mb-4">
-    //       <CCardHeader>Line Chart</CCardHeader>
-    //       <CCardBody>
-    //         <CChartLine
-    //           data={{
-    //             labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
-    //             datasets: [
-    //               {
-    //                 label: 'My First dataset',
-    //                 backgroundColor: 'rgba(220, 220, 220, 0.2)',
-    //                 borderColor: 'rgba(220, 220, 220, 1)',
-    //                 pointBackgroundColor: 'rgba(220, 220, 220, 1)',
-    //                 pointBorderColor: '#fff',
-    //                 data: [random(), random(), random(), random(), random(), random(), random()],
-    //               },
-    //               {
-    //                 label: 'My Second dataset',
-    //                 backgroundColor: 'rgba(151, 187, 205, 0.2)',
-    //                 borderColor: 'rgba(151, 187, 205, 1)',
-    //                 pointBackgroundColor: 'rgba(151, 187, 205, 1)',
-    //                 pointBorderColor: '#fff',
-    //                 data: [random(), random(), random(), random(), random(), random(), random()],
-    //               },
-    //             ],
-    //           }}
-    //         />
-    //       </CCardBody>
-    //     </CCard>
-    //   </CCol>
-    //   <CCol xs={6}>
-    //     <CCard className="mb-4">
-    //       <CCardHeader>Doughnut Chart</CCardHeader>
-    //       <CCardBody>
-    //         <CChartDoughnut
-    //           data={{
-    //             labels: ['VueJs', 'EmberJs', 'ReactJs', 'AngularJs'],
-    //             datasets: [
-    //               {
-    //                 backgroundColor: ['#41B883', '#E46651', '#00D8FF', '#DD1B16'],
-    //                 data: [40, 20, 80, 10],
-    //               },
-    //             ],
-    //           }}
-    //         />
-    //       </CCardBody>
-    //     </CCard>
-    //   </CCol>
-    //   <CCol xs={6}>
-    //     <CCard className="mb-4">
-    //       <CCardHeader>Pie Chart</CCardHeader>
-    //       <CCardBody>
-    //         <CChartPie
-    //           data={{
-    //             labels: ['Red', 'Green', 'Yellow'],
-    //             datasets: [
-    //               {
-    //                 data: [300, 50, 100],
-    //                 backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56'],
-    //                 hoverBackgroundColor: ['#FF6384', '#36A2EB', '#FFCE56'],
-    //               },
-    //             ],
-    //           }}
-    //         />
-    //       </CCardBody>
-    //     </CCard>
-    //   </CCol>
-    //   <CCol xs={6}>
-    //     <CCard className="mb-4">
-    //       <CCardHeader>Polar Area Chart</CCardHeader>
-    //       <CCardBody>
-    //         <CChartPolarArea
-    //           data={{
-    //             labels: ['Red', 'Green', 'Yellow', 'Grey', 'Blue'],
-    //             datasets: [
-    //               {
-    //                 data: [11, 16, 7, 3, 14],
-    //                 backgroundColor: ['#FF6384', '#4BC0C0', '#FFCE56', '#E7E9ED', '#36A2EB'],
-    //               },
-    //             ],
-    //           }}
-    //         />
-    //       </CCardBody>
-    //     </CCard>
-    //   </CCol>
-    //   <CCol xs={6}>
-    //     <CCard className="mb-4">
-    //       <CCardHeader>Radar Chart</CCardHeader>
-    //       <CCardBody>
-    //         <CChartRadar
-    //           data={{
-    //             labels: [
-    //               'Eating',
-    //               'Drinking',
-    //               'Sleeping',
-    //               'Designing',
-    //               'Coding',
-    //               'Cycling',
-    //               'Running',
-    //             ],
-    //             datasets: [
-    //               {
-    //                 label: 'My First dataset',
-    //                 backgroundColor: 'rgba(220, 220, 220, 0.2)',
-    //                 borderColor: 'rgba(220, 220, 220, 1)',
-    //                 pointBackgroundColor: 'rgba(220, 220, 220, 1)',
-    //                 pointBorderColor: '#fff',
-    //                 pointHighlightFill: '#fff',
-    //                 pointHighlightStroke: 'rgba(220, 220, 220, 1)',
-    //                 data: [65, 59, 90, 81, 56, 55, 40],
-    //               },
-    //               {
-    //                 label: 'My Second dataset',
-    //                 backgroundColor: 'rgba(151, 187, 205, 0.2)',
-    //                 borderColor: 'rgba(151, 187, 205, 1)',
-    //                 pointBackgroundColor: 'rgba(151, 187, 205, 1)',
-    //                 pointBorderColor: '#fff',
-    //                 pointHighlightFill: '#fff',
-    //                 pointHighlightStroke: 'rgba(151, 187, 205, 1)',
-    //                 data: [28, 48, 40, 19, 96, 27, 100],
-    //               },
-    //             ],
-    //           }}
-    //         />
-    //       </CCardBody>
-    //     </CCard>
-    //   </CCol>
-    // </CRow>
+    </CCard>
   )
 }
 

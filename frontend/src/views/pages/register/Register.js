@@ -26,15 +26,15 @@ const Register = () => {
   const [user, setUser] = useState({
     fullName:'',
     role:'',
+    staffId:'null',
     contactNumber:'',
     email:'',
     password:'',
-    confirmPassword:'',
-    staffId:'',
-    adminId: ''
+    confirmPassword:''
   })
 
-  const [visible, setVisible] = useState(false); 
+  const [Pvisible, setPVisible] = useState(false); 
+  const [PCvisible, setPCVisible] = useState(false); 
   const [error, setError] = useState('')
   const [isValid, setIsValid] = useState(true);
 
@@ -45,7 +45,23 @@ const Register = () => {
     setError('')
     setIsValid(true)
 
-    const SIdPattern = /^(?:S)?[0-9]{4}$/;
+    const namePattern = /^[a-zA-Z]+(?:[ |.][a-zA-Z]+)*$/;
+
+    if (!namePattern.test(user.fullName)) {
+      setError('Full name is not in the correct format');
+      setIsValid(false);
+      return;
+    }
+
+    const validRole = ['CUSTOMER', 'STAFF'];
+
+    if(!validRole.includes(user.role)){
+      setError('Invalid role');
+      setIsValid(false);
+      return;
+    }
+
+    const SIdPattern = /^(?:Y)?[AMSD][0-9]{3}$/;
 
     if(user.role ==='STAFF' && user.staffId.length !==5 ) {
       setError('Staff Id must be exactly 5 digits');
@@ -60,21 +76,8 @@ const Register = () => {
       return;
     }
 
-    const AIdPattern = /^(?:A)?[0-9]{3}$/; 
-
-    if(user.role ==='ADMIN' && user.adminId.length !== 4) {
-      setError('Admin Id must be exactly 4 digits');
-      setIsValid(false);
-      return;
-    }
-
-    if (user.role ==='ADMIN' && !AIdPattern.test(user.adminId)) {
-      setError('Admin Id is not in the correct format');
-      setIsValid(false);
-      return;
-    }
-
-    const CNpattern = /^(?:0)?[7][01245678][0-9]{7}$/;
+    const CNMPpattern = /^(?:0)?([7][01245678][0-9]{7})$/;
+    // const CNLPpattern = /^(?:0)(?:11|21|41|21|22|23|24|25|26|27|28|31|32|33|34|35|36|37|38|41)\d{7}$/;
 
     if (user.contactNumber.length !== 10) {
       setError('Contact number must be exactly 10 digits');
@@ -82,7 +85,7 @@ const Register = () => {
       return;
     }
     
-    if (!CNpattern.test(user.contactNumber)) {
+    if (!CNMPpattern.test(user.contactNumber)) {
       setError('Contact number is not in the correct format');
       setIsValid(false);
       return;
@@ -106,6 +109,7 @@ const Register = () => {
         method:'POST'
       }).then(res => {
         if (res.data.statusCode === 201) {
+          alert("Created successfully")
           navigate('/')
         } else {
           alert("Not created successfully")
@@ -145,6 +149,7 @@ const Register = () => {
                       required
                       />
                   </CInputGroup>
+                  {!isValid && error === 'Full name is not in the correct format' && <p>{error}</p>}
 
                   <CInputGroup className="mb-3">
                     <CInputGroupText as="label"><CIcon icon={cilUser} /></CInputGroupText>
@@ -157,9 +162,9 @@ const Register = () => {
                       <option value=""> Select Role</option>
                       <option value="CUSTOMER">Customer</option>
                       <option value="STAFF">Staff</option>
-                      <option value="ADMIN">Admin</option>
                     </CFormSelect>
                   </CInputGroup>
+                  {!isValid && error === 'Invalid role' && <p>{error}</p>}
                   
                   {
                     user.role === "STAFF" ? <>
@@ -177,25 +182,6 @@ const Register = () => {
                       {!isValid && error === 'Staff Id must be exactly 5 digits' && <p>{error}</p>}
                       {!isValid && error === 'Staff Id is not in the correct format' && <p>{error}</p>}</>
                      : null
-                  }
-
-                  {
-                    user.role === "ADMIN" ? <>
-                    <CInputGroup className="mb-3">
-                      <CInputGroupText as="label"><CIcon icon={cilUser} /></CInputGroupText>
-                      <CFormInput
-                        id='Admin Id'
-                        type='text' 
-                        placeholder="Admin Id" 
-                        autoComplete="Admin Id" 
-                        onChange={(e) => setUser({...user, adminId:e.target.value})}
-                        required
-                      />
-                    </CInputGroup> 
-                      {!isValid && error === 'Admin Id must be exactly 4 digits' && <p>{error}</p>}
-                      {!isValid && error === 'Admin Id is not in the correct format' && <p>{error}</p>}</>
-                     : null
-                     
                   }
                  
                   <CInputGroup className="mb-3">
@@ -233,17 +219,18 @@ const Register = () => {
                     </CInputGroupText>
                     <CFormInput
                       id='Password'
-                      type={visible ? 'text' : 'password'}
+                      type={Pvisible ? 'text' : 'password'}
                       placeholder="Password"
                       autoComplete="new-password"
+                      // pattern='/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[\W_]).{8,}$/'
                       onChange={(e) => setUser({...user, password:e.target.value})}
                       required
                       minLength={4}
                       maxLength={10}
                     />
                     <CInputGroupText>
-                      <CButton onClick={() => setVisible(!visible)}>
-                        {visible ? <Icon icon={eye} size={20} /> : <Icon icon={eyeOff} size={20} />} 
+                      <CButton onClick={() => setPVisible(!Pvisible)}>
+                        {Pvisible ? <Icon icon={eye} size={20} /> : <Icon icon={eyeOff} size={20} />} 
                       </CButton>
                     </CInputGroupText>
                   </CInputGroup>
@@ -255,17 +242,18 @@ const Register = () => {
                     </CInputGroupText>
                     <CFormInput
                       id='ConfirmPassword'
-                      type={visible ? 'text' : 'password'}
+                      type={PCvisible ? 'text' : 'password'}
                       placeholder="Confirm Password"
                       autoComplete="new-password"
+                      // pattern='/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[\W_]).{8,}$/'
                       onChange={(e) => setUser({...user, confirmPassword:e.target.value})}
                       required
                       minLength={4}
                       maxLength={10}
                     />
                     <CInputGroupText>
-                      <CButton onClick={() => setVisible(!visible)}>
-                        {visible ? <Icon icon={eye} size={20} /> : <Icon icon={eyeOff} size={20} />} 
+                      <CButton onClick={() => setPCVisible(!PCvisible)}>
+                        {PCvisible ? <Icon icon={eye} size={20} /> : <Icon icon={eyeOff} size={20} />} 
                       </CButton>
                     </CInputGroupText>
                   </CInputGroup>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import {
   CCard,
@@ -21,20 +21,28 @@ function useQuery() {
 
 const UpdateBranch = () => {
 
-  const query = useQuery()
+    const query = useQuery()
 
-  const [branch, setBranch] = useState({
-    branchName:'',
-    branchAddress:'',
-    city:'',
-    contactNumber:'',
-    zipCode:''
-  })
+    const [branch, setBranch] = useState({
+      branchName:'',
+      branchAddress:'',
+      city:'',
+      contactNumber:'',
+      zipCode:''
+    })
 
-  const navigate = useNavigate()
+    const navigate = useNavigate()
 
-  const [error, setError] = useState('')
-  const [isValid, setIsValid] = useState(true);
+    const [error, setError] = useState('')
+    const [isValid, setIsValid] = useState(true);
+
+    useEffect(() => {
+      axios(`http://localhost:6431/branch/${query.get('id')}`, {
+        method:'get'
+    }).then(res => {
+      setBranch(res.data)
+    })
+  }, [])
 
   const handleUpdate = (e) => {
     e.preventDefault()
@@ -70,13 +78,15 @@ const UpdateBranch = () => {
       return;;
     }
 
-    if(isValid) {
-      axios(`http://localhost:6431/updateBranch/${query.get('branchCode')}`, {
+    const confirmUpdate = window.confirm('Are you sure you want to update this form?');
+
+    if(isValid && confirmUpdate) {
+      axios(`http://localhost:6431/branch/${query.get('id')}`, {
         data:branch,
         method:'PUT'
       }).then(res => {
         if (res.data.statusCode === 201) {
-          navigate('/')
+          navigate('/branch')
         } else {
           alert("Not Updated successfully")
         }
@@ -95,7 +105,7 @@ const UpdateBranch = () => {
       <CCol>
         <CCard>
           <CCardHeader>
-            <strong>New Branch</strong>
+            <strong>Update Branch</strong>
           </CCardHeader>
           <CForm className="row g-3" onSubmit={handleUpdate}>
             <CRow className="mb-5"></CRow>
@@ -103,12 +113,14 @@ const UpdateBranch = () => {
             <CRow className="mb-3">
               <CFormLabel htmlFor="inputCode">Branch Code</CFormLabel>
               <CCol xs="auto">
+                
                 <CFormInput 
                   type='text' 
                   id='code' 
                   className='form-control'
                   onChange={(e) => setBranch({ ...branch, branchCode: e.target.value })}
                   required
+                  readOnly = {true}
                   defaultValue={branch?.branchCode}
                 />
               </CCol>
@@ -186,6 +198,7 @@ const UpdateBranch = () => {
                   defaultValue={branch?.zipCode}
                 />
               </CCol>
+              {console.log(branch?.zipCode)}
               {!isValid && error === BRANCH_ERRORS.ZIPCODE_LENGTH_VALIDATION && <p>{error}</p>}
               {!isValid && error === BRANCH_ERRORS.ZIPCODE_FORMAT_VALIDATION && <p>{error}</p>}
             </CRow>
@@ -196,7 +209,14 @@ const UpdateBranch = () => {
                 <CButton color='success' type='submit' className='mb-3'>Update</CButton>
               </CCol>
               <CCol xs='auto'>
-                <CButton color='secondary' type='submit' className='mb-3'>Cancel</CButton>
+                <CButton 
+                  color='secondary' 
+                  type='submit' 
+                  className='mb-3'
+                  onClick={() => window.confirm('Are you sure you want to cancel this update form?') ? navigate('/branch') : ''} 
+                >
+                  Cancel
+                </CButton>
               </CCol>
             </CRow>
           </CForm>

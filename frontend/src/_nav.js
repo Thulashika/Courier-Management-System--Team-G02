@@ -5,15 +5,13 @@ import {
   cilCalculator,
   cilChartPie,
   cilCursor,
-  cilDescription,
   cilDrop,
   cilNotes,
-  cilPencil,
   cilPuzzle,
   cilSpeedometer,
   cilStar,
 } from '@coreui/icons'
-import { CNavGroup, CNavItem, CNavTitle } from '@coreui/react'
+import { CNavGroup, CNavItem} from '@coreui/react'
 
 const _nav = [
   {
@@ -36,16 +34,6 @@ const _nav = [
   //   to: '/theme/colors',
   //   icon: <CIcon icon={cilDrop} customClassName="nav-icon" />,
   // },
-  // {
-  //   component: CNavItem,
-  //   name: 'Typography',
-  //   to: '/theme/typography',
-  //   icon: <CIcon icon={cilPencil} customClassName="nav-icon" />,
-  // },
-  // {
-  //   component: CNavTitle,
-  //   name: 'Components',
-  // },
   {
     component: CNavItem,
     name: 'Branch',
@@ -55,7 +43,7 @@ const _nav = [
   {
     component: CNavItem,
     name: 'BranchStaff',
-    to: '/branch_staff',
+    to: '/staff',
     icon: <CIcon icon={cilCursor} customClassName="nav-icon" />,
   },
   {
@@ -94,33 +82,7 @@ const _nav = [
     icon: <CIcon icon={cilBell} customClassName="nav-icon" />,
     to: '/findus'
   },
-  // {
-  //   component: CNavGroup,
-  //   name: 'Notifications',
-  //   icon: <CIcon icon={cilBell} customClassName="nav-icon" />,
-  //   items: [
-  //     {
-  //       component: CNavItem,
-  //       name: 'Alerts',
-  //       to: '/notifications/alerts',
-  //     },
-  //     {
-  //       component: CNavItem,
-  //       name: 'Badges',
-  //       to: '/notifications/badges',
-  //     },
-  //     {
-  //       component: CNavItem,
-  //       name: 'Modal',
-  //       to: '/notifications/modals',
-  //     },
-  //     {
-  //       component: CNavItem,
-  //       name: 'Toasts',
-  //       to: '/notifications/toasts',
-  //     },
-  //   ],
-  // },
+  
   // {
   //   component: CNavItem,
   //   name: 'Widgets',
@@ -150,11 +112,11 @@ const _nav = [
         name: 'Register',
         to: '/register',
       },
-      // {
-      //   component: CNavItem,
-      //   name: 'Error 404',
-      //   to: '/404',
-      // },
+      {
+        component: CNavItem,
+        name: 'Forgot Password',
+        to: '/forgot-password',
+      },
       // {
       //   component: CNavItem,
       //   name: 'Error 500',
