@@ -66,7 +66,7 @@ class Contactus extends Component {
 
                   </p>
 
-                  <p>Don't have an account? <Link to="/registion">Registration</Link></p>
+                  <p>Do not have an account? <Link to="/user">Registration</Link></p>
                </div>
             </form>
          </div>
