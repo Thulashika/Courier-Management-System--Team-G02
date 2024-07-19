@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 
 import {
@@ -12,8 +12,6 @@ import {
 import CIcon from '@coreui/icons-react'
 
 import { AppSidebarNav } from './AppSidebarNav'
-
-import { logo } from '../assets/brand/logo'
 import { sygnet } from '../assets/brand/sygnet'
 
 // sidebar nav config
@@ -23,6 +21,8 @@ const AppSidebar = () => {
   const dispatch = useDispatch()
   const unfoldable = useSelector((state) => state.sidebarUnfoldable)
   const sidebarShow = useSelector((state) => state.sidebarShow)
+
+  const [user, setUser] = useState('')
 
   return (
     <CSidebar
@@ -37,8 +37,13 @@ const AppSidebar = () => {
     >
       <CSidebarHeader className="border-bottom">
         <CSidebarBrand to="/">
-          <h4>Courrier Service</h4>
-          {/* <CIcon customClassName="sidebar-brand-full" icon={logo} height={32} /> */}
+        {
+          user === 'ADMIN' ? <h4>Admin</h4> :
+          user === 'STAFF' ? <h4>Staff</h4> :
+          user === 'CUSTOMER' ? <h4>Customer</h4> :
+          null
+        }
+          
           <CIcon customClassName="sidebar-brand-narrow" icon={sygnet} height={32} />
         </CSidebarBrand>
         <CCloseButton

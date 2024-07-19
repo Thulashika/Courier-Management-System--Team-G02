@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react'
-import { Link, useLocation, useNavigate } from 'react-router-dom'
+import React, { useState } from 'react'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 import {
   CButton,
   CCard,
@@ -11,10 +11,15 @@ import {
   CFormInput,
   CInputGroup,
   CInputGroupText,
+  CModal,
+  CModalBody,
+  CModalFooter,
+  CModalHeader,
+  CModalTitle,
   CRow,
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
-import { cilLockLocked, cilUser } from '@coreui/icons'
+import { cilLockLocked} from '@coreui/icons'
 import axios from 'axios'
 
 import { Icon } from 'react-icons-kit';
@@ -28,10 +33,16 @@ import { eye } from 'react-icons-kit/feather/eye';
 
 const Login = () => {
 
+  const [Fvisible, setFVisible] =  useState(false)
+  const [Rvisible, setRVisible] =  useState(false)
   const [visible, setVisible] =  useState(false)
   const [error, setError] = useState('')
   const [isValid, setIsValid] = useState(true);
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState()
+  const [message, setMessage] = useState('')
 
+  const {id, token} = useParams()
 
   const [user, setUser] = useState({
     email:'',
@@ -59,6 +70,7 @@ const Login = () => {
         method: 'POST'
       }).then(res => {
         if(res.data.statusCode === 200){
+          alert("Login succesfully")
           navigate('/')
         } else {
           alert("Not Login successfully")
@@ -76,6 +88,31 @@ const Login = () => {
       //   console.error(result.message);
       // }
     }
+  }
+  
+  const handleForgotPassword = async (e) => {
+    e.preventDefault()
+
+    axios.defaults.withCredentials = true;
+    axios.post('http://localhost:6431/forgot-password', {email})
+    .then(res => {
+        if(res.data.Status === "Success") {
+            navigate('/login')
+            
+        }
+    }).catch(err => console.log(err))
+  }  
+
+  const handleResetPassword = (e) => {
+    e.preventDefault()
+    axios.defaults.withCredentials = true;
+    axios.post(`http://localhost:6431/reset-password/${id}/${token}`, {password})
+    .then(res => {
+        if(res.data.Status === "Success") {
+            navigate('/login')
+           
+        }
+    }).catch(err => console.log(err))
   }
 
   return (
@@ -124,14 +161,128 @@ const Login = () => {
 
                     <CRow>
                       <CCol xs={6}>
-                        <CButton type='submit' color="primary" className="px-4">
+                        <CButton type='submit' color='primary' className='px-4'>
                           Login
                         </CButton>
                       </CCol>
-                      <CCol xs={6} className="text-right">
-                        <CButton color="link" className="px-0">
+                      <CCol xs={6} className='text-right'>
+                        <CButton 
+                          color='link'
+                          onClick={() => setFVisible(!Fvisible)}
+                        >
                           Forgot password?
                         </CButton>
+
+                        <CModal 
+                          alignment='center'
+                          visible={Fvisible}
+                          onClose={() => setFVisible(false)}
+                          aria-labelledby='ToggleBetweenModalsExample1'
+                        >
+                          <CModalHeader>
+                            <CModalTitle id='ToggleBetweenModalsExample1'>Update Password</CModalTitle>
+                          </CModalHeader>
+
+                          <CModalBody>
+                            <CForm onClick={handleForgotPassword}>
+                              <CFormInput
+                                label="Email"
+                                type="email"
+                                className="form-control"
+                                id="recipient-email"
+                                autoComplete="off"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                required
+                              />
+                            </CForm>
+
+                            {message && <p>{message}</p>}
+
+                            <CModalFooter>
+                              <CButton
+                                type='button' 
+                                color='secondary' 
+                                onClick={() => setFVisible(false)}
+                              >
+                                Close
+                              </CButton>
+
+                              <CButton
+                                type='submit' 
+                                color='primary'
+                                onClick={() => {
+                                  setFVisible(false)
+                                  setRVisible(true)
+                                }}
+                              >
+                                  Send Reset Link
+                              </CButton>
+                            </CModalFooter>
+                          </CModalBody>                 
+                        </CModal>
+
+                        <CModal
+                          alignment='center'
+                          visible={Rvisible}
+                          onClose={() => {
+                            setRVisible(false)
+                          }}
+                          aria-labelledby='ToggleBetweenModalsExample2'
+                        >
+                          <CModalHeader>
+                            <CModalTitle id="ToggleBetweenModalsExample2">Reset Password</CModalTitle>
+                          </CModalHeader>
+
+                          <CModalBody>
+                          <CForm onClick={handleResetPassword}>
+                              <CFormInput
+                                type={Rvisible ? 'text' : 'password'}
+                                label="New Password"
+                                // type="password"
+                                className="form-control"
+                                id="recipient-password"
+                                autoComplete="off"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                required
+                              />
+                              <CFormInput
+                                type={Rvisible ? 'text' : 'password'}
+                                label="Confirm Password"
+                                // type="password"
+                                className="form-control"
+                                id="recipient-confirm-password"
+                                autoComplete="off"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                required
+                              />
+                            </CForm>
+                            <CModalFooter>
+                              <CButton
+                                type='button' 
+                                color='secondary' 
+                                onClick={() => {
+                                  setFVisible(true)
+                                  setRVisible(false)
+                                }}
+                              >
+                                Close
+                              </CButton>
+
+                              <CButton
+                                type='submit' 
+                                color='primary'
+                                onClick={() => {
+                                  setRVisible(false)
+                                }}
+                              >
+                                  Update
+                              </CButton>
+                            </CModalFooter>
+                          </CModalBody>
+                        </CModal>
                       </CCol>
                     </CRow>
                   </CForm>

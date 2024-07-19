@@ -60,13 +60,14 @@ class Contactus extends Component {
                <button type="submit">Submit</button>
                <div className="feature">
 
-                  <p><h4>REQUEST A CALLBACK.</h4>
+                  <p>
+                     <h4>REQUEST A CALLBACK.</h4>
                      We will Contact in the shortest time.
-
-
                   </p>
 
-                  <p>Don't have an account? <Link to="/registion">Registration</Link></p>
+                  <p> Do not have an account? 
+                     <Link to="/registion">Registration</Link>
+                  </p>
                </div>
             </form>
          </div>
