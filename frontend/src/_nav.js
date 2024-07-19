@@ -5,15 +5,13 @@ import {
   cilCalculator,
   cilChartPie,
   cilCursor,
-  cilDescription,
   cilDrop,
   cilNotes,
-  cilPencil,
   cilPuzzle,
   cilSpeedometer,
   cilStar,
 } from '@coreui/icons'
-import { CNavGroup, CNavItem, CNavTitle } from '@coreui/react'
+import { CNavGroup, CNavItem} from '@coreui/react'
 
 const _nav = [
   {
@@ -45,7 +43,7 @@ const _nav = [
   {
     component: CNavItem,
     name: 'BranchStaff',
-    to: '/branch_staff',
+    to: '/staff',
     icon: <CIcon icon={cilCursor} customClassName="nav-icon" />,
   },
   {
@@ -64,7 +62,7 @@ const _nav = [
     component: CNavItem,
     name: 'Reports',
     to: '/reports',
-    icon: <CIcon icon={cilStar} customClassName="nav-icon" />,
+    icon: <CIcon icon={cilStar} customClassName="nav-icon" />
   },
   {
     component: CNavItem,
@@ -84,6 +82,7 @@ const _nav = [
     icon: <CIcon icon={cilBell} customClassName="nav-icon" />,
     to: '/findus'
   },
+  
   // {
   //   component: CNavItem,
   //   name: 'Widgets',
@@ -113,11 +112,11 @@ const _nav = [
         name: 'Register',
         to: '/register',
       },
-      // {
-      //   component: CNavItem,
-      //   name: 'Error 404',
-      //   to: '/404',
-      // },
+      {
+        component: CNavItem,
+        name: 'Forgot Password',
+        to: '/forgot-password',
+      },
       // {
       //   component: CNavItem,
       //   name: 'Error 500',
