@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { 
   CButton,
   CCard, 
@@ -21,7 +21,11 @@ import { cilTrash, cilPencil } from '@coreui/icons'
 import CIcon  from '@coreui/icons-react'
 import { Link } from 'react-router-dom';
 import eyeIcon from '../../../assets/images/eye.png'
+import QRCodeGenerator from './QRCodeGenerator'
 import QRCode from 'qrcode.react'; // Import QRCode library
+import QRCodeReader, { QrReader } from 'react-qr-reader';
+import { debounce } from 'lodash'
+// import { Html5QrcodeScanner } from 'html5-qrcode/minified/html5-qrcode.min.js';
 
 const ParcelList = () => {
 
@@ -30,6 +34,10 @@ const ParcelList = () => {
   const [limit, setLimit] = useState(10);
   const [totalParcels, setTotalParcels] = useState(0);
   const [search, setSearch] = useState('');
+  const [result, setResult] = useState('');
+  const [showScanner, setShowScanner] = useState(false);
+  // const [scanner, setScanner] = useState(null);
+  // const scannerRef = useRef(null);
 
   const getStatus = (status) => {
     switch (status) {
@@ -51,22 +59,27 @@ const ParcelList = () => {
   useEffect(() => {
     getAll()
     getTotalCount();
-  }, [page, limit]); //search
+  }, [page, limit]);
 
-  const getAll = () => {
-    axios('http://localhost:6431/parcel', {
-      method:'GET',
-      params:{
-        page: page,
-        limit: limit,
-      // search: search,
-      },
-    }).then(res => {
-      setData(res.data)
-    }).catch((err) => {
-      console.error('Error fetching parcels:', err);
-    });
-  }
+  useEffect(() => {
+    getAll(search);
+  }, [search]);
+
+  const getAll = useCallback(
+    debounce(async (query) => {
+      try {
+        const response = await axios.get('http://localhost:6431/parcel', {
+          params: { page: page,
+                  limit: limit,
+                  search: query ? query : {} }
+        });
+        setData(response.data);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    }, 500), // Debounce delay in milliseconds
+    []
+  );
 
   const getTotalCount = () => {
     axios
@@ -77,6 +90,47 @@ const ParcelList = () => {
       .catch((err) => {
         console.error('Error fetching total count:', err);
       });
+  };
+
+  const handleScan = (data) => {
+    if (data) {
+      setResult(data);
+      // setData(QRCodeGenerator)
+      setShowScanner(false); // Close scanner after successful scan
+    }
+  };
+
+  // const startScanner = () => {
+  //   if (scannerRef.current) {
+  //     const html5QrCodeScanner = new Html5QrcodeScanner(
+  //       "qr-reader",
+  //       { fps: 10, qrbox: 250 },
+  //       true
+  //     );
+  //     html5QrCodeScanner.render(onScanSuccess, onScanError);
+  //     setScanner(html5QrCodeScanner);
+  //   }
+  // };
+
+  // const onScanSuccess = (decodedText, decodedResult) => {
+  //   setResult(decodedText);
+  //   if (scanner) {
+  //     scanner.clear().catch((err) => console.log(err));
+  //   }
+  // };
+
+  // const onScanError = (errorMessage) => {
+  //   console.error(errorMessage);
+  // };
+
+  const handleError = (err) => {
+    console.error(err);
+  };
+
+  const handleQRCodeButtonClick = () => {
+    setShowScanner(true); // Show the scanner when the button is clicked
+    // setData(QRCodeGenerator)
+    // startScanner();
   };
 
   const handleClick = (id) => {
@@ -105,9 +159,32 @@ const ParcelList = () => {
         <CCardBody>
           <CContainer className='py-3'>
             <CRow className="mb-3">
-              <div className="d-grid gap-2 d-md-flex justify-content-md-end">
-                <CButton href='/parcels/new_parcels' className='me-md-2' color='primary' variant='outline'>AddNew</CButton>
-              </div>
+
+              <CCol>
+                <div className="d-grid gap-2 d-md-flex justify-content-md-start">
+                  <CButton onClick={handleQRCodeButtonClick} className='me-md-2' color='primary' variant='outline'>Scan QR code</CButton>
+                </div>
+              </CCol>
+
+              {showScanner && (
+                <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'black' }}>
+                  <QrReader
+                    onScan={handleScan}
+                    onError={handleError}
+                    style={{ width: '100%', height: '100%' }}
+                  />
+                </div>
+              )}
+
+              {/* <div id="qr-reader" style={{ width: '100%', height: '400px' }}></div> */}
+            
+              {result && <div>Scanned QR Code Data: {result}</div>}
+
+              <CCol>
+                <div className="d-grid gap-2 d-md-flex justify-content-md-end">
+                  <CButton href='/parcels/new_parcels' className='me-md-2' color='primary' variant='outline'>AddNew</CButton>
+                </div>
+              </CCol>
             </CRow>
           </CContainer>
 
@@ -144,12 +221,12 @@ const ParcelList = () => {
                   <CTableHeaderCell scope='col'>Recipient Name</CTableHeaderCell>
                   <CTableHeaderCell scope='col'>Recipient Date</CTableHeaderCell>
                   <CTableHeaderCell scope='col'>Status</CTableHeaderCell>
-                  <CTableHeaderCell scope="col">QR Code</CTableHeaderCell> {/* Add QR Code column */}
+                  {/* <CTableHeaderCell scope="col">QR Code</CTableHeaderCell> Add QR Code column */}
                   <CTableHeaderCell scope='col'>Action</CTableHeaderCell>
                 </CTableRow>
               </CTableHead>
+
               <CTableBody>
-              
               {data.length > 0 ? (
                   data.map((parcel, index) => (
                     <CTableRow key={index}>
@@ -160,9 +237,9 @@ const ParcelList = () => {
                       <CTableDataCell>{`${parcel.recipientDetails ? JSON.parse(parcel.recipientDetails).firstName : ''} ${parcel.recipientDetails ? JSON.parse(parcel.recipientDetails).lastName : ''}`}</CTableDataCell>
                       <CTableDataCell>{parcel.recipientDetails ? JSON.parse(parcel.recipientDetails).date : ''}</CTableDataCell>
                       <CTableDataCell> <span className={`badge text-bg-${getStatus(parcel.status)}`}>{parcel.status}</span></CTableDataCell>
-                      <CTableDataCell>
+                      {/* <CTableDataCell>
                         <QRCode value={`Parcel ID: ${parcel.id}`} size={50} /> {/* Generate QR Code */}
-                      </CTableDataCell>
+                      {/* </CTableDataCell> */}
                       <CTableDataCell> 
                         <Link to={`/parcels/read?id=${parcel.id}`}>
                           <CButton
@@ -203,23 +280,25 @@ const ParcelList = () => {
                   )}          
               </CTableBody>
             </CTable>
-          </CRow>
 
-          <CRow className="justify-content-end">
-            <CPagination align="end" aria-label="Page navigation">
-              <CPaginationItem disabled={page <= 1} onClick={() => setPage(page - 1)}>
-                Previous
-              </CPaginationItem>
-              {Array.from({ length: totalPages }, (_, i) => (
-                <CPaginationItem key={i} active={i + 1 === page} onClick={() => setPage(i + 1)}>
-                  {i + 1}
-                </CPaginationItem>
-              ))}
-              <CPaginationItem disabled={page >= totalPages} onClick={() => setPage(page + 1)}>
-                Next
-              </CPaginationItem>
-            </CPagination>
-          </CRow>
+            { limit >= 1 ? 
+              <CRow className="justify-content-end">
+                <CPagination align="end" aria-label="Page navigation">
+                  <CPaginationItem disabled={page <= 1} onClick={() => setPage(page - 1)}>
+                    Previous
+                  </CPaginationItem>
+                  {Array.from({ length: totalPages }, (_, i) => (
+                    <CPaginationItem key={i} active={i + 1 === page} onClick={() => setPage(i + 1)}>
+                      {i + 1}
+                    </CPaginationItem>
+                  ))}
+                  <CPaginationItem disabled={page >= totalPages} onClick={() => setPage(page + 1)}>
+                    Next
+                  </CPaginationItem>
+                </CPagination>
+              </CRow>
+            : null }
+          </CRow>          
         </CCardBody>
       </CCard>
     </CRow>
