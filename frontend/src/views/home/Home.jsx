@@ -4,6 +4,8 @@ import './Home.css';
 const Home = () => {
    return (
       <div className="home-container">
+         <img src=''/>
+         <img src={'/assets/images/homepage.jpg'} alt="Homepage" />
          <section className="hero-section">
             <div className="hero-content">
                <h1>Welcome to Our Courier Management System</h1>
