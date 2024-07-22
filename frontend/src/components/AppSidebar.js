@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 
 import {
@@ -16,6 +16,8 @@ import { sygnet } from '../assets/brand/sygnet'
 
 // sidebar nav config
 import navigation from '../_nav'
+import { GlobalStateContext } from '../views/pages/login/Login'
+import axios from 'axios'
 
 const AppSidebar = () => {
   const dispatch = useDispatch()
@@ -23,6 +25,20 @@ const AppSidebar = () => {
   const sidebarShow = useSelector((state) => state.sidebarShow)
 
   const [user, setUser] = useState('')
+
+  const state = useSelector(state => state.authChangeState);
+
+  const [role, setRole] = useState('');
+
+  // useEffect(() => {
+  //   axios(`http://localhost:6431/fetchRole?email=${state.email}`, {
+  //     method: 'GET',
+  //   }).then(res => {
+  //     if(res.data.statusCode === 200) {
+  //       setRole(res.data.role);
+  //     }
+  //   })
+  // }, [])
 
   return (
     <CSidebar
@@ -36,11 +52,12 @@ const AppSidebar = () => {
       }}
     >
       <CSidebarHeader className="border-bottom">
+        {/* {state} */}
         <CSidebarBrand to="/">
         {
-          user === 'ADMIN' ? <h4>Admin</h4> :
-          user === 'STAFF' ? <h4>Staff</h4> :
-          user === 'CUSTOMER' ? <h4>Customer</h4> :
+          role === 'ADMIN' ? <h4>Admin</h4> :
+          role === 'STAFF' ? <h4>Staff</h4> :
+          role === 'CUSTOMER' ? <h4>Customer</h4> :
           null
         }
           

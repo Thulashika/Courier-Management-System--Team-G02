@@ -6,6 +6,8 @@ import bcrypt from 'bcrypt'; // for password hashing comparison
 import jwt from 'jsonwebtoken'; // for token generation
 import path from 'path'
 import nodemailer from 'nodemailer'
+import { report } from 'process';
+import cookieParser from 'cookie-parser';
 // import http from 'http'
 // import branch from './branch'
 
@@ -23,7 +25,13 @@ const db = mysql.createConnection({
 const app = express()
 
 app.use(express.json()) // for parsing application/json
-app.use(cors())
+
+const corsOptions = {
+    origin: 'http://localhost:3000',
+    credentials: true,
+  };
+
+app.use(cors(corsOptions))
 
 app.use(express.urlencoded({ extended: true })); // to parse URL-encoded bodies
 
@@ -31,6 +39,41 @@ app.use(express.urlencoded({ extended: true })); // to parse URL-encoded bodies
 app.set('views', path.join('../frontend/login', 'views'));
 app.set('view engine', 'ejs');
 // app.set('views', __dirname + '/views');
+
+
+// for cookie based authentication.
+app.use(cookieParser())
+
+// for localstorage based authentication;
+const authenticationToken = (req, res, next) => {
+    const token = req.headers['authentication']?.split(' ')[1];
+    if(!token) return res.sendStatus(401);
+
+    jwt.verify(token, JWT_SECRET, (err, user) => {
+        if(err) return res.sendStatus(403);
+        req.user = user;
+        next();
+    })
+    
+}
+
+// for cookie based authentication.
+const verifyToken = (req, res, next) => {
+    console.log(req.cookies.token)
+    const token = req.cookies.token;
+    if(!token) return res.status(403).send('A token is required for authentication');
+
+    try {
+        const decoded = jwt.verify(token, JWT_SECRET);
+        req.user = decoded;
+    }
+    catch( err) {
+        return res.status(401).send('Invalid token');
+    }
+    
+    return next();
+    
+}
 
 const getStaffIdByStaffId = (staffId) => {
     return new Promise((resolve, reject) => {
@@ -112,8 +155,8 @@ app.post('/userRegister', async (req, res) => {
 
 
 // Secret key for JWT
-// const JWT_SECRET = 'supersecretkey';
-const JWT_SECRET = "hvdvay6ert72839289()aiyg8t87qt72393293883uhefiuh78ttq3ifi78272jbkj?[]]pou89ywe"
+const JWT_SECRET = 'supersecretkey';
+// const JWT_SECRET = "hvdvay6ert72839289()aiyg8t87qt72393293883uhefiuh78ttq3ifi78272jbkj?[]]pou89ywe"
 
 app.post('/userLogin', async (req,res) => {
 
@@ -164,6 +207,10 @@ app.post('/userLogin', async (req,res) => {
 
             // Password matched, generate and return a token
             const token = jwt.sign({ id: user.id, email: user.email }, JWT_SECRET, { expiresIn: '1h' });
+
+            // for cookie authentication only
+            res.cookie('token', token, { httpOnly: true, secure: true, sameSite: true});
+
             return res.status(200).json({statusCode:200, message: 'Login successful', token });
         });
     });
@@ -192,37 +239,31 @@ app.post('/forgot-password', async (req, res) => {
         // Generate a token with a short expiry (e.g., 1 hour)
         const token = jwt.sign({ email }, JWT_SECRET, { expiresIn: '1h' });
 
+        const expirationTime = new Date();
+        expirationTime.setHours(expirationTime.getHours() + 1);
+
         // Send email with password reset link
         try {
-            await sendPasswordResetEmail(email, token);
-            // db.query(
-            //     `insert into password-reset(email, token) values(${db.escape(results[0].email)}, '${token}')`
-            // )
+            await sendPasswordResetEmail(email, token, expirationTime.toLocaleString());
 
              // Insert token into the password_reset table
-             const insertQuery = 'INSERT INTO `password-reset` (email, token) VALUES (?, ?)';
-             db.query(insertQuery, [email, token], (err) => {
+             const insertQuery = 'INSERT INTO `password-reset` (email, token, expires) VALUES (?, ?, ?)';
+             db.query(insertQuery, [email, token, expirationTime], (err) => {
                  if (err) {
                      console.error('Error inserting token into database:', err);
                      return res.status(500).json({ message: 'Internal server error' });
                  }
-                 return res.status(200).json({ message: 'Password reset email sent' });
+                 return res.status(200).json({ statusCode: 200, message: 'Password reset email sent' });
              });
-
-            // return res.status(200).json({ message: 'Password reset email sent' });
         } catch (error) {
             console.error('Error sending email:', error);
             return res.status(500).json({ message: 'Error sending password reset email' });
         }
-
-        // db.query(
-        //     `insert into password-reset(email, token) values(${db.escape(results[0].email)}, '${token}')`
-        // )
     });
 })
 
 // Helper function to send password reset email
-async function sendPasswordResetEmail(email, token) {
+async function sendPasswordResetEmail(email, token, expirationTime) {
     try{
         // Configure Nodemailer transporter
         const transporter = nodemailer.createTransport({
@@ -233,7 +274,7 @@ async function sendPasswordResetEmail(email, token) {
             service: 'gmail',
             auth: {
                 user: 'lasibala24@gmail.com',
-                pass: 'Family2403',
+                pass: 'uzyl aldq dcha fygd',
             },
         });
 
@@ -243,8 +284,9 @@ async function sendPasswordResetEmail(email, token) {
             to: email,
             subject: 'Password Reset Instructions',
             html: `
-                <p>You requested a password reset for your account.</p>
-                <p>Click <a href="http://localhost:6431/reset-password/${token}">here</a> to reset your password.</p>
+                 <p>You requested a password reset for your account.</p>
+                <p>Click <a href="http://localhost:3000/reset-password/${token}">here</a> to reset your password.</p>
+                <p>This link will expire on ${expirationTime}.</p>
                 <p>If you didn't request this, please ignore this email.</p>
             `,
         };
@@ -275,7 +317,6 @@ app.get('/reset-password', (req,res) => {
 
         db.query(`select * from password-reset where token = ? limit 1`, [token], (err, results) => {
             if(err) {
-                console.log("first:",err)
                 return res.status(500).json('Internal Server Error');
             }
 
@@ -284,7 +325,6 @@ app.get('/reset-password', (req,res) => {
                 const email = results[0].email;
                 db.query(`select * from userprofile where email = ? limit 1`, [email], (err, result) => {
                     if(err) {
-                        console.log("sec:",err)
                         return res.status(500).json('Internal Server Error')
                     }
                     
@@ -297,13 +337,12 @@ app.get('/reset-password', (req,res) => {
         })
 
     } catch (error) {
-        console.log("3:",error.message)
         return res.status(500).json('Internal Server Error')
     }
 })
 
 // Route to handle password reset form submission
-app.post('/reset-password', (req, res) => {
+app.post('/reset-password', async (req, res) => {
     const { password, confirmPassword, token } = req.body;
 
     if(password !== confirmPassword) {
@@ -312,29 +351,57 @@ app.post('/reset-password', (req, res) => {
     }
 
     // Hash the new password (implement your hashing function)
-    const hashedPassword = hashPassword(password);
+    const saltRounds = 10;
+    const hashedPassword = await bcrypt.hash(req.body.password.toString(), saltRounds);
 
-    // Find the user by token and update their password
-    db.query('SELECT * FROM `password_reset` WHERE token = ? LIMIT 1', [token], (err, results) => {
+    jwt.verify(token, JWT_SECRET, (err, decoded) => {
         if (err) {
-            console.error(err);
-            return res.status(500).json('Internal Server Error');
+            return res.status(400).json({ message: 'Invalid or expired token' });
         }
 
-        if (results.length > 0) {
-            const email = results[0].email;
-            db.query('UPDATE `userProfile` SET password = ? WHERE email = ?', [hashedPassword, email], (err) => {
-                if (err) {
-                    console.error(err);
-                    return res.status(500).json('Internal Server Error');
-                }
+        const email = decoded.email;
 
-                return res.json('reset-password-success'); // Create this view to show a success message
-            });
-        } else {
-            return res.json('404');
-        }
-    });
+         // Find the user by token and update their password
+        db.query('SELECT * FROM `password-reset` WHERE email = ? AND token = ? LIMIT 1', [email,token], (err, results) => {
+            if (err) {
+                return res.status(500).json('Internal Server Error');
+            }
+
+            if (results.length === 0) {
+                return res.status(400).json({ message: 'Invalid or expired token' });
+            }
+
+            const tokenExpiration = new Date(results[0].expires);
+            const currentTime = new Date();
+
+            if (currentTime > tokenExpiration) {
+                return res.status(400).json({ message: 'Token has expired' });
+            }
+
+            if (results.length > 0) {
+                db.query('UPDATE `userProfile` SET password = ? WHERE email = ?', [hashedPassword, email], (err) => {
+                    if (err) {
+                        console.error(err);
+                        return res.status(500).json('Internal Server Error');
+                    }
+
+                    const deleteQuery = 'DELETE FROM `password-reset` WHERE email = ?';
+                    db.query(deleteQuery, [email], (err) => {
+                        if (err) {
+                            console.error('Error deleting token:', err);
+                        }
+                    });
+
+                    return res.status(200).json({statusCode: 200, statusMessage: 'reset-password-success'}); // Create this view to show a success message
+                });
+            } else {
+                return res.json('404');
+            }
+        });
+
+    })
+
+   
 })
 
 // Function to hash passwords (implement this function as per your requirements)
@@ -393,7 +460,7 @@ app.post('/branch', (req,res) => {
 })
 
 
-app.get('/branch', (req,res) => {
+app.get('/branch', verifyToken, (req,res) => {
     const getAllQuery = 'select * from branch'
 
     db.query(getAllQuery, (err,data) => {
@@ -518,8 +585,6 @@ app.post('/parcel', (req, res) => {
     const senderDetailsJSON = JSON.stringify(senderDetails);
     const recipientDetailsJSON = JSON.stringify(recipientDetails);
 
-    console.log(typeof(JSON.parse(senderDetailsJSON)))
-
      // Check if parcelDetails is an array
     if (!Array.isArray(parcelDetails)) {
         return res.status(400).json({ error: 'parcelDetails must be an array' });
@@ -558,43 +623,67 @@ app.post('/parcel', (req, res) => {
     });
 });
 
-app.get('/parcel', (req,res) => {
-    const getAllQuery = 'select * from parcel limit ?, ?';
-
+app.get('/parcel', (req, res) => {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
     const offset = (page - 1) * limit;
     const search = req.query.search || '';
 
-    // Prepare the base query
-    let query = 'SELECT * FROM parcels';
-    let queryParams = [];
+    // Function to get all column names from the parcel table
+    const getColumnNamesQuery = "SHOW COLUMNS FROM parcel";
 
-    // Add the search filter if there is a search term
-    if (search) {
-        query += ` WHERE referenceNumber LIKE ? OR 
-                   senderFirstName LIKE ? OR 
-                   senderLastName LIKE ? OR 
-                   senderDate LIKE ? OR 
-                   recipientFirstName LIKE ? OR 
-                   recipientLastName LIKE ? OR 
-                   recipientDate LIKE ? OR 
-                   status LIKE ?`;
-        const searchPattern = `%${search}%`;
-        queryParams = Array(8).fill(searchPattern);
-    }
+    db.query(getColumnNamesQuery, (err, columns) => {
+        if (err) {
+            return res.json(err);
+        }
 
-    // Add pagination
-    query += ' LIMIT ?, ?';
-    queryParams.push(offset, limit);
+        // Prepare the base query
+        let query = 'SELECT * FROM parcel';
+        let queryParams = [];
 
-    db.query(getAllQuery, [offset, limit], (err,data) => {
-        if(err) {
-            return res.json(err)
-        } 
-        return res.send(data)
-    })
-})
+        // Add the search filter if there is a search term
+        if (search) {
+            const searchTerms = search.split(' ');
+            const searchConditions = searchTerms.map(term => {
+                const searchPattern = `%${term}%`;
+                return columns.map(column => {
+                    if (column.Type.startsWith('json')) {
+                        return `JSON_EXTRACT(${column.Field}, '$.firstName') LIKE ? OR
+                                JSON_EXTRACT(${column.Field}, '$.lastName') LIKE ? OR
+                                JSON_EXTRACT(${column.Field}, '$.date') LIKE ?`;
+                    } else {
+                        return `${column.Field} LIKE ?`;
+                    }
+                }).join(' OR ');
+            }).join(' OR ');
+
+            query += ` WHERE ${searchConditions}`;
+            queryParams = searchTerms.reduce((params, term) => {
+                const searchPattern = `%${term}%`;
+                return params.concat(columns.reduce((p, column) => {
+                    if (column.Type.startsWith('json')) {
+                        return p.concat([searchPattern, searchPattern, searchPattern]);
+                    } else {
+                        return p.concat([searchPattern]);
+                    }
+                }, []));
+            }, []);
+        }
+        
+        // Add pagination
+        query += ' LIMIT ?, ?';
+        queryParams.push(offset, limit);
+
+        // Execute the query
+        db.query(query, queryParams, (err, data) => {
+            if (err) {
+                return res.json(err);
+            }
+            return res.send(data);
+        });
+    });
+});
+
 
 // Endpoint to get total number of parcels (for pagination metadata)
 app.get('/parcel/count', (req, res) => {
@@ -630,6 +719,54 @@ app.get('/parcel/:id', (req,res) => {
         }))
 
         return res.send(data[0])
+    })
+})
+
+app.get('/report', (req,res) => {
+    const { fromDate, toDate, status } = req.query;
+    const getReportQuery = 'select status, senderDetails, recipientDetails, parcelDetails from parcel'
+
+    db.query(getReportQuery, (err,report) => {
+        if(err) {
+            return res.status(500).json({ message: 'Internal server error', error: err });
+        }
+
+        if (!Array.isArray(report)) {
+            return res.status(500).json({ message: 'Unexpected result format', error: report });
+        }
+
+        let filteredData = report.map(parcel => {
+            const senderDetails = JSON.parse(parcel.senderDetails)
+            const recipientDetails = JSON.parse(parcel.recipientDetails)
+            const parcelDetails = JSON.parse(parcel.parcelDetails)
+
+            return{
+                status: parcel.status,
+                senderDate: senderDetails.date,
+                recipientDate: recipientDetails.date,
+                senderFirstName: senderDetails.firstName,
+                senderLastName: senderDetails.lastName,
+                recipientFirstName: recipientDetails.firstName,
+                recipientLastName: recipientDetails.lastName,
+                parcelTotalAmount: parcelDetails.totalAmount
+            }
+        })
+
+        const from = new Date(fromDate);
+        const to = new Date(toDate);
+
+        filteredData = filteredData.filter(item => {
+        const senderDate = new Date(item.senderDate);
+        const recipientDate = new Date(item.recipientDate);
+
+        return (
+            (status === 'All' || item.status === status) &&
+            (senderDate >= from && senderDate <= to) &&
+            (recipientDate >= from && recipientDate <= to)
+        );
+        });
+
+        return res.send(filteredData)
     })
 })
 
@@ -744,7 +881,47 @@ const getBranchIdByBranchCode = (branchCode) => {
         }
       });
     });
-  };
+};
+
+// // Mock tracking data
+// const trackingData = {
+//     '123456': [
+//       { date: '2024-07-17', time: '10:00 AM', status: 'Item accepted by Courier' },
+//       { date: '2024-07-18', time: '11:00 AM', status: 'Collected' },
+//       { date: '2024-07-19', time: '12:00 PM', status: 'Shipped' },
+//       { date: '2024-07-20', time: '01:00 PM', status: 'In-Transit' },
+//       { date: '2024-07-21', time: '02:00 PM', status: 'Delivered' },
+//     ]
+//   };
+  
+//   app.get('/track', (req, res) => {
+//     const trackingNumber = req.query.number;
+//     const trackingInfo = trackingData[trackingNumber];
+  
+//     if (trackingInfo) {
+//       res.json({ statuses: trackingInfo });
+//     } else {
+//       res.status(404).json({ message: 'Tracking number not found' });
+//     }
+//   });
+
+app.get('/track_parcels/:referenceNumber', (req, res) => {
+    const getByTrackingNoQuery = 'select status from parcel where referenceNumber=?'
+
+    const values = [
+        req.params.referenceNumber
+    ]
+
+    db.query(getByTrackingNoQuery, values, (err, data) => {
+        if (err) {
+            return res.status(500).json({ error: 'Internal Server Error', details: err });
+        }
+        if (data.length === 0) {
+            return res.status(404).json({ message: 'Tracking number not found' });
+        }
+        return res.json({ status: data[0].status });
+    })
+})
 
 app.post('/staff', async (req,res) => {
     const createQuery = 'insert into staff(`staffId`, `branchId`, `position`) values(?)'
@@ -805,23 +982,82 @@ app.post('/staff', async (req,res) => {
 })
 
 
-app.get('/staff', (req,res) => {
+// app.get('/staff', (req,res) => {
 
-    const getAllQuery = `select staff.id, staff.staffId, fullName, branchName, position, email, userprofile.contactNumber from staff 
+//     const getAllQuery = `select staff.id, staff.staffId, fullName, branchName, position, email, userprofile.contactNumber from staff 
+//                          left join userprofile on staff.id = userprofile.staffId 
+//                          join branch on branch.id = staff.branchId`
+
+//     db.query(getAllQuery, (err,data) => {
+//         if(err) {
+//             return res.json(err)
+//         } 
+//         return res.send(data)
+//     })
+// })
+
+app.get('/staff', authenticationToken, (req, res) => {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const offset = (page - 1) * limit;
+    const search = req.query.search || '';
+
+    // Function to get all column names from the parcel table
+    const getColumnNamesQuery = `SHOW COLUMNS FROM staff`;
+
+    db.query(getColumnNamesQuery, (err, columns) => {
+        if (err) {
+            return res.json(err);
+        }
+
+        // Prepare the base query
+        let query = `select staff.id, staff.staffId, fullName, branchCode as branch, position, email, userprofile.contactNumber from staff 
                          left join userprofile on staff.id = userprofile.staffId 
-                         join branch on branch.id = staff.branchId`
+                         join branch on branch.id = staff.branchId`;
+        let queryParams = [];
 
-    db.query(getAllQuery, (err,data) => {
-        if(err) {
-            return res.json(err)
-        } 
-        return res.send(data)
-    })
-})
+        // Add the search filter if there is a search term
+        if (search) {
+            const searchPattern = `%${search}%`;
+            query += ` WHERE staff.staffId LIKE ? OR 
+                              fullName LIKE ? OR 
+                              branchCode LIKE ? OR 
+                              position LIKE ? OR 
+                              email LIKE ? OR 
+                              userprofile.contactNumber LIKE ?`;
+            queryParams = Array(6).fill(searchPattern);
+        }
+        
+        // Add pagination
+        query += ' LIMIT ?, ?';
+        queryParams.push(offset, limit);
+
+        // Execute the query
+        db.query(query, queryParams, (err, data) => {
+            if (err) {
+                return res.json(err);
+            }
+            return res.send(data);
+        });
+    });
+});
+
+// Endpoint to get total number of staff (for pagination metadata)
+app.get('/staff/count', (req, res) => {
+
+    const query = 'select count(*) as count from staff';
+
+    db.query(query, (err, results) => {
+      if (err) {
+        return res.status(500).json({ error: err.message });
+      }
+      res.json(results[0]);
+    });
+});
 
 app.get('/staff/:id', (req,res) => {
     const getByIdQuery = `select staff.staffId, fullName, branchCode as branch, position, email, userprofile.contactNumber from staff 
-                         left join userprofile on staff.staffId = userprofile.id 
+                         left join userprofile on staff.id = userprofile.staffId 
                          join branch on branch.id = staff.branchId where staff.id=?`
 
     const values = [
@@ -910,54 +1146,55 @@ app.put('/staff/:id', async (req,res) => {
     })
 })
 
-app.get('/report', (req, res) => {
-    const { status, fromDate, toDate } = req.query;
+app.put('/profile/:id', async (req, res) => {
+    const updateProfileQuery = `update userProfile set fullName=?, password=?, contactNumber=?, email=?, gender=?, birthday=? where id=?`
 
-    console.log('Received Query Parameters:', { status, fromDate, toDate });
-  
-    const getQuery = `SELECT * FROM parcel WHERE status = ? AND 
-                      JSON_EXTRACT(parcelDetails, '$.date') >= ? AND 
-                      JSON_EXTRACT(parcelDetails, '$.date') <= ?`;
-  
+    const saltRounds = 10;
+    const hashedPassword = await bcrypt.hash(req.body.password.toString(), saltRounds);
+
+    // Validate password length
+    if (req.body.password.length < 4 || req.body.password.length > 10) {
+        return res.status(400).json({ error: 'Password must be between 4 and 10 characters' });
+    }
+
+    // Validate contact number (assuming it should be a 10-digit number)
+    const CNMPregex = /^(?:0)?[7][01245678][0-9]{7}$/;  
+    if (!CNMPregex.test(req.body.contactNumber)){
+        return res.status(400).json({ message: 'Invalid contact number' });
+    }
+    // Validate email
+    if (!validator.isEmail(req.body.email)) {
+        return res.status(400).json({ message: 'Invalid email format' });
+    }
+
+    // Construct values array for insertion
     const values = [
-      status,
-      fromDate,
-      toDate
+        req.body.fullName,
+        hashedPassword,
+        req.body.contactNumber,
+        req.body.email,
+        req.body.gender,
+        req.body.birthday,
+        req.params.id
     ];
 
-    console.log('Executing Query:', getQuery, values);
-  
-    db.query(getQuery, values, (err, data) => {
-      if (err) {
-        return res.json(err);
-      }
-  
-    //   const results = data.map(parcel => ({
-    //     status: parcel.status,
-    //     parcelDetails: JSON.parse(parcel.parcelDetails),
-    //     recipientDetails: JSON.parse(parcel.recipientDetails)
-    //   }));
+    // Validation function to check if any value is empty
+    const isValid = values.every(value => value !== undefined && value !== '');
 
-    //   console.log('Parsed Results:', results);
-  
-      const filteredData = values.filter(item => {
-        const itemDate = new Date(item.date);
-        const from = new Date(fromDate);
-        const to = new Date(toDate);
-  
-        return (
-          (status === 'All' || item.status === status) &&
-          itemDate >= from &&
-          itemDate <= to
-        );
-      });
+    if (!isValid) {
+        return res.status(400).json({ error: 'All fields are required' });
+    }
 
-      console.log('Filtered Data:', filteredData);
-  
-      res.json(filteredData);
+    db.query(updateProfileQuery, [values], (err, data) => {
+        if(err) {
+            if(err.errno === 1062) {
+                return res.status(500).json({ statusCode: 500, statusMessage: 'Duplicate entry' });
+            }
+            return res.status(500).json(err);
+        }
+        return res.status(201).json({ statusCode: 201, statusMessage: 'User Profile Updated Successfully' });
     });
 });
-
 
 // import http from 'http';
 // import formidable from 'formidable'
@@ -984,6 +1221,85 @@ app.get('/report', (req, res) => {
 //     return res.end();
 // }
 // })
+
+// In your Node.js backend
+app.post('/get-otp', (req, res) => {
+    const { phoneNumber } = req.body;
+    // Your logic to generate and send OTP
+    res.status(200).json({ message: 'OTP sent successfully' });
+});
+
+// In your Node.js backend
+// app.post('/reset-password', (req, res) => {
+//     const { password, confirmPassword } = req.body;
+    
+//     // Your logic to reset the password
+//     if (password === confirmPassword) {
+//         // Perform password reset logic here
+//         res.status(200).json({ message: 'Password reset successfully' });
+//     } else {
+//         res.status(400).json({ message: 'Passwords do not match' });
+//     }
+// });
+
+// In your Node.js backend
+app.post('/verify-otp', (req, res) => {
+    const { otp } = req.body;
+
+    // Your logic to verify the OTP
+    if (otp === "expectedOTP") {
+        res.status(200).json({ message: 'OTP verified successfully' });
+    } else {
+        res.status(400).json({ message: 'Invalid OTP' });
+    }
+});
+
+app.post('/resend-otp', (req, res) => {
+    const { phoneNumber } = req.body;
+
+    // Your logic to resend the OTP
+    res.status(200).json({ message: 'OTP resent successfully' });
+});
+  
+app.get('/userStatus/:id', (req, res) => {
+
+    const getUser = 'select fullName from userprofile where id=?'
+
+    const value = [
+        req.params.id
+    ]
+
+    db.query(getUser, value, (err, data) => {
+        if(err) {
+            return res.status(500).json(err)
+        }
+        // return res.json(data)
+        return res.status(200).json({statusCode:200, statusMessage:'User found'})
+    })
+});
+
+app.get('/fetchRole', (req, res) => {
+
+    if(!req.query.email) {
+        return res.status(400).json({ message: 'Invalid email address' });
+    }
+
+    const getRole = 'select role from userprofile where email=?'
+
+    const value = [
+        req.query.email
+    ]
+
+    db.query(getRole, value, (err, data) => {
+        if(err) {
+            return res.status(500).json(err)
+        }
+        // return res.json(data)
+        return res.status(200).json({statusCode:200, role: data[0].role})
+    })
+});
+
+
 
 app.listen(6431, () => {
     console.log("Running")

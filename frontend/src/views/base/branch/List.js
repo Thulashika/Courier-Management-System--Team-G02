@@ -33,7 +33,14 @@ const List = () => {
     getAll()
   },[page, limit]) //search
 
+  const getCookie = (name) => {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name} = `);
+    if(parts.length === 2) return parts.pop().split(`;`).shift();
+  }
+
   const getAll = () => {
+    console.log(getCookie('token'))
     axios('http://localhost:6431/branch', {
       method:'GET',
       params:{
@@ -41,6 +48,10 @@ const List = () => {
         limit: limit,
       // search: search,
       },
+      withCredentials: true,
+      // headers: {
+      //   'authentication': `Bearer ${getCookie('token')}`
+      // }
     }).then(res => {
       setData(res.data)
     }).catch((err) => {

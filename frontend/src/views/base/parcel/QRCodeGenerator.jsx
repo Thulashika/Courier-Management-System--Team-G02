@@ -10,6 +10,7 @@ const QRCodeGenerator = () => {
           lastName: '',
           address: '',
           contactNumber: '',
+          NIC:'',
           date: '',
           branchProcessed: ''
         },
@@ -18,6 +19,7 @@ const QRCodeGenerator = () => {
           lastName: '',
           address: '',
           contactNumber: '',
+          NIC:'',
           date: '',
           branchProcessed: ''
         },
@@ -27,6 +29,7 @@ const QRCodeGenerator = () => {
           deliveryCharge: '',
           totalAmount: '',
           dueAmount: '',
+          paymentMethod:'',
           status:''
         }]
     })

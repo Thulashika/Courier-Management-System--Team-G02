@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { createContext, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import {
   CButton,
@@ -25,6 +25,9 @@ import axios from 'axios'
 import { Icon } from 'react-icons-kit';
 import { eyeOff } from 'react-icons-kit/feather/eyeOff';
 import { eye } from 'react-icons-kit/feather/eye';
+import { toast } from 'react-toastify'
+import { LOGIN_ERRORS } from '../../../const'
+import { useDispatch } from 'react-redux'
 
 // function useQuery() {
 //   const {search} = useLocation()
@@ -52,6 +55,7 @@ const Login = () => {
   // const query = useQuery()
 
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const handleSubmit = (e)=> {
     e.preventDefault()
@@ -67,11 +71,15 @@ const Login = () => {
     if(isValid) {
       axios(`http://localhost:6431/userLogin`, {
         data: user,
-        method: 'POST'
+        method: 'POST',
+        withCredentials: true
       }).then(res => {
         if(res.data.statusCode === 200){
           alert("Login succesfully")
           navigate('/')
+          dispatch({type: 'SET_EMAIL', payload: user.email})
+          // localStorage.setItem('token', res.data.token)
+          // localStorage.removeItem('token')
         } else {
           alert("Not Login successfully")
         }
@@ -89,30 +97,37 @@ const Login = () => {
       // }
     }
   }
-  
-  const handleForgotPassword = async (e) => {
-    e.preventDefault()
 
-    axios.defaults.withCredentials = true;
-    axios.post('http://localhost:6431/forgot-password', {email})
-    .then(res => {
-        if(res.data.Status === "Success") {
-            navigate('/login')
-            
-        }
-    }).catch(err => console.log(err))
-  }  
-
-  const handleResetPassword = (e) => {
+  const handleForgotPassword = (e) => {
     e.preventDefault()
-    axios.defaults.withCredentials = true;
-    axios.post(`http://localhost:6431/reset-password/${id}/${token}`, {password})
-    .then(res => {
-        if(res.data.Status === "Success") {
-            navigate('/login')
-           
+    setError('')
+    setIsValid(true)
+
+
+    if (!email) {
+      setError(LOGIN_ERRORS.EMAIL_VALIDATION);
+      setIsValid(false)
+      return;
+    }
+
+    setFVisible(false)
+    setRVisible(true)
+
+    if(isValid) {
+      axios('http://localhost:6431/forgot-password', {
+        data: { email: email },
+        method: 'POST'
+      }).then(res => {
+        if(res.data.statusCode === 200) {
+          alert('Password reset email sent')
+          // navigate('/reset-password')
+        } else {
+          alert('Not password reset email sent')
         }
-    }).catch(err => console.log(err))
+      }).catch(err => {
+        alert('Password reset email not sent')
+      })
+    }
   }
 
   return (
@@ -127,7 +142,6 @@ const Login = () => {
                   <CForm onSubmit={handleSubmit}>
                     <h1>Login</h1>
                     <p className="text-body-secondary">Sign In to your account</p>
-
                     <CInputGroup className="mb-3">
                       <CInputGroupText>@</CInputGroupText>
                       <CFormInput 
@@ -165,129 +179,65 @@ const Login = () => {
                           Login
                         </CButton>
                       </CCol>
+                      
                       <CCol xs={6} className='text-right'>
                         <CButton 
                           color='link'
                           onClick={() => setFVisible(!Fvisible)}
                         >
                           Forgot password?
-                        </CButton>
-
-                        <CModal 
-                          alignment='center'
-                          visible={Fvisible}
-                          onClose={() => setFVisible(false)}
-                          aria-labelledby='ToggleBetweenModalsExample1'
-                        >
-                          <CModalHeader>
-                            <CModalTitle id='ToggleBetweenModalsExample1'>Update Password</CModalTitle>
-                          </CModalHeader>
-
-                          <CModalBody>
-                            <CForm onClick={handleForgotPassword}>
-                              <CFormInput
-                                label="Email"
-                                type="email"
-                                className="form-control"
-                                id="recipient-email"
-                                autoComplete="off"
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                                required
-                              />
-                            </CForm>
-
-                            {message && <p>{message}</p>}
-
-                            <CModalFooter>
-                              <CButton
-                                type='button' 
-                                color='secondary' 
-                                onClick={() => setFVisible(false)}
-                              >
-                                Close
-                              </CButton>
-
-                              <CButton
-                                type='submit' 
-                                color='primary'
-                                onClick={() => {
-                                  setFVisible(false)
-                                  setRVisible(true)
-                                }}
-                              >
-                                  Send Reset Link
-                              </CButton>
-                            </CModalFooter>
-                          </CModalBody>                 
-                        </CModal>
-
-                        <CModal
-                          alignment='center'
-                          visible={Rvisible}
-                          onClose={() => {
-                            setRVisible(false)
-                          }}
-                          aria-labelledby='ToggleBetweenModalsExample2'
-                        >
-                          <CModalHeader>
-                            <CModalTitle id="ToggleBetweenModalsExample2">Reset Password</CModalTitle>
-                          </CModalHeader>
-
-                          <CModalBody>
-                          <CForm onClick={handleResetPassword}>
-                              <CFormInput
-                                type={Rvisible ? 'text' : 'password'}
-                                label="New Password"
-                                // type="password"
-                                className="form-control"
-                                id="recipient-password"
-                                autoComplete="off"
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                                required
-                              />
-                              <CFormInput
-                                type={Rvisible ? 'text' : 'password'}
-                                label="Confirm Password"
-                                // type="password"
-                                className="form-control"
-                                id="recipient-confirm-password"
-                                autoComplete="off"
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                                required
-                              />
-                            </CForm>
-                            <CModalFooter>
-                              <CButton
-                                type='button' 
-                                color='secondary' 
-                                onClick={() => {
-                                  setFVisible(true)
-                                  setRVisible(false)
-                                }}
-                              >
-                                Close
-                              </CButton>
-
-                              <CButton
-                                type='submit' 
-                                color='primary'
-                                onClick={() => {
-                                  setRVisible(false)
-                                }}
-                              >
-                                  Update
-                              </CButton>
-                            </CModalFooter>
-                          </CModalBody>
-                        </CModal>
+                        </CButton>                       
                       </CCol>
                     </CRow>
                   </CForm>
                 </CCardBody>
               </CCard>
+
+              <CModal 
+                alignment='center'
+                visible={Fvisible}
+                onClose={() => setFVisible(false)}
+                aria-labelledby='ToggleBetweenModalsExample1'
+              >
+                <CModalHeader>
+                  <CModalTitle id='ToggleBetweenModalsExample1'>Update Password</CModalTitle>
+                </CModalHeader>
+
+                <CModalBody>
+                  <CForm onSubmit={handleForgotPassword}>
+                    <CFormInput
+                      label="Email"
+                      type="email"
+                      className="form-control"
+                      id="recipient-email"
+                      autoComplete="off"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      required
+                    />
+                    {!isValid && error === LOGIN_ERRORS.EMAIL_VALIDATION && <p>{error}</p>}
+                  
+                    <CModalFooter>
+                      <CButton
+                        type='button' 
+                        color='secondary' 
+                        onClick={() => {
+                          setFVisible(false)
+                        }}
+                      >
+                        Close
+                      </CButton>
+
+                      <CButton
+                        type='submit' 
+                        color='primary'
+                      >
+                          Send Reset Link
+                      </CButton>
+                    </CModalFooter>
+                  </CForm>
+                </CModalBody>                 
+              </CModal>
 
               <CCard className="text-white bg-primary py-5" style={{ width: '44%' }}>
                 <CCardBody className="text-center">
@@ -313,4 +263,4 @@ const Login = () => {
   )
 }
 
-export default Login
+export default Login;

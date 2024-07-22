@@ -33,6 +33,7 @@ const NewParcels = () => {
       lastName: '',
       address: '',
       contactNumber: '',
+      NIC:'',
       date: '',
       branchProcessed: ''
     },
@@ -41,6 +42,7 @@ const NewParcels = () => {
       lastName: '',
       address: '',
       contactNumber: '',
+      NIC:'',
       date: '',
       branchProcessed: ''
     },
@@ -50,6 +52,7 @@ const NewParcels = () => {
       deliveryCharge: '',
       totalAmount: '',
       dueAmount: '',
+      paymentMethod:'', // cash on delivery or cash on or online payment or card payment
       status:''
     }],
   });
@@ -66,7 +69,7 @@ const NewParcels = () => {
     if (name === 'weight' || name === 'deliveryCharge') {
       const weight = parseFloat(newData[index].weight) || 0;
       const deliveryCharge = parseFloat(newData[index].deliveryCharge) || 0;
-      newData[index].totalAmount = (weight + deliveryCharge).toFixed(2);
+      newData[index].totalAmount = (weight*350 + deliveryCharge).toFixed(2);
       newData[index].dueAmount = (newData[index].totalAmount - deliveryCharge).toFixed(2);
     }
 
@@ -84,6 +87,7 @@ const NewParcels = () => {
           deliveryCharge: '',
           totalAmount: '',
           dueAmount: '',
+          paymentMethod:'',
           status: ''
         }
       ]
@@ -182,6 +186,7 @@ const NewParcels = () => {
         .post('http://localhost:6431/parcel', parcel)
         .then((res) => {
           if (res.data.statusCode === 201) {
+            alert('Created Successfully')
             navigate('/parcels');
           } else {
             alert('Not created successfully');
@@ -344,6 +349,41 @@ const NewParcels = () => {
             <CRow>
               <CCol xs={6}>
                 <CInputGroup className='mb-3'>
+                  <CInputGroupText>NIC</CInputGroupText>
+                  <CFormInput
+                    type='text'
+                    onChange={(e) =>
+                      setParcel({
+                        ...parcel,
+                        senderDetails: { ...parcel.senderDetails, NIC: e.target.value }
+                      })
+                    }
+                    required
+                  />
+                </CInputGroup>
+              </CCol>
+              <CCol xs={6}>
+                <CInputGroup className='mb-3'>
+                  <CInputGroupText>NIC</CInputGroupText>
+                  <CFormInput
+                    type='text'
+                    onChange={(e) =>
+                      setParcel({
+                        ...parcel,
+                        recipientDetails: { ...parcel.recipientDetails, NIC: e.target.value }
+                      })
+                    }
+                    required
+                  />
+                </CInputGroup>
+              </CCol>
+            </CRow>
+            {!isValid && error === PARCEL_ERRORS.NIC_LENGTH_VALIDATION && <p>{error}</p>}
+            {!isValid && error === PARCEL_ERRORS.NIC_FORMAT_VALIDATION && <p>{error}</p>}
+
+            <CRow>
+              <CCol xs={6}>
+                <CInputGroup className='mb-3'>
                   <CInputGroupText>Date</CInputGroupText>
                   <CFormInput
                     type='date'
@@ -400,7 +440,7 @@ const NewParcels = () => {
               </CCol>
               <CCol xs={6}>
                 <CInputGroup className='mb-3'>
-                  <CInputGroupText>Branch Processed</CInputGroupText>
+                  <CInputGroupText>Pickup Branch</CInputGroupText>
                   <CFormSelect
                     onChange={(e) =>
                       setParcel({
@@ -430,6 +470,7 @@ const NewParcels = () => {
                   <CTableHeaderCell>Delivery Charge</CTableHeaderCell>
                   <CTableHeaderCell>Total Amount</CTableHeaderCell>
                   <CTableHeaderCell>Due Amount</CTableHeaderCell>
+                  <CTableHeaderCell>paymentMethod</CTableHeaderCell>
                   <CTableHeaderCell>Status</CTableHeaderCell>
                   <CTableHeaderCell>Actions</CTableHeaderCell>
                 </CTableRow>
@@ -478,6 +519,7 @@ const NewParcels = () => {
                         readOnly
                       />
                     </CTableDataCell>
+
                     <CTableDataCell>
                       <CFormInput
                         type='number'
@@ -485,6 +527,21 @@ const NewParcels = () => {
                         value={item.dueAmount}
                         readOnly
                       />
+                    </CTableDataCell>
+
+                    <CTableDataCell>
+                      <CFormSelect  
+                        type='select'
+                        name='paymentMethod'
+                        value={item.paymentMethod}
+                        onChange={(e) => handleInputChange(index, e)}                    
+                        required>
+                          <option value=''>Please Select Method</option>
+                          <option value='CASH ON'>Cash on</option>
+                          <option value='CASH ON DELIVERY'>Cash on delivery</option>
+                          <option value='ONLINE PAYMENT'>Online payment</option>
+                          <option value='CARD PAYMENT'>Card payment</option>
+                      </CFormSelect>
                     </CTableDataCell>
 
                     <CTableDataCell>

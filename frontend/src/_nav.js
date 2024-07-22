@@ -1,15 +1,16 @@
 import React from 'react'
 import CIcon from '@coreui/icons-react'
 import {
-  cilBell,
-  cilCalculator,
   cilChartPie,
-  cilCursor,
-  cilDrop,
+  cilChatBubble,
+  cilFile,
+  cilHappy,
+  cilIndustry,
   cilNotes,
-  cilPuzzle,
   cilSpeedometer,
   cilStar,
+  cilTruck,
+  cilUserPlus,
 } from '@coreui/icons'
 import { CNavGroup, CNavItem} from '@coreui/react'
 
@@ -19,32 +20,18 @@ const _nav = [
     name: 'Dashboard',
     to: '/dashboard',
     icon: <CIcon icon={cilSpeedometer} customClassName="nav-icon" />,
-    // badge: {
-    //   color: 'info',
-    //   text: 'NEW',
-    // },
   },
-  // {
-  //   component: CNavTitle,
-  //   name: 'Theme',
-  // },
-  // {
-  //   component: CNavItem,
-  //   name: 'Colors',
-  //   to: '/theme/colors',
-  //   icon: <CIcon icon={cilDrop} customClassName="nav-icon" />,
-  // },
   {
     component: CNavItem,
     name: 'Branch',
     to: '/branch',
-    icon: <CIcon icon={cilPuzzle} customClassName="nav-icon" />,
+    icon: <CIcon icon={cilIndustry} customClassName="nav-icon" />,
   },
   {
     component: CNavItem,
     name: 'BranchStaff',
     to: '/staff',
-    icon: <CIcon icon={cilCursor} customClassName="nav-icon" />,
+    icon: <CIcon icon={cilUserPlus} customClassName="nav-icon" />,
   },
   {
     component: CNavItem,
@@ -62,27 +49,26 @@ const _nav = [
     component: CNavItem,
     name: 'Reports',
     to: '/reports',
-    icon: <CIcon icon={cilStar} customClassName="nav-icon" />
+    icon: <CIcon icon={cilFile} customClassName="nav-icon" />
   },
   {
     component: CNavItem,
     name: 'Ourservices',
-    icon: <CIcon icon={cilBell} customClassName="nav-icon" />,
+    icon: <CIcon icon={cilTruck} customClassName="nav-icon" />,
     to: '/ourservices'
   },
   {
     component: CNavItem,
-    name: 'Contactus',
-    icon: <CIcon icon={cilBell} customClassName="nav-icon" />,
+    name: 'Contact us',
+    icon: <CIcon icon={cilChatBubble} customClassName="nav-icon" />,
     to: '/contactus'
   },
   {
     component: CNavItem,
-    name: 'Findus',
-    icon: <CIcon icon={cilBell} customClassName="nav-icon" />,
+    name: 'Find us',
+    icon: <CIcon icon={cilHappy} customClassName="nav-icon" />,
     to: '/findus'
-  },
-  
+  },  
   // {
   //   component: CNavItem,
   //   name: 'Widgets',
@@ -112,16 +98,6 @@ const _nav = [
         name: 'Register',
         to: '/register',
       },
-      {
-        component: CNavItem,
-        name: 'Forgot Password',
-        to: '/forgot-password',
-      },
-      // {
-      //   component: CNavItem,
-      //   name: 'Error 500',
-      //   to: '/500',
-      // },
     ],
   },
   // {
