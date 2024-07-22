@@ -31,7 +31,8 @@ const List = () => {
 
   useEffect(() => {
     getAll()
-  },[page, limit]) //search
+    getTotalCount()
+  },[page, limit, search])
 
   const getCookie = (name) => {
     const value = `; ${document.cookie}`;
@@ -46,7 +47,7 @@ const List = () => {
       params:{
         page: page,
         limit: limit,
-      // search: search,
+        search: search,
       },
       withCredentials: true,
       // headers: {
@@ -84,6 +85,11 @@ const List = () => {
       })
     }
   }
+
+  // Calculate the index range for the current page
+  const startIndex = (page - 1) * limit;
+  const endIndex = startIndex + limit;
+  const paginatedData = data.slice(startIndex, endIndex);
 
   const totalPages = Math.ceil(totalBranches / limit);
 
@@ -137,8 +143,8 @@ const List = () => {
                   </CTableRow>
                 </CTableHead>
                 <CTableBody>
-                  {data.length > 0 ? (
-                    data.map((branch, index) => (
+                  {paginatedData.length > 0 ? (
+                    paginatedData.map((branch, index) => (
                       <CTableRow key={index}>
                         <CTableDataCell>{(page - 1) * limit + index + 1}</CTableDataCell>
                         <CTableDataCell>{branch.branchCode}</CTableDataCell>
@@ -175,6 +181,7 @@ const List = () => {
               </CTable>
             </CRow>
 
+            { limit >= 1 ? 
             <CRow className="justify-content-end">
             <CPagination align="end" aria-label="Page navigation">
               <CPaginationItem disabled={page <= 1} onClick={() => setPage(page - 1)}>
@@ -190,6 +197,7 @@ const List = () => {
               </CPaginationItem>
             </CPagination>
           </CRow>
+          : null }
           </CCardBody>
         </CCard>
       </CCol>

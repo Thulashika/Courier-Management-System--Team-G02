@@ -14,15 +14,17 @@ import {
     CRow 
 } from '@coreui/react'
 import axios from 'axios'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Icon from 'react-icons-kit'
 import { eyeOff } from 'react-icons-kit/feather/eyeOff'
 import { eye } from 'react-icons-kit/feather/eye'
 import { useNavigate } from 'react-router-dom'
+import profile from '../../../assets/images/profile.png'
 
 const Profile = () => {
 
   const [user, setUser] = useState({
+    image:null,
     fullName:'',
     password:'',
     contactNumber:'',
@@ -36,6 +38,17 @@ const Profile = () => {
   const [isValid, setIsValid] = useState(true);
 
   const navigate = useNavigate()
+
+  // useEffect(() => {
+  //   axios('/http://localhost:6431/profile/:id', {
+  //     method:'GET'
+  //   }).then(res => {
+  //     setUser(res.data[0])
+  //   }).catch(err => {
+  //     // alert('There was an error fetching the user profile!')
+  //     console.log(err)
+  //   })
+  // })
 
   const handleSubmit = async (e) => {
     e.preventDefault()    
@@ -85,10 +98,10 @@ const Profile = () => {
         method:'PUT'
       }).then(res => {
         if (res.data.statusCode === 201) {
-          alert("Update profile successfully")
+          alert("Profile Updated successfully")
           navigate('/')
         } else {
-          alert("Not update profile successfully")
+          alert("Not profile updated successfully")
         }
       }).catch(err => {
         if(err.response?.data?.statusCode === 500) {
@@ -98,7 +111,6 @@ const Profile = () => {
         alert("Update profile not successfully")
       })
     }
-    
   }
 
   return (
@@ -110,7 +122,28 @@ const Profile = () => {
             <CCardBody className="p-4">
               <CForm onSubmit={handleSubmit}>
                 <h1>Account Information</h1>
-
+                <div
+                  onClick={() => {
+                    const input = document.createElement('input')
+                    input.type = 'file'
+                    input.accept = '/image/*'
+                    input.onChange = (e) => {
+                      setUser({...user, image:e.target.files[0]})
+                    }
+                    input.click()
+                  }} 
+                >
+                   {
+                    user.image ? 
+                    <img src={URL.createObjectURL(user.image)} alt='profile' height={100} width={100}/>
+                    : 
+                    <img src={profile} alt='profile' height={100} width={100}/>
+                    }
+                  {/* <img src={profile} alt='profile' height={100} width={100}/> */}
+                  <CInputGroup className="mb-3">
+                  </CInputGroup>
+                </div>
+               
                 <CInputGroup className="mb-3">
                   <CInputGroupText>
                     <CIcon icon={cilUser} />
@@ -122,6 +155,7 @@ const Profile = () => {
                     autoComplete="full name" 
                     onChange={(e) => setUser({...user, fullName:e.target.value})}
                     required
+                    defaultValue={user.fullName}
                     />
                 </CInputGroup>
                 {!isValid && error === 'Full name is not in the correct format' && <p>{error}</p>}
@@ -160,7 +194,7 @@ const Profile = () => {
                     autoComplete="Contact Number" 
                     onChange={(e) => setUser({...user, contactNumber:e.target.value})}
                     required
-                    
+                    defaultValue={user.contactNumber}
                   />
                 </CInputGroup>
                 {!isValid && error === 'Contact number must be exactly 10 digits' && <p>{error}</p>}
@@ -175,6 +209,7 @@ const Profile = () => {
                     autoComplete="email"  
                     onChange={(e) => setUser({...user, email:e.target.value})}
                     required
+                    defaultValue={user.email}
                   />
                 </CInputGroup>
 

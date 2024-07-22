@@ -85,6 +85,11 @@ const StaffList = () => {
     }
   }
 
+  // Calculate the index range for the current page
+  const startIndex = (page - 1) * limit;
+  const endIndex = startIndex + limit;
+  const paginatedData = data.slice(startIndex, endIndex);
+
   const totalPages = Math.ceil(totalStaff / limit);
 
   return (
@@ -138,8 +143,8 @@ const StaffList = () => {
                 </CTableHead>
                 <CTableBody>
                   
-                {data.length > 0 ? (
-                  data.map((staff, index) => (
+                {paginatedData.length > 0 ? (
+                  paginatedData.map((staff, index) => (
                   <CTableRow key={index}>
                     <CTableDataCell>{(page - 1) * limit + index + 1}</CTableDataCell>
                       <CTableDataCell> {staff.staffId} </CTableDataCell>
