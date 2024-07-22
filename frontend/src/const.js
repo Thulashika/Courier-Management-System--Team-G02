@@ -47,3 +47,14 @@ export const LOGIN_ERRORS = {
     CONFIRM_PASSWORD_LENGTH_VALIDATION: 'Confirm Password must be between 4 and 10 characters',
     CONFIRM_PASSWORD_FORMAT_VALIDATION: 'Confirm Password is not in the correct format',
 }
+
+export const RESET_PASSWORD_ERRORS = {
+    
+    PASSWORD_VALIDATION: 'Please enter your password',
+    PASSWORD_LENGTH_VALIDATION: 'Password must be between 4 and 10 characters',
+    PASSWORD_FORMAT_VALIDATION: 'Password is not in the correct format',
+
+    CONFIRM_PASSWORD_VALIDATION: 'Please enter your confirm password',
+    CONFIRM_PASSWORD_LENGTH_VALIDATION: 'Confirm Password must be between 4 and 10 characters',
+    CONFIRM_PASSWORD_FORMAT_VALIDATION: 'Confirm Password is not in the correct format',
+}

@@ -11,6 +11,5 @@ import { GlobalStateContext, Login } from './views/pages/login/Login'
 createRoot(document.getElementById('root')).render(
   <Provider store={store}>
     <App />
-    {/* <ToastContainer /> */}
   </Provider>,
 )

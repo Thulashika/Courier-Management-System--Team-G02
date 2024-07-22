@@ -148,6 +148,11 @@ const ParcelList = () => {
     }
   }
 
+  // Calculate the index range for the current page
+  const startIndex = (page - 1) * limit;
+  const endIndex = startIndex + limit;
+  const paginatedData = data.slice(startIndex, endIndex);
+
   const totalPages = Math.ceil(totalParcels / limit);
 
   return (
@@ -226,59 +231,61 @@ const ParcelList = () => {
                 </CTableRow>
               </CTableHead>
 
-              <CTableBody>
-              {data.length > 0 ? (
-                  data.map((parcel, index) => (
-                    <CTableRow key={index}>
-                    <CTableDataCell>{(page - 1) * limit + index + 1}</CTableDataCell>
-                      <CTableDataCell>{parcel.referenceNumber}</CTableDataCell>
-                      <CTableDataCell>{`${JSON.parse(parcel.senderDetails).firstName} ${JSON.parse(parcel.senderDetails).lastName}`}</CTableDataCell>
-                      <CTableDataCell>{parcel.senderDetails ? JSON.parse(parcel.senderDetails).date : ''}</CTableDataCell>
-                      <CTableDataCell>{`${parcel.recipientDetails ? JSON.parse(parcel.recipientDetails).firstName : ''} ${parcel.recipientDetails ? JSON.parse(parcel.recipientDetails).lastName : ''}`}</CTableDataCell>
-                      <CTableDataCell>{parcel.recipientDetails ? JSON.parse(parcel.recipientDetails).date : ''}</CTableDataCell>
-                      <CTableDataCell> <span className={`badge text-bg-${getStatus(parcel.status)}`}>{parcel.status}</span></CTableDataCell>
-                      {/* <CTableDataCell>
-                        <QRCode value={`Parcel ID: ${parcel.id}`} size={50} /> {/* Generate QR Code */}
-                      {/* </CTableDataCell> */}
-                      <CTableDataCell> 
-                        <Link to={`/parcels/read?id=${parcel.id}`}>
-                          <CButton
-                            color='dark'
-                            size='sm'
-                            variant='ghost'
-                            className="me-md-2">
-                            <img src={eyeIcon} alt='view' height={20} width={20}/>
-                          </CButton>
-                        </Link>
-                        
-                        <Link to={`/parcels/updateParcel?id=${parcel.id}`}>
-                          <CButton 
-                            color='primary' 
-                            size='sm' 
-                            variant='ghost' 
-                            className="me-md-2">
-                              <CIcon icon={cilPencil}/>
-                          </CButton>
+              {/* { limit >= 1 ?  */}
+                <CTableBody>
+                {paginatedData.length > 0 ? (
+                    paginatedData.map((parcel, index) => (
+                      <CTableRow key={index}>
+                      <CTableDataCell>{startIndex + index + 1}</CTableDataCell>
+                        <CTableDataCell>{parcel.referenceNumber}</CTableDataCell>
+                        <CTableDataCell>{`${JSON.parse(parcel.senderDetails).firstName} ${JSON.parse(parcel.senderDetails).lastName}`}</CTableDataCell>
+                        <CTableDataCell>{parcel.senderDetails ? JSON.parse(parcel.senderDetails).date : ''}</CTableDataCell>
+                        <CTableDataCell>{`${parcel.recipientDetails ? JSON.parse(parcel.recipientDetails).firstName : ''} ${parcel.recipientDetails ? JSON.parse(parcel.recipientDetails).lastName : ''}`}</CTableDataCell>
+                        <CTableDataCell>{parcel.recipientDetails ? JSON.parse(parcel.recipientDetails).date : ''}</CTableDataCell>
+                        <CTableDataCell> <span className={`badge text-bg-${getStatus(parcel.status)}`}>{parcel.status}</span></CTableDataCell>
+                        {/* <CTableDataCell>
+                          <QRCode value={`Parcel ID: ${parcel.id}`} size={50} /> {/* Generate QR Code */}
+                        {/* </CTableDataCell> */}
+                        <CTableDataCell> 
+                          <Link to={`/parcels/read?id=${parcel.id}`}>
+                            <CButton
+                              color='dark'
+                              size='sm'
+                              variant='ghost'
+                              className="me-md-2">
+                              <img src={eyeIcon} alt='view' height={20} width={20}/>
+                            </CButton>
                           </Link>
+                          
+                          <Link to={`/parcels/updateParcel?id=${parcel.id}`}>
+                            <CButton 
+                              color='primary' 
+                              size='sm' 
+                              variant='ghost' 
+                              className="me-md-2">
+                                <CIcon icon={cilPencil}/>
+                            </CButton>
+                            </Link>
 
-                          <CButton
-                            color='danger'
-                            size='sm'
-                            variant='ghost'
-                            onClick={() => handleClick(parcel.id)}>
-                              <CIcon icon={cilTrash}/>
-                          </CButton>
+                            <CButton
+                              color='danger'
+                              size='sm'
+                              variant='ghost'
+                              onClick={() => handleClick(parcel.id)}>
+                                <CIcon icon={cilTrash}/>
+                            </CButton>
 
-                      </CTableDataCell>
+                        </CTableDataCell>
+                      </CTableRow>
+                    ))
+                  ):
+                  (
+                    <CTableRow>
+                      <CTableDataCell colSpan="9">No parcels found</CTableDataCell>
                     </CTableRow>
-                  ))
-                ):
-                (
-                  <CTableRow>
-                    <CTableDataCell colSpan="9">No parcels found</CTableDataCell>
-                  </CTableRow>
-                  )}          
-              </CTableBody>
+                    )}      
+                </CTableBody> 
+              {/* : null }    */}
             </CTable>
 
             { limit >= 1 ? 

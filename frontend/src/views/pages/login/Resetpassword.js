@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Link, useLocation, useNavigate, useParams } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import {
   CButton,
   CCard,
@@ -9,24 +9,10 @@ import {
   CContainer,
   CForm,
   CFormInput,
-  CInputGroup,
-  CInputGroupText,
-  CModal,
-  CModalBody,
-  CModalFooter,
-  CModalHeader,
-  CModalTitle,
   CRow,
 } from '@coreui/react'
-import CIcon from '@coreui/icons-react'
-import { cilLockLocked} from '@coreui/icons'
 import axios from 'axios'
-
-import { Icon } from 'react-icons-kit';
-import { eyeOff } from 'react-icons-kit/feather/eyeOff';
-import { eye } from 'react-icons-kit/feather/eye';
-import { toast } from 'react-toastify'
-import { LOGIN_ERRORS } from '../../../const'
+import { RESET_PASSWORD_ERRORS } from '../../../const'
 
 function useQuery() {
     const {search} = useLocation()
@@ -57,26 +43,38 @@ const Resetpassword = () => {
     setIsValid(true)
 
 
-    // if (!password) {
-    //   setError(LOGIN_ERRORS.PASSWORD_VALIDATION);
-    //   setIsValid(false)
-    //   return;
-    // }
+    if (!user.password) {
+      setError(RESET_PASSWORD_ERRORS.PASSWORD_VALIDATION);
+      setIsValid(false)
+      return;
+    }
 
-    // if (!confirmPassword) {
-    //     setError(LOGIN_ERRORS.CONFIRM_PASSWORD_VALIDATION);
-    //     setIsValid(false)
-    //     return;
-    // }
+    if (user.password.length < 4 || user.password.length > 10) {
+      setError(RESET_PASSWORD_ERRORS.PASSWORD_LENGTH_VALIDATION)
+      setIsValid(false)
+      return;
+    }
+
+    if (!user.confirmPassword) {
+        setError(RESET_PASSWORD_ERRORS.CONFIRM_PASSWORD_VALIDATION);
+        setIsValid(false)
+        return;
+    }
+
+    if (user.confirmPassword.length < 4 || user.confirmPassword.length > 10) {
+      setError(RESET_PASSWORD_ERRORS.CONFIRM_PASSWORD_LENGTH_VALIDATION)
+      setIsValid(false)
+      return;
+    }
 
     if(isValid) {
       axios('http://localhost:6431/reset-password', {
-        // data: { password: password, confirmPassword: confirmPassword, token: query.get('token') },
+        data: { password: user.password, confirmPassword: user.confirmPassword, token: query.get('token') },
         method: 'POST'
       }).then(res => {
         if(res.data.statusCode === 200) {
           alert('Reset password success')
-          navigate('/')
+          navigate('/login')
         } else {
           alert('Not success reset password')
         }
@@ -97,104 +95,57 @@ const Resetpassword = () => {
                     <CCardBody>
                         <CForm onSubmit={handleResetPassword}>
                             <h3>Reset Password</h3>
-                            <CFormInput
-                                type='password'
-                                label="New Password"
-                                className="form-control"
-                                id="recipient-password"
-                                autoComplete="off"
-                                // value={password}
-                                // onChange={(e) => setPassword(e.target.value)}
-                                required
-                            />
-                            <CFormInput
-                                type={'password'}
-                                label="Confirm Password"
-                                className="form-control"
-                                id="recipient-confirm-password"
-                                autoComplete="off"
-                                // value={confirmPassword}
-                                // onChange={(e) => setConfirmPassword(e.target.value)}
-                                required
-                            />
+                            <CRow className="mb-3">
+                              <CFormInput
+                                  type='password'
+                                  label="New Password"
+                                  className="form-control"
+                                  id="recipient-password"
+                                  autoComplete="off"
+                                  onChange={(e) => setUser({...user, password:e.target.value})}
+                                  required
+                              />
+                              {!isValid && error === RESET_PASSWORD_ERRORS.PASSWORD_FORMAT_VALIDATION && <p>{error}</p>}
+                              {!isValid && error === RESET_PASSWORD_ERRORS.PASSWORD_LENGTH_VALIDATION && <p>{error}</p>}
+                            </CRow>
+                           
+                            <CRow className="mb-3">
+                              <CFormInput
+                                  type='password'
+                                  label="Confirm Password"
+                                  className="form-control"
+                                  id="recipient-confirm-password"
+                                  autoComplete="off"
+                                  onChange={(e) => setUser({...user, confirmPassword:e.target.value})}
+                                  required
+                              />
+                              {!isValid && error === RESET_PASSWORD_ERRORS.CONFIRM_PASSWORD_FORMAT_VALIDATION && <p>{error}</p>}
+                              {!isValid && error === RESET_PASSWORD_ERRORS.CONFIRM_PASSWORD_LENGTH_VALIDATION && <p>{error}</p>}
+                            </CRow>
 
-                            <CButton
-                                type='submit' 
-                                color='secondary'
-                                onClick={() => window.confirm('Are you sure you want to cancel this form?') ? navigate('/login') : ''}
-                            >
-                                Close
-                            </CButton>
-
-                            <CButton
-                            type='submit' 
-                            color='primary'
-                            >
-                                Update
-                            </CButton>
+                            <CRow className="mb-3">
+                              <CCol xs="auto">
+                                <CButton
+                                  type='submit' 
+                                  color='secondary'
+                                  onClick={() => window.confirm('Are you sure you want to cancel this form?') ? navigate('/login') : ''}
+                                >
+                                  Close
+                                </CButton>
+                              </CCol>
+                            
+                              <CCol xs="auto">
+                                <CButton
+                                  type='submit' 
+                                  color='primary'
+                                >
+                                  Update
+                                </CButton>
+                              </CCol>
+                            </CRow>                            
                         </CForm>
                     </CCardBody>
                 </CCard>
-
-              {/* <CModal
-                alignment='center'
-                visible={Rvisible}
-                onClose={() => {
-                  setRVisible(false)
-                }}
-                aria-labelledby='ToggleBetweenModalsExample2'
-              >
-                <CModalHeader>
-                  <CModalTitle id="ToggleBetweenModalsExample2">Reset Password</CModalTitle>
-                </CModalHeader>
-
-                <CModalBody>
-                <CForm onClick={handleResetPassword}>
-                    <CFormInput
-                      type={Rvisible ? 'text' : 'password'}
-                      label="New Password"
-                      className="form-control"
-                      id="recipient-password"
-                      autoComplete="off"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      required
-                    />
-                    <CFormInput
-                      type={Rvisible ? 'text' : 'password'}
-                      label="Confirm Password"
-                      className="form-control"
-                      id="recipient-confirm-password"
-                      autoComplete="off"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      required
-                    />
-                  </CForm>
-                  <CModalFooter>
-                    <CButton
-                      type='button' 
-                      color='secondary' 
-                      onClick={() => {
-                        setFVisible(true)
-                        setRVisible(false)
-                      }}
-                    >
-                      Close
-                    </CButton>
-
-                    <CButton
-                      type='submit' 
-                      color='primary'
-                      onClick={() => {
-                        setRVisible(false)
-                      }}
-                    >
-                        Update
-                    </CButton>
-                  </CModalFooter>
-                </CModalBody>
-              </CModal> */}
             </CCardGroup>
           </CCol>
         </CRow>

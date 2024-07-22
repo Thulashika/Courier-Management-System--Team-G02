@@ -8,11 +8,7 @@ import path from 'path'
 import nodemailer from 'nodemailer'
 import { report } from 'process';
 import cookieParser from 'cookie-parser';
-// import http from 'http'
-// import branch from './branch'
-
-// const branch = require('./branch')
-// const http = require('http')
+import multer from 'multer'
 
 // Database connection setup (adjust to your configuration)
 const db = mysql.createConnection({
@@ -54,7 +50,6 @@ const authenticationToken = (req, res, next) => {
         req.user = user;
         next();
     })
-    
 }
 
 // for cookie based authentication.
@@ -156,7 +151,6 @@ app.post('/userRegister', async (req, res) => {
 
 // Secret key for JWT
 const JWT_SECRET = 'supersecretkey';
-// const JWT_SECRET = "hvdvay6ert72839289()aiyg8t87qt72393293883uhefiuh78ttq3ifi78272jbkj?[]]pou89ywe"
 
 app.post('/userLogin', async (req,res) => {
 
@@ -274,7 +268,7 @@ async function sendPasswordResetEmail(email, token, expirationTime) {
             service: 'gmail',
             auth: {
                 user: 'lasibala24@gmail.com',
-                pass: 'uzyl aldq dcha fygd',
+                pass: 'sqhr hhez canm skhd',
             },
         });
 
@@ -285,7 +279,7 @@ async function sendPasswordResetEmail(email, token, expirationTime) {
             subject: 'Password Reset Instructions',
             html: `
                  <p>You requested a password reset for your account.</p>
-                <p>Click <a href="http://localhost:3000/reset-password/${token}">here</a> to reset your password.</p>
+                <p>Click <a href="http://localhost:3000/reset-password?token=${token}">here</a> to reset your password.</p>
                 <p>This link will expire on ${expirationTime}.</p>
                 <p>If you didn't request this, please ignore this email.</p>
             `,
@@ -307,39 +301,39 @@ async function sendPasswordResetEmail(email, token, expirationTime) {
 }
 
 // Route to handle password reset form rendering
-app.get('/reset-password', (req,res) => {
-    try {
-        const token = req.body.token  // Use req.query to get the token from the URL
+// app.get('/reset-password', (req,res) => {
+//     try {
+//         const token = req.body.token  // Use req.query to get the token from the URL
 
-        if(!token) {
-            return res.json('404')
-        }
+//         if(!token) {
+//             return res.json('404')
+//         }
 
-        db.query(`select * from password-reset where token = ? limit 1`, [token], (err, results) => {
-            if(err) {
-                return res.status(500).json('Internal Server Error');
-            }
+//         db.query(`select * from password-reset where token = ? limit 1`, [token], (err, results) => {
+//             if(err) {
+//                 return res.status(500).json('Internal Server Error');
+//             }
 
-            if(results.length > 0) {
+//             if(results.length > 0) {
 
-                const email = results[0].email;
-                db.query(`select * from userprofile where email = ? limit 1`, [email], (err, result) => {
-                    if(err) {
-                        return res.status(500).json('Internal Server Error')
-                    }
+//                 const email = results[0].email;
+//                 db.query(`select * from userprofile where email = ? limit 1`, [email], (err, result) => {
+//                     if(err) {
+//                         return res.status(500).json('Internal Server Error')
+//                     }
                     
-                    return res.json('reset-password', {user: result[0]})
-                })
+//                     return res.json('reset-password', {user: result[0]})
+//                 })
 
-            } else {
-                return res.json('404')
-            }
-        })
+//             } else {
+//                 return res.json('404')
+//             }
+//         })
 
-    } catch (error) {
-        return res.status(500).json('Internal Server Error')
-    }
-})
+//     } catch (error) {
+//         return res.status(500).json('Internal Server Error')
+//     }
+// })
 
 // Route to handle password reset form submission
 app.post('/reset-password', async (req, res) => {
@@ -347,7 +341,6 @@ app.post('/reset-password', async (req, res) => {
 
     if(password !== confirmPassword) {
         return res.json({statusCode: 500, statusMessage:('reset-password', {error_message: 'Password not match'})});
-        // return res.json('Password not  match')
     }
 
     // Hash the new password (implement your hashing function)
@@ -398,17 +391,8 @@ app.post('/reset-password', async (req, res) => {
                 return res.json('404');
             }
         });
-
     })
-
-   
 })
-
-// Function to hash passwords (implement this function as per your requirements)
-function hashPassword(password) {
-    // Implement password hashing (e.g., using bcrypt)
-    return password; // Replace with hashed password
-}
 
 app.post('/branch', (req,res) => {
     const createQuery = 'insert into branch(`branchCode`, `branchName`, `branchAddress`, `city`, `contactNumber`, `zipCode`) values(?)'
@@ -459,17 +443,62 @@ app.post('/branch', (req,res) => {
     })
 })
 
+app.get('/branch', (req, res) => {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const offset = (page - 1) * limit;
+    const search = req.query.search || '';
 
-app.get('/branch', verifyToken, (req,res) => {
-    const getAllQuery = 'select * from branch'
+    // Function to get all column names from the parcel table
+    const getColumnNamesQuery = `SHOW COLUMNS FROM branch`;
 
-    db.query(getAllQuery, (err,data) => {
-        if(err) {
-            return res.json(err)
-        } 
-        return res.send(data)
-    })
-})
+    db.query(getColumnNamesQuery, (err, columns) => {
+        if (err) {
+            return res.json(err);
+        }
+
+        // Prepare the base query
+        let query = `select * from branch`;
+        let queryParams = [];
+
+        // Add the search filter if there is a search term
+        if (search) {
+            const searchPattern = `%${search}%`;
+            query += ` WHERE branch.branchCode LIKE ? OR 
+                              branchName LIKE ? OR 
+                              branchAddress LIKE ? OR 
+                              city LIKE ? OR 
+                              contactNumber LIKE ? OR 
+                              zipCode LIKE ?`;
+            queryParams = Array(6).fill(searchPattern);
+        }
+        
+        // Add pagination
+        query += ' LIMIT ?, ?';
+        queryParams.push(offset, limit);
+
+        // Execute the query
+        db.query(query, queryParams, (err, data) => {
+            if (err) {
+                return res.json(err);
+            }
+            return res.send(data);
+        });
+    });
+});
+
+// Endpoint to get total number of parcels (for pagination metadata)
+app.get('/branch/count', (req, res) => {
+
+    const query = 'select count(*) as count from branch';
+
+    db.query(query, (err, results) => {
+      if (err) {
+        return res.status(500).json({ error: err.message });
+      }
+      res.json(results[0]);
+    });
+});
 
 app.get('/branch/:id', (req,res) => {
     const getByIdQuery = 'select * from branch where id=?'
@@ -539,38 +568,6 @@ app.put('/branch/:id', (req,res) => {
         return res.status(201).send({statusCode:201, statusMessage:'Updated Successfully'})
     })
 })  
-
-//     // const Nameregex = /^[A-Za-z\s]{1,50}$/; // Example: letters and spaces, max length 50
-//     // if(!Nameregex.test(req.body.senderDetails)) {
-//     //     return res.status(400).json({error: 'Invalid sender name'})
-//     // }
-
-//     // if(!Nameregex.test(req.body.recipientDetails)) {
-//     //     return res.status(400).json({error: 'Invalid recipient name'})
-//     // }
-    
-//     // const isValidDate = (senderDate, recipientDate) => {
-//     //     const regex = /^\d{4}-\d{2}-\d{2}$/; // Example: YYYY-MM-DD format
-//     //     return regex.test(senderDate, recipientDate) && !isNaN(new Date(senderDate, recipientDate).getTime());
-//     // };
-
-//     // if(!isValidDate) {
-//     //     return res.status(400).json({error: 'Invalid date'})
-//     // }
-
-//     const Dateregex = /^\d{2}-\d{2}-\d{4}$/; // Example: YYYY-MM-DD format
-
-//     // if(!Dateregex.test(req.body.senderDate) && !isNaN(new Date(senderDate).getTime())) {
-//     //     return res.status(400).json({error: 'Invalid sender date'})
-//     // }
-
-//     // if(!Dateregex.test(req.body.recipientDate) && !isNaN(new Date(recipientDate).getTime())) {
-//     //     return res.status(400).json({error: 'Invalid recipient date'})
-//     // }
-
-//     // if(!Dateregex.test(req.body.senderDetails)) {
-//     //     return res.status(400).json({error: 'Invalid sender date'})
-//     // }
 
 app.post('/parcel', (req, res) => {
     const createQuery = 'insert into parcel(`referenceNumber`, `senderDetails`, `recipientDetails`, `parcelDetails`, `status`) VALUES(?,?,?,?, ?)';
@@ -784,15 +781,6 @@ app.delete('/parcel/:id', (req,res) => {
         return res.send('Deleted Successfully')
     })
 })
-
-// app.put('/parcel/:id', (req,res) => {
-
-//     // Validate zip code (assuming it should be a 5-digit number)
-//     const RNRegex = /^(?:P)?[0-9]{4}$/; 
-//     if (!RNRegex.test(req.body.referenceNumber)){
-//         return res.status(400).json({ message: 'Invalid reference Number' });
-//     }
-
 //     const Nameregex = /^[A-Za-z\s]{1,50}$/; // Example: letters and spaces, max length 50
 
 //     if(!Nameregex.test(req.body.senderName)) {
@@ -801,25 +789,6 @@ app.delete('/parcel/:id', (req,res) => {
 
 //     if(!Nameregex.test(req.body.recipientName)) {
 //         return res.status(400).json({error: 'Invalid recipient name'})
-//     }
-    
-//     // const isValidDate = (senderDate, recipientDate) => {
-//     //     const regex = /^\d{4}-\d{2}-\d{2}$/; // Example: YYYY-MM-DD format
-//     //     return regex.test(senderDate, recipientDate) && !isNaN(new Date(senderDate, recipientDate).getTime());
-//     // };
-
-//     // if(!isValidDate) {
-//     //     return res.status(400).json({error: 'Invalid date'})
-//     // }
-
-//     const Dateregex = /^\d{4}-\d{2}-\d{2}$/; // Example: YYYY-MM-DD format
-
-//     if(!Dateregex.test(req.body.senderDate) && !isNaN(new Date(senderDate).getTime())) {
-//         return res.status(400).json({error: 'Invalid sender date'})
-//     }
-
-//     if(!Dateregex.test(req.body.recipientDate) && !isNaN(new Date(recipientDate).getTime())) {
-//         return res.status(400).json({error: 'Invalid recipient date'})
 //     }
 // })
 
@@ -981,22 +950,7 @@ app.post('/staff', async (req,res) => {
     })
 })
 
-
-// app.get('/staff', (req,res) => {
-
-//     const getAllQuery = `select staff.id, staff.staffId, fullName, branchName, position, email, userprofile.contactNumber from staff 
-//                          left join userprofile on staff.id = userprofile.staffId 
-//                          join branch on branch.id = staff.branchId`
-
-//     db.query(getAllQuery, (err,data) => {
-//         if(err) {
-//             return res.json(err)
-//         } 
-//         return res.send(data)
-//     })
-// })
-
-app.get('/staff', authenticationToken, (req, res) => {
+app.get('/staff', (req, res) => {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
     const offset = (page - 1) * limit;
@@ -1146,8 +1100,53 @@ app.put('/staff/:id', async (req,res) => {
     })
 })
 
-app.put('/profile/:id', async (req, res) => {
-    const updateProfileQuery = `update userProfile set fullName=?, password=?, contactNumber=?, email=?, gender=?, birthday=? where id=?`
+app.use(express.static('../frontend/src/assets'))
+
+// image stroage confing
+// const stroage = multer.diskStorage({
+//     destination: (req, file, callback) => {
+//         callback(null, '../frontend/src/assets/images')
+//     },
+//     filename: (req, file, callback) => {
+//         callback(null, file.fieldname + "_" + Date.now() + path.extname(file.originalname))
+//         // callback(null, `image-${Date.now()}.${file.originalname}`)
+//     }
+// })
+
+// //image filter
+// const isImage = (req, file, callback) => {
+//     if(file.mimetype.startsWith('image')) {
+//         callback(null, true)
+//     } else {
+//         callback(null, Error('only image is allowed'))
+//     }
+// }
+
+// const upload = multer({
+//     storage: stroage,
+//     // fileFilter: isImage
+// })
+
+// Multer configuration for file uploads
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
+
+app.post('/profile', upload.single('image'), (req,res) => {
+    // console.log(req.file)
+    // const image = req.file.fieldname
+    const image = req.file.buffer
+    const updateUserProfileQuery = 'update userprofile set image=?'
+    
+    db.query(updateUserProfileQuery, [image], (err, profile) => {
+        if(err) {
+            return res.json({statusCode: 500, statusMessage: 'Error'})
+        }
+        return res.json({statusCode: 200, statusMessage: 'Success'})
+    })
+})
+
+app.put('/profile/:id', upload.single('image'), async (req, res) => {
+    const updateProfileQuery = `update userProfile set image=?, fullName=?, password=?, contactNumber=?, email=?, gender=?, birthday=? where id=?`
 
     const saltRounds = 10;
     const hashedPassword = await bcrypt.hash(req.body.password.toString(), saltRounds);
@@ -1169,6 +1168,7 @@ app.put('/profile/:id', async (req, res) => {
 
     // Construct values array for insertion
     const values = [
+        req.file.buffer,
         req.body.fullName,
         hashedPassword,
         req.body.contactNumber,
@@ -1187,14 +1187,33 @@ app.put('/profile/:id', async (req, res) => {
 
     db.query(updateProfileQuery, [values], (err, data) => {
         if(err) {
-            if(err.errno === 1062) {
-                return res.status(500).json({ statusCode: 500, statusMessage: 'Duplicate entry' });
-            }
-            return res.status(500).json(err);
+            return res.status(500).json({ statusMessage: 'Internal server error' });
         }
-        return res.status(201).json({ statusCode: 201, statusMessage: 'User Profile Updated Successfully' });
+
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ statusMessage: 'User not found' });
+        }
+
+        return res.status(200).json({ statusCode: 200, statusMessage: 'User Profile Updated Successfully' });
     });
 });
+
+app.get('/profile/:id', (req,res) => {
+    const getProfileQuery = 'select * from userprofile where id=?'
+
+    db.query(getProfileQuery, [req.params.id], (err,profile) => {
+        if(err) {
+            return res.status(500).json({ statusCode: 500, statusMessage: 'Internal server error'});
+        }
+
+        if(profile.length === 0) {
+            return res.status(404).json({statusCode: 404, statusMessage: 'user not found'})
+        }
+
+        res.contentType('image/jpeg');
+        res.send(profile[0].image)
+    })
+})
 
 // import http from 'http';
 // import formidable from 'formidable'
@@ -1228,19 +1247,6 @@ app.post('/get-otp', (req, res) => {
     // Your logic to generate and send OTP
     res.status(200).json({ message: 'OTP sent successfully' });
 });
-
-// In your Node.js backend
-// app.post('/reset-password', (req, res) => {
-//     const { password, confirmPassword } = req.body;
-    
-//     // Your logic to reset the password
-//     if (password === confirmPassword) {
-//         // Perform password reset logic here
-//         res.status(200).json({ message: 'Password reset successfully' });
-//     } else {
-//         res.status(400).json({ message: 'Passwords do not match' });
-//     }
-// });
 
 // In your Node.js backend
 app.post('/verify-otp', (req, res) => {
@@ -1298,8 +1304,6 @@ app.get('/fetchRole', (req, res) => {
         return res.status(200).json({statusCode:200, role: data[0].role})
     })
 });
-
-
 
 app.listen(6431, () => {
     console.log("Running")

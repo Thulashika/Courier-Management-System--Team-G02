@@ -25,25 +25,16 @@ import axios from 'axios'
 import { Icon } from 'react-icons-kit';
 import { eyeOff } from 'react-icons-kit/feather/eyeOff';
 import { eye } from 'react-icons-kit/feather/eye';
-import { toast } from 'react-toastify'
 import { LOGIN_ERRORS } from '../../../const'
 import { useDispatch } from 'react-redux'
 
-// function useQuery() {
-//   const {search} = useLocation()
-//   return React.useMemo (() => new URLSearchParams(search), [search])
-// }
-
 const Login = () => {
 
-  const [Fvisible, setFVisible] =  useState(false)
-  const [Rvisible, setRVisible] =  useState(false)
   const [visible, setVisible] =  useState(false)
+  const [Fvisible, setFVisible] =  useState(false)
   const [error, setError] = useState('')
   const [isValid, setIsValid] = useState(true);
   const [email, setEmail] = useState('')
-  const [password, setPassword] = useState()
-  const [message, setMessage] = useState('')
 
   const {id, token} = useParams()
 
@@ -51,8 +42,6 @@ const Login = () => {
     email:'',
     password:''
   })
-
-  // const query = useQuery()
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -111,7 +100,6 @@ const Login = () => {
     }
 
     setFVisible(false)
-    setRVisible(true)
 
     if(isValid) {
       axios('http://localhost:6431/forgot-password', {
