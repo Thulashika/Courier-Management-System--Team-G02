@@ -10,6 +10,7 @@ export const BRANCH_ERRORS = {
 }
 
 export const PARCEL_ERRORS = {
+    NUMBER_VALIDATION: 'Please enter your email',
     NUMBER_LENGTH_VALIDATION: 'Parcel reference number must be exactly 5 digits',
     NUMBER_FORMAT_VALIDATION: 'Parcel reference number is not in the correct format',
 

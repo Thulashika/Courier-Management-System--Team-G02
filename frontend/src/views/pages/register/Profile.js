@@ -14,12 +14,13 @@ import {
     CRow 
 } from '@coreui/react'
 import axios from 'axios'
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import Icon from 'react-icons-kit'
 import { eyeOff } from 'react-icons-kit/feather/eyeOff'
 import { eye } from 'react-icons-kit/feather/eye'
 import { useNavigate } from 'react-router-dom'
 import profile from '../../../assets/images/profile.png'
+import { AuthContext } from './AuthProvider'
 
 const Profile = () => {
 
@@ -28,7 +29,6 @@ const Profile = () => {
     fullName:'',
     password:'',
     contactNumber:'',
-    email:'',
     gender:'',
     birthday:''
   })
@@ -36,19 +36,22 @@ const Profile = () => {
   const [visible, setVisible] = useState(false); 
   const [error, setError] = useState('')
   const [isValid, setIsValid] = useState(true);
+  const [preview, setPreview] = useState(null);
 
   const navigate = useNavigate()
 
-  // useEffect(() => {
-  //   axios('/http://localhost:6431/profile/:id', {
-  //     method:'GET'
-  //   }).then(res => {
-  //     setUser(res.data[0])
-  //   }).catch(err => {
-  //     // alert('There was an error fetching the user profile!')
-  //     console.log(err)
-  //   })
-  // })
+  const { userDetails } = useContext(AuthContext);
+
+  useEffect(() => {
+    axios(`http://localhost:6431/profile/${userDetails.id}`, {
+      method:'GET'
+    }).then(res => {
+      setUser(res.data.profile)
+    }).catch(err => {
+      // alert('There was an error fetching the user profile!')
+      console.log(err)
+    })
+  }, [])
 
   const handleSubmit = async (e) => {
     e.preventDefault()    
@@ -63,12 +66,14 @@ const Profile = () => {
       return;
     }
 
-    if (!user.password || user.password.length < 4 || user.password.length > 10) {
-        setError('Password must be between 4 and 10 characters')
-        setIsValid(false)
-        return;
-      }
-
+    // if(user.password) {
+    //   if (user.password.length < 4 || user.password.length > 10) {
+    //     setError('Password must be between 4 and 10 characters')
+    //     setIsValid(false)
+    //     return;
+    //   }
+    // }
+   
     const CNMPpattern = /^(?:0)?([7][01245678][0-9]{7})$/;
     // const CNLPpattern = /^(?:0)(?:11|21|41|21|22|23|24|25|26|27|28|31|32|33|34|35|36|37|38|41)\d{7}$/;
 
@@ -93,13 +98,21 @@ const Profile = () => {
     }
 
     if(isValid) {
-      axios('http://localhost:6431/profile', {
-        data: user,
+
+      const formData = new FormData();
+      formData.append('image', user.image)
+      formData.append('fullName', user.fullName)
+      formData.append('password', user.password)
+      formData.append('contactNumber', user.contactNumber)
+      formData.append('birthday', user.birthday)
+      formData.append('gender', user.gender)
+
+      axios(`http://localhost:6431/profile/${userDetails.id}`, {
+        data: formData,
         method:'PUT'
       }).then(res => {
         if (res.data.statusCode === 201) {
           alert("Profile Updated successfully")
-          navigate('/')
         } else {
           alert("Not profile updated successfully")
         }
@@ -113,6 +126,29 @@ const Profile = () => {
     }
   }
 
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+            setUser({...user, image: file});
+            setPreview(reader.result);
+        };
+        reader.readAsDataURL(file);
+    } else {
+        setUser({...user, image: null});
+        setPreview(null);
+    }
+};
+
+  const handleDivClick = () => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/*';
+    input.onchange = handleImageChange;
+    input.click();
+};
+
   return (
     <div className="bg-body-tertiary min-vh-100 d-flex flex-row align-items-center">
     <CContainer>
@@ -123,25 +159,26 @@ const Profile = () => {
               <CForm onSubmit={handleSubmit}>
                 <h1>Account Information</h1>
                 <div
-                  onClick={() => {
-                    const input = document.createElement('input')
-                    input.type = 'file'
-                    input.accept = '/image/*'
-                    input.onChange = (e) => {
-                      setUser({...user, image:e.target.files[0]})
-                    }
-                    input.click()
-                  }} 
+                    onClick={handleDivClick}
+                    style={{
+                        display: 'inline-block',
+                        padding: '10px',
+                        cursor: 'pointer',
+                    }}
                 >
-                   {
-                    user.image ? 
-                    <img src={URL.createObjectURL(user.image)} alt='profile' height={100} width={100}/>
-                    : 
-                    <img src={profile} alt='profile' height={100} width={100}/>
-                    }
-                  {/* <img src={profile} alt='profile' height={100} width={100}/> */}
-                  <CInputGroup className="mb-3">
-                  </CInputGroup>
+                    {preview ? (
+                        <img src={preview}
+                            alt="Image Preview"
+                            style={{ width: '100px', height: '100px', borderRadius: '50%', objectFit: 'cover' }}
+                        />
+                    ) : (
+                        <img
+                            src={profile} // replace with the URL of your default profile image
+                            alt="Profile"
+                            height={100}
+                            width={100}
+                        />
+                    )}
                 </div>
                
                 <CInputGroup className="mb-3">
@@ -171,7 +208,6 @@ const Profile = () => {
                     autoComplete="new-password"
                     // pattern='/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[\W_]).{8,}$/'
                     onChange={(e) => setUser({...user, password:e.target.value})}
-                    required
                     minLength={4}
                     maxLength={10}
                   />
@@ -205,10 +241,8 @@ const Profile = () => {
                   <CFormInput 
                     id='Email'
                     type='email'
-                    placeholder="Email" 
-                    autoComplete="email"  
                     onChange={(e) => setUser({...user, email:e.target.value})}
-                    required
+                    readOnly
                     defaultValue={user.email}
                   />
                 </CInputGroup>
@@ -221,7 +255,8 @@ const Profile = () => {
                         name="Male" 
                         id="Male" 
                         label="Male" 
-                        value='Male'
+                        value='MALE'
+                        checked={user.gender === 'MALE'}
                         onChange={(e) => setUser({...user, gender:e.target.value})}
                     />
                     <CFormCheck 
@@ -230,7 +265,8 @@ const Profile = () => {
                         name="Female" 
                         id="Female" 
                         label="Female" 
-                        value='Female'
+                        value='FEMALE'
+                        checked={user.gender === 'FEMALE'}
                         onChange={(e) => setUser({...user, gender:e.target.value})}
                     />
                     <CFormCheck 
@@ -239,7 +275,8 @@ const Profile = () => {
                         name="Other" 
                         id="Other" 
                         label="Other" 
-                        value='Other'
+                        value='OTHER'
+                        checked={user.gender === 'OTHER'}
                         onChange={(e) => setUser({...user, gender:e.target.value})}
                     />
                 </CInputGroup>
@@ -253,7 +290,6 @@ const Profile = () => {
                     placeholder="Birthday" 
                     autoComplete="birthday"  
                     onChange={(e) => setUser({...user, birthday:e.target.value})}
-                    required
                   />
                 </CInputGroup>
 

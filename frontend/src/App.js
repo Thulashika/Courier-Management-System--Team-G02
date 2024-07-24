@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux'
 
 import { CSpinner, useColorModes } from '@coreui/react'
 import './scss/style.scss'
+import { AuthProvider } from './views/pages/register/AuthProvider'
 
 // Containers
 const DefaultLayout = React.lazy(() => import('./layout/DefaultLayout'))
@@ -37,6 +38,7 @@ const App = () => {
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
+    <AuthProvider>
     <Router>
       <Suspense
         fallback={
@@ -58,6 +60,7 @@ const App = () => {
         </Routes>
       </Suspense>
     </Router>
+    </AuthProvider>
   )
 }
 
