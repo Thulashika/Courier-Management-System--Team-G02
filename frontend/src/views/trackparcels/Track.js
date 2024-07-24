@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { 
   CCard, 
   CCol,
@@ -9,19 +9,21 @@ import {
   CFormInput
 } from '@coreui/react'
 import axios from 'axios';
+import { PARCEL_ERRORS } from '../../const';
+import { useSelector } from 'react-redux';
+import { AuthContext } from '../pages/register/AuthProvider';
 
 const Track = () => {
 
   const [trackingNumber, setTrackingNumber] = useState('');
   // const [trackingStatus, setTrackingStatus] = useState([]);
-  const [trackingInfo, setTrackingInfo] = useState(null);
+  // const [trackingInfo, setTrackingInfo] = useState(null);
+  const [parcel, setParcel] = useState(null);
   const [error, setError] = useState('');
+  const [isValid, setIsValid] = useState(true);
 
   // const handleSearchClick = () => {
-  //   if (trackingNumber.trim() === '') {
-  //     setError('Please enter a valid tracking number');
-  //     return;
-  //   }
+    
 
   //   setError('');
     
@@ -37,14 +39,69 @@ const Track = () => {
     // setTrackingStatus(simulatedData);
   // };
 
-  const handleSearch = async () => {
-    try {
-      const response = await axios.get(`/track?number=${trackingNumber}`);
-      setTrackingInfo(response.data);
-      setError('');
-    } catch (err) {
-      setError('Error fetching tracking information');
-      setTrackingInfo(null);
+  const { userDetails } = useContext(AuthContext);
+  console.log(userDetails)
+
+  const handleSearch = async (e) => {
+    e.preventDefault()
+    setError('');
+    setIsValid(true);
+
+    const BCregex = /^(?:P)?[0-9]{4}$/;
+
+    // Validate parcel details
+    // for (const item of parcel.parcelDetails) {
+      if (trackingNumber.trim() === '') {
+        // setError('Please enter a valid tracking number');
+        setError(PARCEL_ERRORS.NUMBER_VALIDATION)
+        setIsValid(false);
+        return;
+      }
+
+      if (trackingNumber.length !== 5) {
+        console.log('Error: Tracking number length is not 5');
+        setError(PARCEL_ERRORS.NUMBER_LENGTH_VALIDATION);
+        setIsValid(false);
+        return;
+      }
+  
+      if (!BCregex.test(trackingNumber)) {
+        console.log('Error: Tracking number format is invalid');
+        setError(PARCEL_ERRORS.NUMBER_FORMAT_VALIDATION);
+        setIsValid(false);
+        return;
+      }
+    // }
+
+    // try {
+    //   const response = await axios.get(`http://localhost:6431/track_parcels/${trackingNumber}`);
+    //   console.log('API Response:', response.data); // Add this line
+    //   setParcel(response.data);
+    //   setError('');
+    // } catch (err) {
+      // setError('Parcel not found');
+      // setParcel(null);
+    // }
+    
+    if (isValid) {
+      axios
+        .get(`http://localhost:6431/track_parcels/${trackingNumber}`)
+        .then((res) => {
+          if (res.data.statusCode === 200) {
+            setParcel(res.data);
+            setError('');
+          } else {
+            alert('Not found parcel');
+          }
+        })
+        .catch((err) => {
+          if (err.response?.data?.statusCode === 500) {
+            setError('Parcel not found');
+            setParcel(null);
+            return
+          }
+          alert('Not found');
+        });
     }
   };
 
@@ -70,32 +127,24 @@ const Track = () => {
               <CButton color='primary' onClick={handleSearch}>Search</CButton>
             </CCol>
           </CRow>
-          {/* <CRow className="mb-3 text-center">
-            <p>Item accepted by Courier</p>
-          </CRow>
-          <CRow className="mb-3 text-center">
-            <p>Collected</p>
-          </CRow>
-          <CRow className="mb-3 text-center">
-            <p>Shipped</p>
-          </CRow>
-          <CRow className="mb-3 text-center">
-            <p>In-Transit</p>
-          </CRow>
-          <CRow className="mb-3 text-center">
-            <p>Delivered</p>
-          </CRow> */}
-
           {error && (
             <CRow className="mb-3 text-center">
               <p style={{ color: 'red' }}>{error}</p>
             </CRow>
           )}
-          {trackingInfo > 0 && trackingInfo.status.map((status, index) => (
+
+          {/* {parcel > 0 && parcel.status.map((trackParcel, index) => (
             <CRow key={index} className="mb-3 text-center">
-              <p>{status.date} - {status.time} - {status.status}</p>
+              <p>Status: {trackParcel.status}</p>
             </CRow>
-          ))}
+          ))} */}
+
+
+            {parcel && 
+              <CRow className="mb-3 text-center">
+                <p>Status: {parcel.status.status}  </p>
+              </CRow>
+            }
         </CCol>
       </CRow>
     </CCard>

@@ -1,5 +1,5 @@
-import React, { createContext, useState } from 'react'
-import { Link, useNavigate, useParams } from 'react-router-dom'
+import React, { useContext, useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
 import {
   CButton,
   CCard,
@@ -21,12 +21,12 @@ import {
 import CIcon from '@coreui/icons-react'
 import { cilLockLocked} from '@coreui/icons'
 import axios from 'axios'
-
 import { Icon } from 'react-icons-kit';
 import { eyeOff } from 'react-icons-kit/feather/eyeOff';
 import { eye } from 'react-icons-kit/feather/eye';
 import { LOGIN_ERRORS } from '../../../const'
-import { useDispatch } from 'react-redux'
+import { AuthContext } from '../register/AuthProvider'
+
 
 const Login = () => {
 
@@ -34,17 +34,16 @@ const Login = () => {
   const [Fvisible, setFVisible] =  useState(false)
   const [error, setError] = useState('')
   const [isValid, setIsValid] = useState(true);
-  const [email, setEmail] = useState('')
-
-  const {id, token} = useParams()
 
   const [user, setUser] = useState({
     email:'',
-    password:''
+    password:'',
+    id: 0
   })
 
+  const { login } = useContext(AuthContext);
+
   const navigate = useNavigate();
-  const dispatch = useDispatch();
 
   const handleSubmit = (e)=> {
     e.preventDefault()
@@ -65,8 +64,9 @@ const Login = () => {
       }).then(res => {
         if(res.data.statusCode === 200){
           alert("Login succesfully")
+          login(res.data.email, res.data.id, res.data.role);
           navigate('/')
-          dispatch({type: 'SET_EMAIL', payload: user.email})
+          // dispatch({type: 'SET_DETAILS', payload: {email: user.email, id: res.data.id}})
           // localStorage.setItem('token', res.data.token)
           // localStorage.removeItem('token')
         } else {
@@ -93,7 +93,7 @@ const Login = () => {
     setIsValid(true)
 
 
-    if (!email) {
+    if (!user.email) {
       setError(LOGIN_ERRORS.EMAIL_VALIDATION);
       setIsValid(false)
       return;
@@ -103,7 +103,7 @@ const Login = () => {
 
     if(isValid) {
       axios('http://localhost:6431/forgot-password', {
-        data: { email: email },
+        data: { email: user.email },
         method: 'POST'
       }).then(res => {
         if(res.data.statusCode === 200) {
@@ -199,8 +199,8 @@ const Login = () => {
                       className="form-control"
                       id="recipient-email"
                       autoComplete="off"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
+                      value={user.email}
+                      onChange={(e) => setUser({...user, email: e.target.value})}
                       required
                     />
                     {!isValid && error === LOGIN_ERRORS.EMAIL_VALIDATION && <p>{error}</p>}

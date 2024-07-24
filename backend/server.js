@@ -6,7 +6,6 @@ import bcrypt from 'bcrypt'; // for password hashing comparison
 import jwt from 'jsonwebtoken'; // for token generation
 import path from 'path'
 import nodemailer from 'nodemailer'
-import { report } from 'process';
 import cookieParser from 'cookie-parser';
 import multer from 'multer'
 
@@ -205,7 +204,7 @@ app.post('/userLogin', async (req,res) => {
             // for cookie authentication only
             res.cookie('token', token, { httpOnly: true, secure: true, sameSite: true});
 
-            return res.status(200).json({statusCode:200, message: 'Login successful', token });
+            return res.status(200).json({statusCode:200, message: 'Login successful', token, email, id: user.id, role: user.role });
         });
     });
 })
@@ -852,28 +851,6 @@ const getBranchIdByBranchCode = (branchCode) => {
     });
 };
 
-// // Mock tracking data
-// const trackingData = {
-//     '123456': [
-//       { date: '2024-07-17', time: '10:00 AM', status: 'Item accepted by Courier' },
-//       { date: '2024-07-18', time: '11:00 AM', status: 'Collected' },
-//       { date: '2024-07-19', time: '12:00 PM', status: 'Shipped' },
-//       { date: '2024-07-20', time: '01:00 PM', status: 'In-Transit' },
-//       { date: '2024-07-21', time: '02:00 PM', status: 'Delivered' },
-//     ]
-//   };
-  
-//   app.get('/track', (req, res) => {
-//     const trackingNumber = req.query.number;
-//     const trackingInfo = trackingData[trackingNumber];
-  
-//     if (trackingInfo) {
-//       res.json({ statuses: trackingInfo });
-//     } else {
-//       res.status(404).json({ message: 'Tracking number not found' });
-//     }
-//   });
-
 app.get('/track_parcels/:referenceNumber', (req, res) => {
     const getByTrackingNoQuery = 'select status from parcel where referenceNumber=?'
 
@@ -881,14 +858,14 @@ app.get('/track_parcels/:referenceNumber', (req, res) => {
         req.params.referenceNumber
     ]
 
-    db.query(getByTrackingNoQuery, values, (err, data) => {
+    db.query(getByTrackingNoQuery, [values], (err, data) => {
         if (err) {
             return res.status(500).json({ error: 'Internal Server Error', details: err });
         }
         if (data.length === 0) {
             return res.status(404).json({ message: 'Tracking number not found' });
         }
-        return res.json({ status: data[0].status });
+        return res.json({ statusCode: 200, status: data[0]});
     })
 })
 
@@ -1131,6 +1108,7 @@ app.use(express.static('../frontend/src/assets'))
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
+
 app.post('/profile', upload.single('image'), (req,res) => {
     // console.log(req.file)
     // const image = req.file.fieldname
@@ -1146,14 +1124,25 @@ app.post('/profile', upload.single('image'), (req,res) => {
 })
 
 app.put('/profile/:id', upload.single('image'), async (req, res) => {
-    const updateProfileQuery = `update userProfile set image=?, fullName=?, password=?, contactNumber=?, email=?, gender=?, birthday=? where id=?`
 
-    const saltRounds = 10;
-    const hashedPassword = await bcrypt.hash(req.body.password.toString(), saltRounds);
+    let imageBuffer = req.file ? req.file.buffer : null
 
-    // Validate password length
-    if (req.body.password.length < 4 || req.body.password.length > 10) {
-        return res.status(400).json({ error: 'Password must be between 4 and 10 characters' });
+    if (imageBuffer) {
+        imageBuffer = imageBuffer.toString('base64'); // Convert image buffer to Base64 string
+    }
+
+    const updateProfileQuery = 'update userprofile set image=?, fullName=?, password=?, contactNumber=?, gender=?, dob=? where id=?'
+
+    let hashedPassword = null;
+
+    if(req.body.password.length < 10 && req.body.password.length > 4) {
+        const saltRounds = 10;
+        hashedPassword = await bcrypt.hash(req.body.password.toString(), saltRounds);
+    
+        // Validate password length
+        if (req.body.password.length < 4 || req.body.password.length > 10) {
+            return res.status(400).json({ error: 'Password must be between 4 and 10 characters' });
+        }
     }
 
     // Validate contact number (assuming it should be a 10-digit number)
@@ -1161,18 +1150,13 @@ app.put('/profile/:id', upload.single('image'), async (req, res) => {
     if (!CNMPregex.test(req.body.contactNumber)){
         return res.status(400).json({ message: 'Invalid contact number' });
     }
-    // Validate email
-    if (!validator.isEmail(req.body.email)) {
-        return res.status(400).json({ message: 'Invalid email format' });
-    }
 
     // Construct values array for insertion
     const values = [
-        req.file.buffer,
+        imageBuffer,
         req.body.fullName,
-        hashedPassword,
+        hashedPassword ? hashedPassword : req.body.password,
         req.body.contactNumber,
-        req.body.email,
         req.body.gender,
         req.body.birthday,
         req.params.id
@@ -1185,16 +1169,12 @@ app.put('/profile/:id', upload.single('image'), async (req, res) => {
         return res.status(400).json({ error: 'All fields are required' });
     }
 
-    db.query(updateProfileQuery, [values], (err, data) => {
+    db.query(updateProfileQuery, values, (err, data) => {
         if(err) {
             return res.status(500).json({ statusMessage: 'Internal server error' });
         }
 
-        if (result.affectedRows === 0) {
-            return res.status(404).json({ statusMessage: 'User not found' });
-        }
-
-        return res.status(200).json({ statusCode: 200, statusMessage: 'User Profile Updated Successfully' });
+        return res.status(200).json({ statusCode: 201, statusMessage: 'User Profile Updated Successfully'});
     });
 });
 
@@ -1210,8 +1190,9 @@ app.get('/profile/:id', (req,res) => {
             return res.status(404).json({statusCode: 404, statusMessage: 'user not found'})
         }
 
-        res.contentType('image/jpeg');
-        res.send(profile[0].image)
+        return res.status(200).json({statusCode: 200, statusMessage: 'user found', profile: profile[0]})
+        // res.contentType('image/jpeg');
+        // res.send(profile[0].image)
     })
 })
 
@@ -1279,29 +1260,7 @@ app.get('/userStatus/:id', (req, res) => {
         if(err) {
             return res.status(500).json(err)
         }
-        // return res.json(data)
         return res.status(200).json({statusCode:200, statusMessage:'User found'})
-    })
-});
-
-app.get('/fetchRole', (req, res) => {
-
-    if(!req.query.email) {
-        return res.status(400).json({ message: 'Invalid email address' });
-    }
-
-    const getRole = 'select role from userprofile where email=?'
-
-    const value = [
-        req.query.email
-    ]
-
-    db.query(getRole, value, (err, data) => {
-        if(err) {
-            return res.status(500).json(err)
-        }
-        // return res.json(data)
-        return res.status(200).json({statusCode:200, role: data[0].role})
     })
 });
 

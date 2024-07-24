@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 
 import {
@@ -10,35 +10,18 @@ import {
   CSidebarToggler,
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
-
 import { AppSidebarNav } from './AppSidebarNav'
 import { sygnet } from '../assets/brand/sygnet'
-
-// sidebar nav config
 import navigation from '../_nav'
-import { GlobalStateContext } from '../views/pages/login/Login'
-import axios from 'axios'
+import { AuthContext } from '../views/pages/register/AuthProvider'
 
 const AppSidebar = () => {
   const dispatch = useDispatch()
-  const unfoldable = useSelector((state) => state.sidebarUnfoldable)
-  const sidebarShow = useSelector((state) => state.sidebarShow)
+  const unfoldable = useSelector((state) => state.changeState.sidebarUnfoldable)
+  const sidebarShow = useSelector((state) => state.changeState.sidebarShow)
+  console.log(sidebarShow)
 
-  const [user, setUser] = useState('')
-
-  const state = useSelector(state => state.authChangeState);
-
-  const [role, setRole] = useState('');
-
-  // useEffect(() => {
-  //   axios(`http://localhost:6431/fetchRole?email=${state.email}`, {
-  //     method: 'GET',
-  //   }).then(res => {
-  //     if(res.data.statusCode === 200) {
-  //       setRole(res.data.role);
-  //     }
-  //   })
-  // }, [])
+  const { userDetails } = useContext(AuthContext)
 
   return (
     <CSidebar
@@ -52,12 +35,11 @@ const AppSidebar = () => {
       }}
     >
       <CSidebarHeader className="border-bottom">
-        {/* {state} */}
         <CSidebarBrand to="/">
         {
-          role === 'ADMIN' ? <h4>Admin</h4> :
-          role === 'STAFF' ? <h4>Staff</h4> :
-          role === 'CUSTOMER' ? <h4>Customer</h4> :
+          userDetails.role === 'ADMIN' ? <h4>Admin</h4> :
+          userDetails.role === 'STAFF' ? <h4>Staff</h4> :
+          userDetails.role === 'CUSTOMER' ? <h4>Customer</h4> :
           null
         }
           
@@ -66,7 +48,7 @@ const AppSidebar = () => {
         <CCloseButton
           className="d-lg-none"
           dark
-          onClick={() => dispatch({ type: 'set', sidebarShow: false })}
+          onClick={() => dispatch({ type: 'set', sidebarShow: !sidebarShow })}
         />
       </CSidebarHeader>
       <AppSidebarNav items={navigation} />
