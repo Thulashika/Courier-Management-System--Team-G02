@@ -107,6 +107,7 @@ const AddNew = () => {
   }
 
   return (
+    
     <CRow>
       <CCol>
         <CCard>
