@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 
 import {
   CCard,
@@ -13,6 +13,7 @@ import {
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
 import { BRANCH_ERRORS } from '../../../const'
+import { AuthContext } from '../../pages/register/AuthProvider'
 
 const AddNew = () => {
 
@@ -26,6 +27,8 @@ const AddNew = () => {
   })
 
   const navigate = useNavigate()
+
+  const { branchCount } = useContext(AuthContext);
   
   const [error, setError] = useState('')
   const [isValid, setIsValid] = useState(true);
@@ -87,6 +90,7 @@ const AddNew = () => {
         method:'POST'
       }).then(res => {
         if (res.data.statusCode === 201) {
+          // branchCount(res.data.id)
           navigate('/branch')
         } else {
           alert("Not created successfully")

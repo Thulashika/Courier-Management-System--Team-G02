@@ -60,7 +60,6 @@ const [allBranches, setAllBranches] = useState([])
     }, [])
 
     const handleUpdate = (e) => {
-        console.log("hii")
         e.preventDefault()
         setError('')
         setIsValid(true)
@@ -103,7 +102,6 @@ const [allBranches, setAllBranches] = useState([])
 
   return (
     <CRow>
-    {console.log("hii")}
         <CCol xs={12}>
             <CCard style={{ width: '18rem' }}>
                 <CCardHeader>
@@ -136,7 +134,6 @@ const [allBranches, setAllBranches] = useState([])
                         </CRow>
 
                         <CRow className="mb-3">
-                            {console.log(staff)}
                             <CFormSelect
                                 id='Branch'
                                 type='text'
@@ -148,7 +145,7 @@ const [allBranches, setAllBranches] = useState([])
                                     <option selected='' value=''>
                                         Open this select menu
                                     </option>
-                                    {allBranches.map((branch, index) => (
+                                    {Array.isArray(allBranches) && allBranches.map((branch, index) => (
                                         <option key={index} value={branch.branchCode}>
                                             {branch.branchName}
                                         </option>

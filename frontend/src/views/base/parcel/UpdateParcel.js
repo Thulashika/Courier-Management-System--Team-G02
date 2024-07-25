@@ -69,6 +69,7 @@ const UpdateParcels = () => {
 
   const [error, setError] = useState('');
   const [isValid, setIsValid] = useState(true);
+  const [isEdit, setIsEdit] = useState(false);
 
   const handleInputChange = (index, e) => {
     const { name, value } = e.target;
@@ -111,6 +112,12 @@ const UpdateParcels = () => {
   };
 
   useEffect(() => {
+    if(query.get('type') === 'edit') {
+      setIsEdit(true)
+    } else {
+      setIsEdit(false)
+    };
+    
     axios(`http://localhost:6431/parcel/${query.get('id')}`, {
       method: 'get'
     }).then(res => {
@@ -215,7 +222,7 @@ const UpdateParcels = () => {
   return (
     <CRow>
       <CHeader>
-        <strong>Update Parcel</strong>
+        <strong>{ isEdit ? 'Update Parcel' : 'View Parcel' }</strong>
       </CHeader>
       <CCard className='mb-4'>
         <CCardHeader>
@@ -245,7 +252,7 @@ const UpdateParcels = () => {
                       })
                     }
                     required
-                   
+                    disabled={!isEdit}
                     defaultValue={parcel?.senderDetails.firstName}
                   />
                   <CFormInput
@@ -258,6 +265,7 @@ const UpdateParcels = () => {
                       })
                     }
                     required
+                    disabled={!isEdit}
                     defaultValue={parcel?.senderDetails.lastName}
                   />
                 </CInputGroup>
@@ -275,6 +283,7 @@ const UpdateParcels = () => {
                       })
                     }
                     required
+                    disabled={!isEdit}
                     defaultValue={parcel?.recipientDetails.firstName}
                   />
                   <CFormInput
@@ -287,6 +296,7 @@ const UpdateParcels = () => {
                       })
                     }
                     required
+                    disabled={!isEdit}
                     defaultValue={parcel?.recipientDetails.lastName}
                   />
                 </CInputGroup>
@@ -304,6 +314,7 @@ const UpdateParcels = () => {
                       setParcel({ ...parcel, senderDetails: { ...parcel.senderDetails, address: e.target.value } })
                     }
                     required
+                    disabled={!isEdit}
                     defaultValue={parcel?.senderDetails.address}
                   />
                 </CInputGroup>
@@ -320,6 +331,7 @@ const UpdateParcels = () => {
                       })
                     }
                     required
+                    disabled={!isEdit}
                     defaultValue={parcel?.recipientDetails.address}
                   />
                 </CInputGroup>
@@ -339,6 +351,7 @@ const UpdateParcels = () => {
                       })
                     }
                     required
+                    disabled={!isEdit}
                     defaultValue={parcel?.senderDetails.contactNumber}
                   />
                 </CInputGroup>
@@ -355,6 +368,7 @@ const UpdateParcels = () => {
                       })
                     }
                     required
+                    disabled={!isEdit}
                     defaultValue={parcel?.recipientDetails.contactNumber}
                   />
                 </CInputGroup>
@@ -376,6 +390,7 @@ const UpdateParcels = () => {
                       })
                     }
                     required
+                    disabled={!isEdit}
                     defaultValue={parcel?.senderDetails.NIC}
                   />
                 </CInputGroup>
@@ -392,6 +407,7 @@ const UpdateParcels = () => {
                       })
                     }
                     required
+                    disabled={!isEdit}
                     defaultValue={parcel?.recipientDetails.NIC}
                   />
                 </CInputGroup>
@@ -415,6 +431,7 @@ const UpdateParcels = () => {
                       }
                     })}
                     required
+                    disabled={!isEdit}
                     defaultValue={parcel?.senderDetails.date}
                   />
                 </CInputGroup>
@@ -433,6 +450,7 @@ const UpdateParcels = () => {
                       }
                     })}
                     required
+                    disabled={!isEdit}
                     defaultValue={parcel?.recipientDetails.date}
                     min={parcel.senderDetails.date}
                   />
@@ -452,6 +470,7 @@ const UpdateParcels = () => {
                       })
                     }
                     required
+                    disabled={!isEdit}
                     value={parcel?.senderDetails.branchProcessed}
                   >
                     <option value=''>Please Select Branch</option>
@@ -471,6 +490,7 @@ const UpdateParcels = () => {
                       })
                     }
                     required
+                    disabled={!isEdit}
                     value={parcel?.recipientDetails.branchProcessed}
                   >
                     <option value=''>Please Select Branch</option>
@@ -522,6 +542,7 @@ const UpdateParcels = () => {
                         value={item.weight}
                         onChange={(e) => handleInputChange(index, e)}
                         required
+                        disabled={!isEdit}
                         defaultValue={parcel?.parcelDetails.weight}
                       />
                     </CTableDataCell>
@@ -533,6 +554,7 @@ const UpdateParcels = () => {
                         value={item.deliveryCharge}
                         onChange={(e) => handleInputChange(index, e)}
                         required
+                        disabled={!isEdit}
                         defaultValue={parcel?.parcelDetails.deliveryCharge}
                       />
                     </CTableDataCell>
@@ -563,6 +585,7 @@ const UpdateParcels = () => {
                         value={item.paymentMethod}
                         onChange={(e) => handleInputChange(index, e)}                    
                         required
+                        disabled={!isEdit}
                         defaultValue={parcel?.parcelDetails.paymentMethod}
                       >
                           <option value=''>Please Select Method</option>
@@ -580,6 +603,7 @@ const UpdateParcels = () => {
                         value={item.status}
                         onChange={(e) => handleInputChange(index, e)}                    
                         required
+                        disabled={!isEdit}
                         defaultValue={parcel?.parcelDetails.status}
                       >
                           <option value=''>Please Select Status</option>
@@ -595,6 +619,7 @@ const UpdateParcels = () => {
                       <CButton
                         color='danger'
                         variant='ghost'
+                        disabled={!isEdit}
                         onClick={() => deleteItem(index)}
                       >
                         <CIcon icon={cilTrash}/>
@@ -606,22 +631,22 @@ const UpdateParcels = () => {
               </CTableBody>
             </CTable>
 
-            <CRow className="mb-3">
+            { isEdit && <CRow className="mb-3">
               <div className="d-grid gap-2 d-md-flex justify-content-md-end">
                 <CButton type='button' className='me-md-2' color='primary' variant='outline' onClick={UpdateItem}>Update Parcel</CButton>
               </div>
-            </CRow>
+            </CRow>}
 
             <div className='d-grid gap-2 d-md-flex'>
-              <CButton color='success' type='submit'>
+              {isEdit && <CButton color='success' type='submit'>
                 Update
-              </CButton>
+              </CButton>}
               <CButton 
                 color='secondary' 
                 type='submit' 
                 onClick={() => window.confirm('Are you sure you want to cancel this update form?') ? navigate('/parcels') : ''} 
               >
-                Cancel
+                {isEdit ? 'Cancel': 'Done'}
               </CButton>
             </div>
           </CForm>

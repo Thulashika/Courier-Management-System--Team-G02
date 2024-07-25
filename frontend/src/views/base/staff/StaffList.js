@@ -134,7 +134,7 @@ const StaffList = () => {
                     <CTableHeaderCell scope='col'>Id</CTableHeaderCell>
                     <CTableHeaderCell scope='col'>Staff Id</CTableHeaderCell>
                     <CTableHeaderCell scope='col'>Staff Name</CTableHeaderCell>
-                    <CTableHeaderCell scope='col'>Branch Name</CTableHeaderCell>
+                    <CTableHeaderCell scope='col'>Branch</CTableHeaderCell>
                     <CTableHeaderCell scope='col'>Position</CTableHeaderCell>
                     <CTableHeaderCell scope='col'>Email</CTableHeaderCell>
                     <CTableHeaderCell scope='col'>Contact Number</CTableHeaderCell>
@@ -149,7 +149,7 @@ const StaffList = () => {
                     <CTableDataCell>{(page - 1) * limit + index + 1}</CTableDataCell>
                       <CTableDataCell> {staff.staffId} </CTableDataCell>
                       <CTableDataCell> {staff.fullName} </CTableDataCell>
-                      <CTableDataCell> {staff.branchName} </CTableDataCell>
+                      <CTableDataCell> {staff.branch} </CTableDataCell>
                       <CTableDataCell> {staff.position} </CTableDataCell>
                       <CTableDataCell> {staff.email} </CTableDataCell>
                       <CTableDataCell> {staff.contactNumber} </CTableDataCell>

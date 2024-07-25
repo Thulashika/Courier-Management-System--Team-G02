@@ -204,7 +204,7 @@ app.post('/userLogin', async (req,res) => {
             // for cookie authentication only
             res.cookie('token', token, { httpOnly: true, secure: true, sameSite: true});
 
-            return res.status(200).json({statusCode:200, message: 'Login successful', token, email, id: user.id, role: user.role });
+            return res.status(200).json({statusCode:200, message: 'Login successful', token, email, id: user.id, role: user.role, fullName: user.fullName });
         });
     });
 })
@@ -481,7 +481,8 @@ app.get('/branch', (req, res) => {
             if (err) {
                 return res.json(err);
             }
-            return res.send(data);
+            return res.send({data, count: data.length});
+            // return res.status(200).json({statusCode:200, data, id: id});
         });
     });
 });
@@ -496,6 +497,33 @@ app.get('/branch/count', (req, res) => {
         return res.status(500).json({ error: err.message });
       }
       res.json(results[0]);
+    });
+});
+
+app.get('/dashboard/count', (req, res) => {
+
+    const count = `SELECT (SELECT COUNT(*) FROM branch) AS branchCount, 
+                          (SELECT COUNT(*) FROM staff) AS staffCount, 
+                          (SELECT COUNT(*) FROM parcel) AS parcelCount,
+                          (SELECT COUNT(*) FROM parcel WHERE status = 'ACCEPTED') AS acceptCount,
+                          (SELECT COUNT(*) FROM parcel WHERE status = 'DELIVERED') AS deliverCount,
+                          (SELECT COUNT(*) FROM parcel WHERE status = 'COLLECTED') AS collectCount,
+                          (SELECT COUNT(*) FROM parcel WHERE status = 'IN-TRANSIT') AS intransitCount,
+                          (SELECT COUNT(*) FROM parcel WHERE status = 'SHIPPED') AS shipCount`;
+
+    db.query(count, (err, results) => {
+      if (err) {
+        return res.status(500).json({ error: err.message });
+      }
+      res.json({ branchCount: results[0].branchCount, 
+                 staffCount: results[0].staffCount, 
+                 parcelCount: results[0].parcelCount,
+                 acceptCount: results[0].acceptCount,
+                 deliverCount: results[0].deliverCount,
+                 collectCount: results[0].collectCount,
+                 intransitCount: results[0].intransitCount,
+                 shipCount: results[0].shipCount
+               });
     });
 });
 

@@ -113,7 +113,7 @@ const AddNewStaff = () => {
                                     <option selected='' value=''>
                                         Open this select menu
                                     </option>
-                                    {allBranches.map((branch, index) => (
+                                    {Array.isArray(allBranches) && allBranches.map((branch, index) => (
                                         <option key={index} value={branch.branchCode}>
                                             {branch.branchName}
                                         </option>

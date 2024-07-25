@@ -64,7 +64,7 @@ const Login = () => {
       }).then(res => {
         if(res.data.statusCode === 200){
           alert("Login succesfully")
-          login(res.data.email, res.data.id, res.data.role);
+          login(res.data.email, res.data.id, res.data.role, res.data.fullName);
           navigate('/')
           // dispatch({type: 'SET_DETAILS', payload: {email: user.email, id: res.data.id}})
           // localStorage.setItem('token', res.data.token)
