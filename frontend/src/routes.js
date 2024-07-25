@@ -1,4 +1,5 @@
-import React from 'react'
+import React, { useContext } from 'react'
+import { AuthContext } from './views/pages/register/AuthProvider';
 
 const Dashboard = React.lazy(() => import('./views/dashboard/Dashboard'))
 const Home = React.lazy(() => import('./views/home/Home'))
@@ -25,6 +26,8 @@ const UpdateParcel = React.lazy(() => import('./views/base/parcel/UpdateParcel')
 const TrackParcels = React.lazy(() => import('./views/trackparcels/Track'))
 const Reports = React.lazy(() => import('./views/reports/Reports'))
 
+// const { userDetails } = useContext(AuthContext)
+
 const routes = [
   { path: '/', exact: true, name: 'Home' },
   { path: '/dashboard', name: 'Dashboard', element: Dashboard },
@@ -35,7 +38,7 @@ const routes = [
   { path: '/staff/updateStaff',  exact: true, name: 'Update Staff', element: UpdateStaff },
   { path: '/staff', name: 'Branch Staff', element: StaffList },
   { path: '/parcels/new_parcels', name: 'New Parcels', element: NewParcels },
-  { path: '/parcels/updateParcel',  exact: true, name: 'Update Parcel', element: UpdateParcel },
+  { path: '/parcels/editViewParcel',  exact: true, name: 'Update Parcel', element: UpdateParcel },
   { path: '/parcels', name: 'Parcels List', element: ParcelList },
   { path: '/track_parcels', name: 'Track Parcels', element: TrackParcels },
   { path: '/reports', name: 'Reports', element: Reports },

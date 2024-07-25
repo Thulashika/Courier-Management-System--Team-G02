@@ -41,7 +41,6 @@ const List = () => {
   }
 
   const getAll = () => {
-    console.log(getCookie('token'))
     axios('http://localhost:6431/branch', {
       method:'GET',
       params:{
@@ -54,7 +53,7 @@ const List = () => {
       //   'authentication': `Bearer ${getCookie('token')}`
       // }
     }).then(res => {
-      setData(res.data)
+      setData(res.data.data)
     }).catch((err) => {
       console.error('Error fetching branches:', err);
     });
@@ -89,7 +88,7 @@ const List = () => {
   // Calculate the index range for the current page
   const startIndex = (page - 1) * limit;
   const endIndex = startIndex + limit;
-  const paginatedData = data.slice(startIndex, endIndex);
+  const paginatedData = data?.slice(startIndex, endIndex);
 
   const totalPages = Math.ceil(totalBranches / limit);
 

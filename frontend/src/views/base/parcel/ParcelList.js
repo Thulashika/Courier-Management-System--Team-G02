@@ -17,14 +17,16 @@ import {
   CPaginationItem,
   CFormInput, } from '@coreui/react'
 import axios from 'axios'
-import { cilTrash, cilPencil } from '@coreui/icons'
+import { cilTrash, cilPencil, cilCloudDownload, cilDrop, cilArrowThickToBottom } from '@coreui/icons'
 import CIcon  from '@coreui/icons-react'
 import { Link } from 'react-router-dom';
 import eyeIcon from '../../../assets/images/eye.png'
-import QRCodeGenerator from './QRCodeGenerator'
 import QRCode from 'qrcode.react'; // Import QRCode library
 import QRCodeReader, { QrReader } from 'react-qr-reader';
 import { debounce } from 'lodash'
+import ReactToPrint from 'react-to-print';
+import BarCodeGenerator from './BarCodeGenerator'
+import PrintButton from './PrintButton'
 // import { Html5QrcodeScanner } from 'html5-qrcode/minified/html5-qrcode.min.js';
 
 const ParcelList = () => {
@@ -244,10 +246,10 @@ const ParcelList = () => {
                         <CTableDataCell>{parcel.recipientDetails ? JSON.parse(parcel.recipientDetails).date : ''}</CTableDataCell>
                         <CTableDataCell> <span className={`badge text-bg-${getStatus(parcel.status)}`}>{parcel.status}</span></CTableDataCell>
                         {/* <CTableDataCell>
-                          <QRCode value={`Parcel ID: ${parcel.id}`} size={50} /> {/* Generate QR Code */}
-                        {/* </CTableDataCell> */}
+                          <QRCode value={`Parcel ID: ${parcel.id}`} size={50} /> 
+                        </CTableDataCell> */}
                         <CTableDataCell> 
-                          <Link to={`/parcels/read?id=${parcel.id}`}>
+                          <Link to={`/parcels/editViewParcel?id=${parcel.id}&type=view`}>
                             <CButton
                               color='dark'
                               size='sm'
@@ -257,7 +259,7 @@ const ParcelList = () => {
                             </CButton>
                           </Link>
                           
-                          <Link to={`/parcels/updateParcel?id=${parcel.id}`}>
+                          <Link to={`/parcels/editViewParcel?id=${parcel.id}&type=edit`}>
                             <CButton 
                               color='primary' 
                               size='sm' 
@@ -274,6 +276,8 @@ const ParcelList = () => {
                               onClick={() => handleClick(parcel.id)}>
                                 <CIcon icon={cilTrash}/>
                             </CButton>
+
+                            <PrintButton id={parcel.id}></PrintButton>
 
                         </CTableDataCell>
                       </CTableRow>

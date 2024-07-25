@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import PropTypes from 'prop-types'
 
 import {
@@ -20,10 +20,29 @@ import CIcon from '@coreui/icons-react'
 import { cilArrowBottom, cilArrowTop, cilBuilding, cilOptions } from '@coreui/icons'
 import parcel from '../../assets/images/parcel.png'
 import userGroup from '../../assets/images/users.png'
+import { AuthContext } from '../pages/register/AuthProvider'
+import axios from 'axios'
 
 const WidgetsDropdown = (props) => {
   const widgetChartRef1 = useRef(null)
   const widgetChartRef2 = useRef(null)
+
+  const [data, setData] = useState({})
+
+  useEffect(() => {
+    getTotalCount()
+  }, [])
+
+  const getTotalCount = () => {
+    axios
+      .get('http://localhost:6431/dashboard/count')
+      .then((res) => {
+        setData(res.data);
+      })
+      .catch((err) => {
+        console.error('Error fetching total count:', err);
+      });
+  };
 
   useEffect(() => {
     document.documentElement.addEventListener('ColorSchemeChange', () => {
@@ -45,12 +64,14 @@ const WidgetsDropdown = (props) => {
 
   return (
     <CContainer className='mb-4'>
+      {console.log(data)}
     <CRow xs={{ cols: 1, gutter: 4 }} md={{ cols: 3 }} >
       <CCol xs>
-        <CCard className="card text-bg-dark mb-3" style={{ width: '18rem' }}>
+        <CCard className="card mb-3" style={{ width: '18rem' }}>
           <CCardBody>
             <div className="card-body">
-              <h1 className="card-title">50</h1>
+              <h1 className="card-title">{data.branchCount}</h1>
+              {/* <h1 className="card-title">50</h1> */}
               <p className="card-text">Total Branches</p>
             </div>
           </CCardBody>
@@ -59,10 +80,10 @@ const WidgetsDropdown = (props) => {
       </CCol>
       
       <CCol xs>
-        <CCard className="card text-bg-dark mb-3" style={{ width: '18rem' }}>
+        <CCard className="card mb-3" style={{ width: '18rem' }}>
           <CCardBody>
             <div className="card-body">
-              <h1 className="card-title">13</h1>
+              <h1 className="card-title">{data.parcelCount}</h1>
               <p className="card-text">Total Parcels</p>
             </div>
           </CCardBody>
@@ -71,10 +92,10 @@ const WidgetsDropdown = (props) => {
       </CCol>
       
       <CCol xs>
-        <CCard className="card text-bg-dark mb-3" style={{ width: '18rem' }}>
+        <CCard className="card mb-3" style={{ width: '18rem' }}>
           <CCardBody>
             <div className="card-body">
-              <h1 className="card-title">2</h1>
+              <h1 className="card-title">{data.staffCount}</h1>
               <p className="card-text">Total Staff</p> 
             </div>
           </CCardBody>
@@ -85,10 +106,10 @@ const WidgetsDropdown = (props) => {
 
     <CRow xs={{ cols: 1, gutter: 4 }} md={{ cols: 3 }} >
       <CCol  xs>
-        <CCard className="card text-bg-dark mb-3" style={{ width: '18rem' }}>
+        <CCard className="card mb-3" style={{ width: '18rem' }}>
           <CCardBody>
             <div className="card-body">
-              <h1 className="card-title">3</h1>
+              <h1 className="card-title">{data.acceptCount}</h1>
               <p className="card-text">Accepted</p>
             </div>
           </CCardBody>
@@ -96,10 +117,10 @@ const WidgetsDropdown = (props) => {
       </CCol>
       
       <CCol  xs>
-        <CCard className="card text-bg-dark mb-3" style={{ width: '18rem' }}>
+        <CCard className="card mb-3" style={{ width: '18rem' }}>
           <CCardBody>
             <div className="card-body">
-              <h1 className="card-title">5</h1>
+              <h1 className="card-title">{data.collectCount}</h1>
               <p className="card-text">Collected</p>
             </div>
           </CCardBody>
@@ -107,10 +128,10 @@ const WidgetsDropdown = (props) => {
       </CCol>
 
       <CCol  xs>
-        <CCard className="card text-bg-dark mb-3" style={{ width: '18rem' }}>
+        <CCard className="card mb-3" style={{ width: '18rem' }}>
           <CCardBody>
             <div className="card-body">
-              <h1 className="card-title">2</h1>
+              <h1 className="card-title">{data.shipCount}</h1>
               <p className="card-text">Shipped</p>
             </div>
           </CCardBody>
@@ -119,30 +140,30 @@ const WidgetsDropdown = (props) => {
     </CRow>    
     
     <CRow>
-      <CCol  md={4}>
-        <CCard className="card text-bg-dark mb-3" style={{ width: '18rem' }}>
+      <CCol md={4}>
+        <CCard className="card mb-3" style={{ width: '18rem' }}>
           <CCardBody>
             <div className="card-body">
-              <h1 className="card-title">0</h1>
+              <h1 className="card-title">{data.intransitCount}</h1>
               <p className="card-text">In-Transit</p>
             </div>
           </CCardBody>
         </CCard>
       </CCol>
     
-      <CCol  md={4}>
-        <CCard className="card text-bg-dark mb-3" style={{ width: '18rem' }}>
+      <CCol md={4}>
+        <CCard className="card mb-3" style={{ width: '18rem' }}>
           <CCardBody>
             <div className="card-body">
-              <h1 className="card-title">2</h1>
+              <h1 className="card-title">{data.deliverCount}</h1>
               <p className="card-text">Delivered</p>
             </div>
           </CCardBody>
         </CCard>
       </CCol>
 
-      <CCol  md={4}>
-        <CCard className="card text-bg-dark mb-3" style={{ width: '18rem' }}>
+      <CCol md={4}>
+        <CCard className="card mb-3" style={{ width: '18rem' }}>
           <CCardBody>
             <div className="card-body">
               <h1 className="card-title">0</h1>
@@ -155,7 +176,7 @@ const WidgetsDropdown = (props) => {
 
     <CRow>
       <CCol  md={4}>
-        <CCard className="card text-bg-dark mb-3" style={{ width: '18rem' }}>
+        <CCard className="card mb-3" style={{ width: '18rem' }}>
          <CCardBody>
           <div className="card-body">
               <h1 className="card-title">0</h1>
@@ -166,7 +187,7 @@ const WidgetsDropdown = (props) => {
       </CCol>
 
       <CCol  md={4}>
-        <CCard className="card text-bg-dark mb-3" style={{ width: '18rem' }}>
+        <CCard className="card mb-3" style={{ width: '18rem' }}>
           <CCardBody>
             <div className="card-body">
               <h1 className="card-title">0</h1>
@@ -177,7 +198,7 @@ const WidgetsDropdown = (props) => {
       </CCol>
 
       <CCol  md={4}>
-        <CCard className="card text-bg-dark mb-3" style={{ width: '18rem' }}>
+        <CCard className="card mb-3" style={{ width: '18rem' }}>
           <CCardBody>
             <div className="card-body">
               <h1 className="card-title">0</h1>

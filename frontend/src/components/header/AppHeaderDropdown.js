@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import {
   CAvatar,
   CDropdown,
@@ -15,12 +15,15 @@ import {
 import CIcon from '@coreui/icons-react'
 import avatar10 from './../../assets/images/avatars/10.jpg'
 import axios from 'axios'
+import { AuthContext } from '../../views/pages/register/AuthProvider'
 
 const AppHeaderDropdown = () => {
 
   const [user, setUser] = []
   const [userStatus, setUserStatus] = useState(null);
   const [loading, setLoading] = useState(true);
+
+  const { userDetails } = useContext(AuthContext)
 
   useEffect(() => {
     const fetchUserStatus = async () => {
@@ -41,6 +44,10 @@ const AppHeaderDropdown = () => {
     return <p>Loading...</p>;
   }
 
+  const getInitials = (name) => {
+    const initials = name.split(' ').map(word => word[0]).join('');
+    return initials.toUpperCase();
+  };
 
   return (
     <CDropdown variant="nav-item">
@@ -48,7 +55,7 @@ const AppHeaderDropdown = () => {
         {/* { userStatus === 'login' ? <CAvatar src={avatar10} status="success"/> :
           <CAvatar color="secondary" status="danger">TB</CAvatar>
         } */}
-        <CAvatar color="success">YT</CAvatar>
+        <CAvatar color="success">{getInitials(userDetails.fullName)}</CAvatar>
       </CDropdownToggle>
       <CDropdownMenu className="pt-0" placement="bottom-end">
         <CDropdownItem href="/profile">

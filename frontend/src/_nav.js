@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import CIcon from '@coreui/icons-react'
 import {
   cilChartPie,
@@ -13,6 +13,9 @@ import {
   cilUserPlus,
 } from '@coreui/icons'
 import { CNavGroup, CNavItem} from '@coreui/react'
+import { AuthContext } from './views/pages/register/AuthProvider'
+
+// const { userDetails } = useContext(AuthContext)
 
 const _nav = [
   {
