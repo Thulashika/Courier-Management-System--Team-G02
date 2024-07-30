@@ -180,8 +180,8 @@ const Dashboard = () => {
     // <div></div>
     <>
       <WidgetsDropdown className="mb-4" />
-      <CCard className="mb-4">
-        <CCardBody>
+      {/* <CCard className="mb-4"> */}
+        {/* <CCardBody> */}
           {/* <CRow>
             <CCol sm={5}>
               <h4 id="traffic" className="card-title mb-0">
@@ -208,7 +208,7 @@ const Dashboard = () => {
             </CCol>
           </CRow> */}
           {/* <MainChart /> */}
-        </CCardBody>
+        {/* </CCardBody> */}
         {/* <CCardFooter>
           <CRow
             xs={{ cols: 1, gutter: 4 }}
@@ -233,15 +233,15 @@ const Dashboard = () => {
             ))}
           </CRow>
         </CCardFooter> */}
-      </CCard>
+      {/* </CCard> */}
       <WidgetsBrand className="mb-4" withCharts />
-      <CRow>
-        <CCol xs>
-          <CCard className="mb-4">
+      {/* <CRow>
+        <CCol xs> */}
+          {/* <CCard className="mb-4"> */}
             {/* <CCardHeader>Traffic {' & '} Sales</CCardHeader> */}
-            <CCardBody>
-              <CRow>
-                <CCol xs={12} md={6} xl={6}>
+            {/* <CCardBody> */}
+              {/* <CRow> */}
+                {/* <CCol xs={12} md={6} xl={6}> */}
                   {/* <CRow>
                     <CCol xs={6}>
                       <div className="border-start border-start-4 border-start-info py-1 px-3">
@@ -258,7 +258,7 @@ const Dashboard = () => {
                       </div>
                     </CCol>
                   </CRow> */}
-                  <hr className="mt-0" />
+                  {/* <hr className="mt-0" /> */}
                   {/* {progressGroupExample1.map((item, index) => (
                     <div className="progress-group mb-4" key={index}>
                       <div className="progress-group-prepend">
@@ -270,8 +270,8 @@ const Dashboard = () => {
                       </div>
                     </div>
                   ))} */}
-                </CCol>
-                <CCol xs={12} md={6} xl={6}>
+                {/* </CCol> */}
+                {/* <CCol xs={12} md={6} xl={6}> */}
                   {/* <CRow>
                     <CCol xs={6}>
                       <div className="border-start border-start-4 border-start-warning py-1 px-3 mb-3">
@@ -287,7 +287,7 @@ const Dashboard = () => {
                     </CCol>
                   </CRow> */}
 
-                  <hr className="mt-0" />
+                  {/* <hr className="mt-0" /> */}
 
                   {/* {progressGroupExample2.map((item, index) => (
                     <div className="progress-group mb-4" key={index}>
@@ -302,7 +302,7 @@ const Dashboard = () => {
                     </div>
                   ))} */}
 
-                  <div className="mb-5"></div>
+                  {/* <div className="mb-5"></div> */}
 
                   {/* {progressGroupExample3.map((item, index) => (
                     <div className="progress-group" key={index}>
@@ -319,8 +319,8 @@ const Dashboard = () => {
                       </div>
                     </div>
                   ))} */}
-                </CCol>
-              </CRow>
+                {/* </CCol> */}
+              {/* </CRow> */}
 
               <br />
 
@@ -377,10 +377,10 @@ const Dashboard = () => {
                   ))}
                 </CTableBody>
               </CTable> */}
-            </CCardBody>
-          </CCard>
-        </CCol>
-      </CRow>
+            {/* </CCardBody> */}
+          {/* </CCard> */}
+        {/* </CCol>
+      </CRow> */}
     </>
   )
 }

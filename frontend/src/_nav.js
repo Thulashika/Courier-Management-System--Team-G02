@@ -1,18 +1,23 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import CIcon from '@coreui/icons-react'
 import {
   cilChartPie,
   cilChatBubble,
   cilFile,
   cilHappy,
+  cilHome,
   cilIndustry,
   cilNotes,
   cilSpeedometer,
   cilStar,
   cilTruck,
+  cilUser,
   cilUserPlus,
 } from '@coreui/icons'
 import { CNavGroup, CNavItem} from '@coreui/react'
+import { AuthContext } from './views/pages/register/AuthProvider'
+
+// const { userDetails } = useContext(AuthContext)
 
 const _nav = [
   {
@@ -51,6 +56,12 @@ const _nav = [
     to: '/reports',
     icon: <CIcon icon={cilFile} customClassName="nav-icon" />
   },
+  // {
+  //   component: CNavItem,
+  //   name: 'Home',
+  //   icon: <CIcon icon={cilHome} customClassName="nav-icon" />,
+  //   to: '/home'
+  // },
   {
     component: CNavItem,
     name: 'Ourservices',
