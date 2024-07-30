@@ -5,9 +5,10 @@ import CIcon from '@coreui/icons-react';
 import { cilArrowThickToBottom } from '@coreui/icons';
 import BarCodeGenerator from './BarCodeGenerator';
 import PropTypes from 'prop-types'; 
+import { QRCode } from 'react-qrcode-logo';
 
 const PrintButton = ({ id }) => {
-  const componentRef = useRef();
+  const ref = useRef(QRCode)
 
   return (
     <div>
@@ -17,11 +18,11 @@ const PrintButton = ({ id }) => {
             <CIcon icon={cilArrowThickToBottom} />
           </CButton>
         )}
-        content={() => componentRef.current}
+        content={() => ref.current.download()}
       />
      
      <div style={{ display: 'none' }}>
-          <BarCodeGenerator ref={componentRef} id={id} />
+          <BarCodeGenerator ref={ref} id={id} />
         </div>
       
     </div>

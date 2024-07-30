@@ -22,6 +22,7 @@ const UpdateStaff = React.lazy(() => import('./views/base/staff/UpdateStaff'))
 const NewParcels = React.lazy(() => import('./views/base/parcel/NewParcels'))
 const ParcelList = React.lazy(() => import('./views/base/parcel/ParcelList'))
 const UpdateParcel = React.lazy(() => import('./views/base/parcel/UpdateParcel'))
+const Details = React.lazy(() => import('./views/base/parcel/Details'))
 
 const TrackParcels = React.lazy(() => import('./views/trackparcels/Track'))
 const Reports = React.lazy(() => import('./views/reports/Reports'))
@@ -40,9 +41,10 @@ const routes = [
   { path: '/parcels/new_parcels', name: 'New Parcels', element: NewParcels },
   { path: '/parcels/editViewParcel',  exact: true, name: 'Update Parcel', element: UpdateParcel },
   { path: '/parcels', name: 'Parcels List', element: ParcelList },
+  { path: '/parcels/details', name: 'Parcel Details', element: Details },
   { path: '/track_parcels', name: 'Track Parcels', element: TrackParcels },
   { path: '/reports', name: 'Reports', element: Reports },
-  { path: '/user', name: 'User', element: Home },
+  { path: '/home', name: 'Home', element: Home },
   { path: '/ourservices', name: 'Ourservices', element: Ourservices},
   { path: '/contactus', name: 'Contact us', element: Contactus},
   { path: '/findus', name: 'Find us', element: Findus}

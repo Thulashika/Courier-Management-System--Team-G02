@@ -8,8 +8,7 @@ export const AuthContext = createContext();
 // Create the provider component
 export const AuthProvider = ({ children }) => {
 
-    const [userDetails, setUser] = useState({email: '', id: 0, role: '', fullName:''});
-    const [branch, setBranch] = useState({id: 0})
+    const [userDetails, setUser] = useState({email: '', id: 0, role: '', fullName:'', image: null});
 
   //  useEffect(() => {
   //   // Retrieve user data from localStorage on mount
@@ -38,51 +37,21 @@ export const AuthProvider = ({ children }) => {
         console.error('Failed to parse user details:', error);
       }
     }
-
-    const savedBranch = localStorage.getItem('branch');
-    if (savedBranch) {
-      try {
-        setBranch(JSON.parse(savedBranch));
-      } catch (error) {
-        console.error('Failed to parse branch details:', error);
-      }
-    }
   }, []);
 
-  const login = (email, id, role, fullName) => {
-    const userData = { email, id, role, fullName };
+  const login = (email, id, role, fullName, image) => {
+    const userData = { email, id, role, fullName, image };
     setUser(userData);
     localStorage.setItem('userDetails', JSON.stringify(userData));
   };
   
   const logout = () => {
-    setUser({ email: '', id: 0, role: '', fullName: '' });
+    setUser({ email: '', id: 0, role: '', fullName: '', image: null });
     localStorage.removeItem('userDetails');
   };
-  
-  const branchCount = (id) => {
-    const branchData = { id };
-    setBranch(branchData);
-    localStorage.setItem('branch', JSON.stringify(branchData));
-  };
-  
-
-  // useEffect(() => {
-  //   // Retrieve branch data from localStorage on mount
-  //   const savedBranch = localStorage.getItem('branch')
-
-  //   if(savedBranch) {
-  //     setBranch(JSON.parse(savedBranch))
-  //   }
-  // }, [])
-
-  // const branchCount = (id) => {
-  //   setBranch({...branch, id})
-  //   localStorage.setItem('branch', JSON.stringify({id}))
-  // }
 
   return (
-    <AuthContext.Provider value={{ userDetails, login, logout, branch, branchCount }}>
+    <AuthContext.Provider value={{ userDetails, login, logout }}>
       {children}
     </AuthContext.Provider>
   );

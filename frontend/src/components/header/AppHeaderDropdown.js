@@ -52,10 +52,10 @@ const AppHeaderDropdown = () => {
   return (
     <CDropdown variant="nav-item">
       <CDropdownToggle placement="bottom-end" className="py-0 pe-0" caret={false}>
-        {/* { userStatus === 'login' ? <CAvatar src={avatar10} status="success"/> :
-          <CAvatar color="secondary" status="danger">TB</CAvatar>
-        } */}
-        <CAvatar color="success">{getInitials(userDetails.fullName)}</CAvatar>
+        {console.log(userDetails.image)}
+        { userDetails.image ? <CAvatar src={userDetails.image} size='xl' shape="rounded-0" status="success"/> :
+          <CAvatar color="primary" status="success">{getInitials(userDetails.fullName)}</CAvatar>
+        }
       </CDropdownToggle>
       <CDropdownMenu className="pt-0" placement="bottom-end">
         <CDropdownItem href="/profile">
@@ -67,7 +67,7 @@ const AppHeaderDropdown = () => {
           Settings
         </CDropdownItem>
         <CDropdownDivider />
-        <CDropdownItem href="/landingPage">
+        <CDropdownItem href="/home">
           <CIcon icon={cilLockLocked} className="me-2" />
           Lock Account
         </CDropdownItem>

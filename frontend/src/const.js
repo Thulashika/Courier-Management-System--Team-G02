@@ -1,3 +1,6 @@
+import React from "react"
+import { useLocation } from "react-router-dom"
+
 export const BRANCH_ERRORS = {
     CODE_LENGTH_VALIDATION: 'Branch Code must be exactly 5 digits',
     CODE_FORMAT_VALIDATION: 'Branch Code is not in the correct format',
@@ -59,3 +62,13 @@ export const RESET_PASSWORD_ERRORS = {
     CONFIRM_PASSWORD_LENGTH_VALIDATION: 'Confirm Password must be between 4 and 10 characters',
     CONFIRM_PASSWORD_FORMAT_VALIDATION: 'Confirm Password is not in the correct format',
 }
+
+export const Query = () => {
+    function useQuery() {
+        const {search} = useLocation()
+        return React.useMemo(() => new URLSearchParams(search), [search])
+    }
+
+     const query = useQuery()
+}
+

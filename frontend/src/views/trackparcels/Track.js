@@ -6,12 +6,19 @@ import {
   CRow, 
   CButton, 
   CFormLabel, 
-  CFormInput
+  CFormInput,
+  CImage,
+  CContainer,
+  CCarousel,
+  CCarouselItem,
+  CCardImageOverlay
 } from '@coreui/react'
 import axios from 'axios';
 import { PARCEL_ERRORS } from '../../const';
 import { useSelector } from 'react-redux';
 import { AuthContext } from '../pages/register/AuthProvider';
+import NFRN from '../../assets/images/NF1.avif'
+import background1 from '../../assets/images/Tr.jpg'
 
 const Track = () => {
 
@@ -91,6 +98,7 @@ const Track = () => {
             setParcel(res.data);
             setError('');
           } else {
+            <CImage rounded src={NFRN} width={200} height={200} align="center"/>
             alert('Not found parcel');
           }
         })
@@ -100,54 +108,66 @@ const Track = () => {
             setParcel(null);
             return
           }
-          alert('Not found');
+          setError(<CImage rounded src={NFRN} width={200} height={200} align="center"/>)
+          // alert('Not found');
         });
     }
   };
 
   return (
-    <CCard >
-      <CRow className="mb-3">
-        <CCol xs={12}>
-          <CCardHeader>
-            <strong>Track</strong>
-          </CCardHeader>
-          <CRow className="mb-3"/>
-          <CRow className="mb-3 text-center">
-            <CFormLabel htmlFor="inputTrackingNumber" className="col-sm-4 col-form-label">Enter Tracking Number</CFormLabel>
-            <CCol sm={4}>
-              <CFormInput 
-                type="text" 
-                id="inputTrackingNumber"
-                value={trackingNumber} 
-                onChange={(e) => setTrackingNumber(e.target.value)}
-              />
-            </CCol>
-            <CCol sm={4}>
-              <CButton color='primary' onClick={handleSearch}>Search</CButton>
-            </CCol>
-          </CRow>
-          {error && (
-            <CRow className="mb-3 text-center">
-              <p style={{ color: 'red' }}>{error}</p>
-            </CRow>
-          )}
+    <CContainer className='mb-4'>
+      <CCarousel>
+        <CCarouselItem>
+          <CCard className='justify-content-center'>
+            <CImage className="d-block w-100" src={background1} alt="slide 1" />
+            <CCardImageOverlay> 
+              <CCard>
+                <CRow className="mb-3">
+                  <CCol xs={12}>
+                    <CCardHeader>
+                      <strong>Track</strong>
+                    </CCardHeader>
+                    <CRow className="mb-3"/>
+                    <CRow className="mb-3 text-center">
+                      <CFormLabel htmlFor="inputTrackingNumber" className="col-sm-4 col-form-label">Enter Tracking Number</CFormLabel>
+                      <CCol sm={4}>
+                        <CFormInput 
+                          type="text" 
+                          id="inputTrackingNumber"
+                          value={trackingNumber} 
+                          onChange={(e) => setTrackingNumber(e.target.value)}
+                        />
+                      </CCol>
+                      <CCol sm={4}>
+                        <CButton color='primary' onClick={handleSearch}>Search</CButton>
+                      </CCol>
+                    </CRow>
+                    {error && (
+                      <CRow className="mb-3 text-center">
+                        <p style={{ color: 'red' }}>{error}</p>
+                      </CRow>
+                    )}
 
-          {/* {parcel > 0 && parcel.status.map((trackParcel, index) => (
-            <CRow key={index} className="mb-3 text-center">
-              <p>Status: {trackParcel.status}</p>
-            </CRow>
-          ))} */}
+                    {/* {parcel > 0 && parcel.status.map((trackParcel, index) => (
+                      <CRow key={index} className="mb-3 text-center">
+                        <p>Status: {trackParcel.status}</p>
+                      </CRow>
+                    ))} */}
 
 
-            {parcel && 
-              <CRow className="mb-3 text-center">
-                <p>Status: {parcel.status.status}  </p>
-              </CRow>
-            }
-        </CCol>
-      </CRow>
-    </CCard>
+                      {parcel && 
+                        <CRow className="mb-3 text-center">
+                          <p>Status: {parcel.status.status}  </p>
+                        </CRow>
+                      }
+                  </CCol>
+                </CRow>
+              </CCard>
+            </CCardImageOverlay>
+          </CCard>
+        </CCarouselItem>
+      </CCarousel>
+    </CContainer>
   )
 }
 

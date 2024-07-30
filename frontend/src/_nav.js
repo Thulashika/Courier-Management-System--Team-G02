@@ -5,11 +5,13 @@ import {
   cilChatBubble,
   cilFile,
   cilHappy,
+  cilHome,
   cilIndustry,
   cilNotes,
   cilSpeedometer,
   cilStar,
   cilTruck,
+  cilUser,
   cilUserPlus,
 } from '@coreui/icons'
 import { CNavGroup, CNavItem} from '@coreui/react'
@@ -54,6 +56,12 @@ const _nav = [
     to: '/reports',
     icon: <CIcon icon={cilFile} customClassName="nav-icon" />
   },
+  // {
+  //   component: CNavItem,
+  //   name: 'Home',
+  //   icon: <CIcon icon={cilHome} customClassName="nav-icon" />,
+  //   to: '/home'
+  // },
   {
     component: CNavItem,
     name: 'Ourservices',
