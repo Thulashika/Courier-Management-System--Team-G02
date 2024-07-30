@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import {
   CButton,
   CCard,
@@ -20,6 +20,7 @@ import { Link } from 'react-router-dom'
 import axios from 'axios'
 import CIcon from '@coreui/icons-react'
 import { cilPencil, cilTrash } from '@coreui/icons'
+import { debounce } from 'lodash'
 
 const StaffList = () => {
 
@@ -34,20 +35,29 @@ const StaffList = () => {
     getTotalCount();
   },[page, limit])
 
-  const getAll = () => {
-    axios('http://localhost:6431/staff', {
-      method:'GET',
-      params:{
-        page: page,
-        limit: limit,
-      // search: search,
-      },
-    }).then(res => {
-      setData(res.data)
-    }).catch((err) => {
-      console.error('Error fetching parcels:', err);
-    });
-  }
+
+  useEffect(() => {
+    getAll(search)
+  },[search])
+
+  const getAll = useCallback(
+    debounce(async (query) => {
+      try {
+        const response = await axios.get('http://localhost:6431/staff', {
+          params: { page: page,
+                  limit: limit,
+                  search: query ? query : {} },
+          // headers: {
+          //   'authentication': `Bearer ${localStorage.getItem('token')}`
+          // }
+        });
+        setData(response.data);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    }, 500), // Debounce delay in milliseconds
+    []
+  );
 
   const getTotalCount = () => {
     axios
@@ -74,6 +84,11 @@ const StaffList = () => {
       })
     }
   }
+
+  // Calculate the index range for the current page
+  const startIndex = (page - 1) * limit;
+  const endIndex = startIndex + limit;
+  const paginatedData = data.slice(startIndex, endIndex);
 
   const totalPages = Math.ceil(totalStaff / limit);
 
@@ -127,8 +142,10 @@ const StaffList = () => {
                   </CTableRow>
                 </CTableHead>
                 <CTableBody>
-                {data && data.map((staff, index) => {
-                  return <CTableRow key={index}>
+                  
+                {paginatedData.length > 0 ? (
+                  paginatedData.map((staff, index) => (
+                  <CTableRow key={index}>
                     <CTableDataCell>{(page - 1) * limit + index + 1}</CTableDataCell>
                       <CTableDataCell> {staff.staffId} </CTableDataCell>
                       <CTableDataCell> {staff.fullName} </CTableDataCell>
@@ -154,26 +171,34 @@ const StaffList = () => {
                         </CButton>
                       </CTableDataCell>
                     </CTableRow>
-                  })}
+                  ))
+                ):
+                (
+                  <CTableRow>
+                    <CTableDataCell colSpan="9">No parcels found</CTableDataCell>
+                  </CTableRow>
+                  )}      
                 </CTableBody>
               </CTable>
+
+              { limit >= 1 ? 
+              <CRow className="justify-content-end">
+                <CPagination align="end" aria-label="Page navigation">
+                  <CPaginationItem disabled={page <= 1} onClick={() => setPage(page - 1)}>
+                    Previous
+                  </CPaginationItem>
+                  {Array.from({ length: totalPages }, (_, i) => (
+                    <CPaginationItem key={i} active={i + 1 === page} onClick={() => setPage(i + 1)}>
+                      {i + 1}
+                    </CPaginationItem>
+                  ))}
+                  <CPaginationItem disabled={page >= totalPages} onClick={() => setPage(page + 1)}>
+                    Next
+                  </CPaginationItem>
+                </CPagination>
+              </CRow>
+              : null }
             </CRow>
-            
-            <CRow className="justify-content-end">
-            <CPagination align="end" aria-label="Page navigation">
-              <CPaginationItem disabled={page <= 1} onClick={() => setPage(page - 1)}>
-                Previous
-              </CPaginationItem>
-              {Array.from({ length: totalPages }, (_, i) => (
-                <CPaginationItem key={i} active={i + 1 === page} onClick={() => setPage(i + 1)}>
-                  {i + 1}
-                </CPaginationItem>
-              ))}
-              <CPaginationItem disabled={page >= totalPages} onClick={() => setPage(page + 1)}>
-                Next
-              </CPaginationItem>
-            </CPagination>
-          </CRow>
           </CCardBody>
         </CCard>
       </CCol>

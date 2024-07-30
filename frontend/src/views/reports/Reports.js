@@ -30,63 +30,18 @@ const Reports = () => {
   const [showReport, setShowReport] = useState(false);
 
   const handleViewReport = (e) => {
-    // e.preventDefult()
-
     if (!fromDate || !toDate || !status) {
       alert("Please select a date range and status.");
       return;
     }
 
-    // const sampleData = [
-    //   {
-    //     date: '2024-07-01',
-    //     sender: 'John Doe',
-    //     recipient: 'Jane Doe',
-    //     amount: 100,
-    //     status: 'Delivered'
-    //   },
-    //   {
-    //     date: '2024-07-02',
-    //     sender: 'Alice',
-    //     recipient: 'Bob',
-    //     amount: 150,
-    //     status: 'Shipped'
-    //   },
-    //   // Add more sample data if needed
-    // ];
-
-    // const filteredData = sampleData.filter(item => {
-    //   const itemDate = new Date(item.date)
-    //   const from = new Date(fromDate)
-    //   const to = new Date(toDate)
-
-    //   return (
-    //     (status === 'All' || item.status === status) && 
-    //     itemDate >= from &&
-    //     itemDate <= to
-    //   )
-    // })
-
-    // setData(filteredData);
-    // setShowReport(true);
-
-//     try {
-//       const response = await axios.get('http://localhost:6431/report', {
-//         params: {
-//           fromDate,
-//           toDate,
-//           status,
-//         },
-//       });
-//       setData(response.data);
-//       setShowReport(true);
-//     } catch (error) {
-//       console.error('Error fetching data:', error);
-//     }
-//   };
-
     axios('http://localhost:6431/report', {
-      method: 'GET'
+      method: 'GET',
+      params: {
+        fromDate,
+        toDate,
+        status,
+      },
     }).then(res => {
       setData(res.data)
       setShowReport(true)
@@ -105,16 +60,17 @@ const Reports = () => {
             <CFormLabel >Status</CFormLabel>
             {/* className="col-sm-2 col-form-label" */}
             <CFormSelect 
+            type='select'
               className="mb-3" 
               value={status} 
               onChange={(e) => setStatus(e.target.value)}
             >
               <option>All</option>
-              <option>Accepted</option>
-              <option>Collected</option>
-              <option>Shipped</option>
-              <option>In-Transit</option>
-              <option>Delivered</option>
+              <option value='ACCEPTED'>Accepted</option>
+              <option value='COLLECTED'>Collected</option>
+              <option value='SHIPPED'>Shipped</option>
+              <option value='IN-TRANSIT'>In-Transit</option>
+              <option value='DELIVERED'>Delivered</option>
             </CFormSelect>
           </CCol>
 
@@ -149,46 +105,52 @@ const Reports = () => {
         </CRow>
       </CCardBody>
 
-    {showReport && (
-       <CCardBody>
-       <CRow className="mb-3">
-         <div className="d-grid gap-2 d-md-flex justify-content-md-end">
-           <CButton 
-             color='success' 
-             className="me-md-2"
-             onClick={() => window.print()}>
-             <CIcon icon={cilPrint} />
-             Print
-           </CButton>
-         </div>
-       </CRow>
+      {showReport && (
+        <CCardBody>
+        <CRow className="mb-3">
+          <div className="d-grid gap-2 d-md-flex justify-content-md-end">
+            <CButton 
+              color='success' 
+              className="me-md-2"
+              onClick={() => window.print()}>
+              <CIcon icon={cilPrint} />
+              Print
+            </CButton>
+          </div>
+        </CRow>
 
-       <CTable>
-         <CTableHead>
-           <CTableRow>
-             <CTableHeaderCell scope='col'>Id</CTableHeaderCell>
-             <CTableHeaderCell scope='col'>Date</CTableHeaderCell>
-             <CTableHeaderCell scope='col'>Sender</CTableHeaderCell>
-             <CTableHeaderCell scope='col'>Recipient</CTableHeaderCell>
-             <CTableHeaderCell scope='col'>Amount</CTableHeaderCell>
-             <CTableHeaderCell scope='col'>Status</CTableHeaderCell>
-           </CTableRow>
-         </CTableHead>
-         <CTableBody>
-           {data && data.map((report,index) => {
-             return <CTableRow key={index}>
-               <CTableDataCell> {index+1} </CTableDataCell>
-               <CTableDataCell> {report.date} </CTableDataCell>
-               <CTableDataCell> {report.sender} </CTableDataCell>
-               <CTableDataCell> {report.recipient} </CTableDataCell>
-               <CTableDataCell> {report.amount} </CTableDataCell>
-               <CTableDataCell> {report.status} </CTableDataCell>
-             </CTableRow>
-           })}          
-         </CTableBody>
-       </CTable>
-     </CCardBody>
-    )}
+        <CTable>
+          <CTableHead>
+            <CTableRow>
+              <CTableHeaderCell scope='col'>Id</CTableHeaderCell>
+              <CTableHeaderCell scope='col'>Date</CTableHeaderCell>
+              <CTableHeaderCell scope='col'>Sender</CTableHeaderCell>
+              <CTableHeaderCell scope='col'>Recipient</CTableHeaderCell>
+              <CTableHeaderCell scope='col'>Amount</CTableHeaderCell>
+              <CTableHeaderCell scope='col'>Status</CTableHeaderCell>
+            </CTableRow>
+          </CTableHead>
+          <CTableBody>
+            {data.length > 0 ? (
+               data.map((report,index) => (
+                <CTableRow key={index}>
+                <CTableDataCell> {index+1} </CTableDataCell>
+                <CTableDataCell> {`from ${report.senderDate} to ${report.recipientDate}`} </CTableDataCell>
+                <CTableDataCell> {`${report.senderFirstName} ${report.senderLastName}`} </CTableDataCell>
+                <CTableDataCell> {`${report.recipientFirstName} ${report.recipientLastName}`}</CTableDataCell>
+                <CTableDataCell> {report.parcelTotalAmount} </CTableDataCell>
+                <CTableDataCell> {report.status} </CTableDataCell>
+              </CTableRow>
+               ))
+              ):(
+                <CTableRow>
+                <CTableDataCell colSpan="9">No parcels found</CTableDataCell>
+              </CTableRow>
+              )}                
+          </CTableBody>
+        </CTable>
+      </CCardBody>
+      )}
      
     </CCard>
   )

@@ -4,16 +4,20 @@ import { useSelector } from 'react-redux'
 
 import { CSpinner, useColorModes } from '@coreui/react'
 import './scss/style.scss'
+import { AuthProvider } from './views/pages/register/AuthProvider'
 
 // Containers
 const DefaultLayout = React.lazy(() => import('./layout/DefaultLayout'))
 
 // Pages
+const Landingpage = React.lazy(() => import('./views/landingpage/Landingpage'))
 const Login = React.lazy(() => import('./views/pages/login/Login'))
-const ForgotPassword = React.lazy(() => import('./views/pages/login/ForgotPassword'))
+const Resetpassword = React.lazy(() => import('./views/pages/login/Resetpassword'))
+const PhoneVerificationScreen = React.lazy(() => import('./views/pages/login/PhoneVerificationScreen'))
+const ForgotPasswordScreen = React.lazy(() => import('./views/pages/login/ForgotPasswordScreen'))
+const ForgotPhoneScreen = React.lazy(() => import('./views/pages/login/ForgotPhoneScreen'))
 const Register = React.lazy(() => import('./views/pages/register/Register'))
-const Page404 = React.lazy(() => import('./views/pages/page404/Page404'))
-const Page500 = React.lazy(() => import('./views/pages/page500/Page500'))
+const Profile = React.lazy(() => import('./views/pages/register/Profile'))
 
 const App = () => {
   const { isColorModeSet, setColorMode } = useColorModes('coreui-free-react-admin-template-theme')
@@ -34,6 +38,7 @@ const App = () => {
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
+    <AuthProvider>
     <Router>
       <Suspense
         fallback={
@@ -43,15 +48,19 @@ const App = () => {
         }
       >
         <Routes>
-          <Route exact path="/login" name="Login Page" element={<Login />} />
-          <Route exact path="/forgot-password" name="Forgot Password Page" element={<ForgotPassword />} />
+        <Route exact path="/landingPage" name="Home Page" element={<Landingpage />} />
+          <Route exact path="/login" name="Login Page" element={<Login />} />          
+          <Route exact path="/reset-password" name="Reset Password" element={<Resetpassword />} />
+          <Route exact path="/phone-verification" name="Phone Verfication Page" element={<PhoneVerificationScreen />} />
+          <Route exact path="/forgot-password" name="Forgot Password Page" element={<ForgotPasswordScreen />} />
+          <Route exact path="/forgot-phone" name="Forgot Phone Page" element={<ForgotPhoneScreen />} />
           <Route exact path="/register" name="Register Page" element={<Register />} />
-          <Route exact path="/404" name="Page 404" element={<Page404 />} />
-          <Route exact path="/500" name="Page 500" element={<Page500 />} />
+          <Route exact path="/profile" name="Profile" element={<Profile />} />
           <Route path="*" name="Home" element={<DefaultLayout />} />
         </Routes>
       </Suspense>
     </Router>
+    </AuthProvider>
   )
 }
 

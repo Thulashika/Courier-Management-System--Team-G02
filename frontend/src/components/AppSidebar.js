@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useContext } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 
 import {
@@ -10,19 +10,18 @@ import {
   CSidebarToggler,
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
-
 import { AppSidebarNav } from './AppSidebarNav'
 import { sygnet } from '../assets/brand/sygnet'
-
-// sidebar nav config
 import navigation from '../_nav'
+import { AuthContext } from '../views/pages/register/AuthProvider'
 
 const AppSidebar = () => {
   const dispatch = useDispatch()
-  const unfoldable = useSelector((state) => state.sidebarUnfoldable)
-  const sidebarShow = useSelector((state) => state.sidebarShow)
+  const unfoldable = useSelector((state) => state.changeState.sidebarUnfoldable)
+  const sidebarShow = useSelector((state) => state.changeState.sidebarShow)
+  console.log(sidebarShow)
 
-  const [user, setUser] = useState('')
+  const { userDetails } = useContext(AuthContext)
 
   return (
     <CSidebar
@@ -38,9 +37,9 @@ const AppSidebar = () => {
       <CSidebarHeader className="border-bottom">
         <CSidebarBrand to="/">
         {
-          user === 'ADMIN' ? <h4>Admin</h4> :
-          user === 'STAFF' ? <h4>Staff</h4> :
-          user === 'CUSTOMER' ? <h4>Customer</h4> :
+          userDetails.role === 'ADMIN' ? <h4>Admin</h4> :
+          userDetails.role === 'STAFF' ? <h4>Staff</h4> :
+          userDetails.role === 'CUSTOMER' ? <h4>Customer</h4> :
           null
         }
           
@@ -49,7 +48,7 @@ const AppSidebar = () => {
         <CCloseButton
           className="d-lg-none"
           dark
-          onClick={() => dispatch({ type: 'set', sidebarShow: false })}
+          onClick={() => dispatch({ type: 'set', sidebarShow: !sidebarShow })}
         />
       </CSidebarHeader>
       <AppSidebarNav items={navigation} />
