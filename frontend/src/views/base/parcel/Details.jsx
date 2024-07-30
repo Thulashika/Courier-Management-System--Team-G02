@@ -9,7 +9,6 @@ const Details = () => {
         <CCol md={9} lg={7} xl={6}>
           <CCard className="mx-4">
             <CCardBody className="p-4">
-              
             </CCardBody>
           </CCard>
         </CCol>
