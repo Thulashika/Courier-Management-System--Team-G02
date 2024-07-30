@@ -1142,7 +1142,9 @@ const upload = multer({ storage: storage });
 
 import { S3Client, PutObjectCommand, GetObjectCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
+import dotenv from 'dotenv';
 
+dotenv.config()
 const region = 'ap-southeast-2';
 const bucketName = 'courrier-service-images';
 
@@ -1150,8 +1152,8 @@ const s3 = new S3Client(
     { 
         region: region, 
         credentials: {
-            accessKeyId: 'AKIAQE43JZVVOZWPS4PY',
-            secretAccessKey: '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'
+            accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+            secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
         } 
     }
 );
