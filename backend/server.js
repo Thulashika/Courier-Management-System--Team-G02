@@ -1035,6 +1035,7 @@ app.get('/staff/:id', (req,res) => {
     })
 })
 
+
 app.delete('/staff/:id', (req,res) => {
     const deleteQuery = 'delete from staff join userprofile on userprofile.id = staff.staffId where staff.id=?'
 
