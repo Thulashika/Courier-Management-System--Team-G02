@@ -176,7 +176,7 @@ app.post('/userLogin', async (req,res) => {
     }
 
     const selectQuery = 'select * from userProfile where email = ?'
-
+    
     db.query(selectQuery, [email], (err, results) => {
         if (err) {
             return res.status(500).json(err);
@@ -189,7 +189,7 @@ app.post('/userLogin', async (req,res) => {
         const user = results[0];
 
         // Check if password matches
-        bcrypt.compare(password.toString(), user.password, (err, isMatch) => {
+        bcrypt.compare(password.toString(), user.password, async (err, isMatch) => {
             if (err) {
                 return res.status(500).json(err);
             }
@@ -204,7 +204,11 @@ app.post('/userLogin', async (req,res) => {
             // for cookie authentication only
             res.cookie('token', token, { httpOnly: true, secure: true, sameSite: true});
 
-            return res.status(200).json({statusCode:200, message: 'Login successful', token, email, id: user.id, role: user.role });
+            if(user.image) {
+                user.image = await getPreSignedUrl(bucketName, extractFileKey(user.image))
+            }
+
+            return res.status(200).json({statusCode:200, message: 'Login successful', token, email, id: user.id, role: user.role, fullName: user.fullName, image: user.image });
         });
     });
 })
@@ -481,7 +485,8 @@ app.get('/branch', (req, res) => {
             if (err) {
                 return res.json(err);
             }
-            return res.send(data);
+            return res.send({data, count: data.length});
+            // return res.status(200).json({statusCode:200, data, id: id});
         });
     });
 });
@@ -496,6 +501,33 @@ app.get('/branch/count', (req, res) => {
         return res.status(500).json({ error: err.message });
       }
       res.json(results[0]);
+    });
+});
+
+app.get('/dashboard/count', (req, res) => {
+
+    const count = `SELECT (SELECT COUNT(*) FROM branch) AS branchCount, 
+                          (SELECT COUNT(*) FROM staff) AS staffCount, 
+                          (SELECT COUNT(*) FROM parcel) AS parcelCount,
+                          (SELECT COUNT(*) FROM parcel WHERE status = 'ACCEPTED') AS acceptCount,
+                          (SELECT COUNT(*) FROM parcel WHERE status = 'DELIVERED') AS deliverCount,
+                          (SELECT COUNT(*) FROM parcel WHERE status = 'COLLECTED') AS collectCount,
+                          (SELECT COUNT(*) FROM parcel WHERE status = 'IN-TRANSIT') AS intransitCount,
+                          (SELECT COUNT(*) FROM parcel WHERE status = 'SHIPPED') AS shipCount`;
+
+    db.query(count, (err, results) => {
+      if (err) {
+        return res.status(500).json({ error: err.message });
+      }
+      res.json({ branchCount: results[0].branchCount, 
+                 staffCount: results[0].staffCount, 
+                 parcelCount: results[0].parcelCount,
+                 acceptCount: results[0].acceptCount,
+                 deliverCount: results[0].deliverCount,
+                 collectCount: results[0].collectCount,
+                 intransitCount: results[0].intransitCount,
+                 shipCount: results[0].shipCount
+               });
     });
 });
 
@@ -1003,6 +1035,7 @@ app.get('/staff/:id', (req,res) => {
     })
 })
 
+
 app.delete('/staff/:id', (req,res) => {
     const deleteQuery = 'delete from staff join userprofile on userprofile.id = staff.staffId where staff.id=?'
 
@@ -1108,6 +1141,27 @@ app.use(express.static('../frontend/src/assets'))
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
+import { S3Client, PutObjectCommand, GetObjectCommand } from '@aws-sdk/client-s3';
+import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
+<<<<<<< HEAD
+import dotenv from 'dotenv';
+
+dotenv.config()
+=======
+
+>>>>>>> 15f02cb (QR Code)
+const region = 'ap-southeast-2';
+const bucketName = 'courrier-service-images';
+
+const s3 = new S3Client(
+    { 
+        region: region, 
+        credentials: {
+            accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+            secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
+        } 
+    }
+);
 
 app.post('/profile', upload.single('image'), (req,res) => {
     // console.log(req.file)
@@ -1125,10 +1179,22 @@ app.post('/profile', upload.single('image'), (req,res) => {
 
 app.put('/profile/:id', upload.single('image'), async (req, res) => {
 
-    let imageBuffer = req.file ? req.file.buffer : null
+    let image = req.file ? req.file.buffer : null
 
-    if (imageBuffer) {
-        imageBuffer = imageBuffer.toString('base64'); // Convert image buffer to Base64 string
+    if (image) {
+        const params = {
+            Bucket: bucketName,
+            Key: req.file.originalname,
+            Body: image,
+            ContentType: req.file.mimetype
+        };
+
+        try {
+            const data = await s3.send(new PutObjectCommand(params));
+            image = `https://${bucketName}.s3.${region}.amazonaws.com/${params.Key}`;
+          } catch (err) {
+            console.error('Error', err);
+          }
     }
 
     const updateProfileQuery = 'update userprofile set image=?, fullName=?, password=?, contactNumber=?, gender=?, dob=? where id=?'
@@ -1153,7 +1219,7 @@ app.put('/profile/:id', upload.single('image'), async (req, res) => {
 
     // Construct values array for insertion
     const values = [
-        imageBuffer,
+        image,
         req.body.fullName,
         hashedPassword ? hashedPassword : req.body.password,
         req.body.contactNumber,
@@ -1178,10 +1244,27 @@ app.put('/profile/:id', upload.single('image'), async (req, res) => {
     });
 });
 
+const getPreSignedUrl = async (bucket, key) => {
+    const command = new GetObjectCommand({
+      Bucket: bucket,
+      Key: key
+    });
+  
+    const url = await getSignedUrl(s3, command, { expiresIn: 3600 }); // URL expires in 1 hour
+    return url;
+  };
+
+  const extractFileKey = (url) => {
+    const urlParts = new URL(url);
+    const path = urlParts.pathname;
+    return path.substring(1); // Remove the leading slash
+  };
+  
+
 app.get('/profile/:id', (req,res) => {
     const getProfileQuery = 'select * from userprofile where id=?'
 
-    db.query(getProfileQuery, [req.params.id], (err,profile) => {
+    db.query(getProfileQuery, [req.params.id], async (err,profile) => {
         if(err) {
             return res.status(500).json({ statusCode: 500, statusMessage: 'Internal server error'});
         }
@@ -1190,9 +1273,11 @@ app.get('/profile/:id', (req,res) => {
             return res.status(404).json({statusCode: 404, statusMessage: 'user not found'})
         }
 
+        if(profile[0]?.image) {
+            profile[0].image = await getPreSignedUrl(bucketName, extractFileKey(profile[0]?.image))
+        }
+        
         return res.status(200).json({statusCode: 200, statusMessage: 'user found', profile: profile[0]})
-        // res.contentType('image/jpeg');
-        // res.send(profile[0].image)
     })
 })
 

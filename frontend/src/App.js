@@ -5,6 +5,7 @@ import { useSelector } from 'react-redux'
 import { CSpinner, useColorModes } from '@coreui/react'
 import './scss/style.scss'
 import { AuthProvider } from './views/pages/register/AuthProvider'
+import Home from './views/home/Home'
 
 // Containers
 const DefaultLayout = React.lazy(() => import('./layout/DefaultLayout'))
@@ -13,9 +14,6 @@ const DefaultLayout = React.lazy(() => import('./layout/DefaultLayout'))
 const Landingpage = React.lazy(() => import('./views/landingpage/Landingpage'))
 const Login = React.lazy(() => import('./views/pages/login/Login'))
 const Resetpassword = React.lazy(() => import('./views/pages/login/Resetpassword'))
-const PhoneVerificationScreen = React.lazy(() => import('./views/pages/login/PhoneVerificationScreen'))
-const ForgotPasswordScreen = React.lazy(() => import('./views/pages/login/ForgotPasswordScreen'))
-const ForgotPhoneScreen = React.lazy(() => import('./views/pages/login/ForgotPhoneScreen'))
 const Register = React.lazy(() => import('./views/pages/register/Register'))
 const Profile = React.lazy(() => import('./views/pages/register/Profile'))
 
@@ -48,12 +46,10 @@ const App = () => {
         }
       >
         <Routes>
-        <Route exact path="/landingPage" name="Home Page" element={<Landingpage />} />
+          <Route exact path="/landingPage" name="Home Page" element={<Landingpage />} />
+          <Route exact path="/home" name="Home Page" element={<Home />} />
           <Route exact path="/login" name="Login Page" element={<Login />} />          
           <Route exact path="/reset-password" name="Reset Password" element={<Resetpassword />} />
-          <Route exact path="/phone-verification" name="Phone Verfication Page" element={<PhoneVerificationScreen />} />
-          <Route exact path="/forgot-password" name="Forgot Password Page" element={<ForgotPasswordScreen />} />
-          <Route exact path="/forgot-phone" name="Forgot Phone Page" element={<ForgotPhoneScreen />} />
           <Route exact path="/register" name="Register Page" element={<Register />} />
           <Route exact path="/profile" name="Profile" element={<Profile />} />
           <Route path="*" name="Home" element={<DefaultLayout />} />
