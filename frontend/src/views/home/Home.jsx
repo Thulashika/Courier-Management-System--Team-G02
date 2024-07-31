@@ -9,6 +9,7 @@ import contactUs from '../../assets/images/c1.png'
 import yoga from '../../assets/images/YT.png'
 
 const Home = () => {
+   
    const state = {
       name: '',
       email: '',
