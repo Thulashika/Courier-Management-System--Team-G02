@@ -1143,13 +1143,9 @@ const upload = multer({ storage: storage });
 
 import { S3Client, PutObjectCommand, GetObjectCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
-<<<<<<< HEAD
 import dotenv from 'dotenv';
 
 dotenv.config()
-=======
-
->>>>>>> 15f02cb (QR Code)
 const region = 'ap-southeast-2';
 const bucketName = 'courrier-service-images';
 
