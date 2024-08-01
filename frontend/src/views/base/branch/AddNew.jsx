@@ -112,7 +112,7 @@ const AddNew = () => {
   return (
     <CRow>
       <CCol>
-        <CCard style={{ width: '540px' }}>
+        <CCard style={{ width: '840px' }}>
           <CCardHeader>
             <strong>New Branch</strong>
           </CCardHeader>

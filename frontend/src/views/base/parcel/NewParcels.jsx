@@ -36,6 +36,7 @@ const NewParcels = () => {
       contactNumber: '',
       NIC:'',
       date: '',
+      time: '',
       branchProcessed: ''
     },
     recipientDetails: {
@@ -45,6 +46,7 @@ const NewParcels = () => {
       contactNumber: '',
       NIC:'',
       date: '',
+      time: '',
       branchProcessed: ''
     },
     parcelDetails: [{
@@ -400,7 +402,23 @@ const NewParcels = () => {
                     required
                   />
                 </CInputGroup>
+                <CInputGroup className='mb-3'>
+                  <CInputGroupText>Time</CInputGroupText>
+                  <CFormInput
+                    type='time'
+                    value={parcel.senderDetails.time}
+                    onChange={(e) => setParcel({
+                      ...parcel,
+                      senderDetails: {
+                        ...parcel.senderDetails,
+                        time: e.target.value
+                      }
+                    })}
+                    required
+                  />
+                </CInputGroup>
               </CCol>
+
               <CCol xs={6}>
                 <CInputGroup className='mb-3'>
                   <CInputGroupText>Date</CInputGroupText>
@@ -416,6 +434,21 @@ const NewParcels = () => {
                     })}
                     required
                     min={parcel.senderDetails.date}
+                  />
+                </CInputGroup>
+                <CInputGroup className='mb-3'>
+                  <CInputGroupText>Time</CInputGroupText>
+                  <CFormInput
+                    type='time'
+                    value={parcel.recipientDetails.time}
+                    onChange={(e) => setParcel({
+                      ...parcel,
+                      recipientDetails: {
+                        ...parcel.recipientDetails,
+                        time: e.target.value
+                      }
+                    })}
+                    required
                   />
                 </CInputGroup>
               </CCol>
