@@ -22,7 +22,7 @@ import axios from 'axios'
 import CIcon from '@coreui/icons-react'
 import { cilPencil, cilTrash } from '@coreui/icons'
 import { debounce } from 'lodash'
-import NFS from '../../../assets/images/NFS.png'
+import NFS from '../../../assets/images/NoData.png'
 
 const StaffList = () => {
 
@@ -178,7 +178,7 @@ const StaffList = () => {
                 (
                   <CTableRow>
                     <CTableDataCell colSpan="9">
-                      <CImage rounded src={NFS} width={200} height={200} align="center"/>
+                      <CImage rounded src={NFS} width={300} height={300} align="center"/>
                     </CTableDataCell>
                   </CTableRow>
                   )}      

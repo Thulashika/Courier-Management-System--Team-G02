@@ -750,6 +750,34 @@ app.get('/parcel/:id', (req,res) => {
     })
 })
 
+app.get('/QRCode/:id', (req,res) => {
+    // const getByIdQuery = 'select status, senderDetails, recipientDetails, parcelDetails from parcel where id = ?'
+    const getByIdQRQuery = 'select recipientDetails from parcel where id = ?'
+
+    const values = [
+        req.params.id
+    ]
+
+    db.query(getByIdQRQuery, values, (err,data) => {
+        if(err) {
+            return res.json(err)
+        }
+
+        data = data.map(parcel => {
+            const recipientDetails = JSON.parse(parcel.recipientDetails)
+
+            return{
+                recipientFirstName: recipientDetails.firstName,
+                recipientLastName: recipientDetails.lastName,
+                recipientAddress: recipientDetails.address,
+                recipientContactNumber: recipientDetails.contactNumber
+            }
+        })
+
+        return res.send(data[0])
+    })
+})
+
 app.get('/report', (req,res) => {
     const { fromDate, toDate, status } = req.query;
     const getReportQuery = 'select status, senderDetails, recipientDetails, parcelDetails from parcel'
@@ -882,24 +910,6 @@ const getBranchIdByBranchCode = (branchCode) => {
       });
     });
 };
-
-app.get('/track_parcels/:referenceNumber', (req, res) => {
-    const getByTrackingNoQuery = 'select status from parcel where referenceNumber=?'
-
-    const values = [
-        req.params.referenceNumber
-    ]
-
-    db.query(getByTrackingNoQuery, [values], (err, data) => {
-        if (err) {
-            return res.status(500).json({ error: 'Internal Server Error', details: err });
-        }
-        if (data.length === 0) {
-            return res.status(404).json({ message: 'Tracking number not found' });
-        }
-        return res.json({ statusCode: 200, status: data[0]});
-    })
-})
 
 app.post('/staff', async (req,res) => {
     const createQuery = 'insert into staff(`staffId`, `branchId`, `position`) values(?)'
@@ -1144,6 +1154,7 @@ const upload = multer({ storage: storage });
 import { S3Client, PutObjectCommand, GetObjectCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
 import dotenv from 'dotenv';
+import { access } from 'fs';
 
 dotenv.config()
 const region = 'ap-southeast-2';
@@ -1276,6 +1287,52 @@ app.get('/profile/:id', (req,res) => {
         return res.status(200).json({statusCode: 200, statusMessage: 'user found', profile: profile[0]})
     })
 })
+
+import FedexTrackingController from '../backend/controllers/FedexTrackingController.js'
+
+app.post('/fedex/track', FedexTrackingController.trackFedexShipment)
+
+app.get('/track_parcels/:referenceNumber', (req, res) => {
+    const getByTrackingNoQuery = 'select status from parcel where referenceNumber=?'
+
+    const values = [
+        req.params.referenceNumber
+    ]
+
+    db.query(getByTrackingNoQuery, [values], (err, data) => {
+
+        if (err) {
+            return res.status(500).json({ error: 'Internal Server Error', details: err });
+        }
+        if (data.length === 0) {
+            return res.status(404).json({ message: 'Tracking number not found' });
+        }
+        return res.json({ statusCode: 200, status: data[0]});
+    })
+})
+
+
+// app.get('/track_parcels/:trackingNumber', (req, res) => {
+//     const trackingNumber = req.params.trackingNumber;
+  
+//     // Example data
+//     const parcelData = {
+//       statusCode: 200,
+//       status: 'In-Transit',
+//       trackingEvents: [
+//         { status: 'Item accepted by Courier', date: '2024-07-17 10:00:00' },
+//         { status: 'Collected', date: '2024-07-17 12:00:00' },
+//         { status: 'Shipped', date: '2024-07-17 15:00:00' },
+//         { status: 'In-Transit', date: '2024-07-18 08:00:00' },
+//         { status: 'Delivered', date: '2024-07-18 13:00:00' }
+//       ]
+//     };
+  
+//     res.json(parcelData);
+//   });
+
+  
+
 
 // import http from 'http';
 // import formidable from 'formidable'

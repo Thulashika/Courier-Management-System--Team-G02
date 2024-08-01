@@ -28,7 +28,7 @@ import { debounce } from 'lodash'
 import ReactToPrint from 'react-to-print';
 import BarCodeGenerator from './BarCodeGenerator'
 import PrintButton from './PrintButton'
-import NFP from '../../../assets/images/NFP.jpg';
+import NFP from '../../../assets/images/NoData.png';
 // import { Html5QrcodeScanner } from 'html5-qrcode/minified/html5-qrcode.min.js';
 
 
@@ -289,7 +289,7 @@ const ParcelList = () => {
                   (
                     <CTableRow>
                       <CTableDataCell colSpan="9">
-                        <CImage rounded src={NFP} width={200} height={200} align="center"/>
+                        <CImage rounded src={NFP} width={300} height={300} align="center"/>
                       </CTableDataCell>
                     </CTableRow>
                     )}      
