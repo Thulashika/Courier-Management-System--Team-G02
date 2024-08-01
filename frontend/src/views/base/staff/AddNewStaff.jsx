@@ -94,7 +94,7 @@ const AddNewStaff = () => {
     //         <CCardImageOverlay> 
         <CRow className='mb-3'>
             <CCol xs={12}>
-                <CCard style={{ width: '540px' }}>
+                <CCard style={{ width: '940px' }}>
                     <CCardHeader>
                         <strong>New Staff</strong>
                     </CCardHeader>

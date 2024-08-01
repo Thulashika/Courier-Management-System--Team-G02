@@ -6,9 +6,11 @@ import { cilArrowThickToBottom } from '@coreui/icons';
 import BarCodeGenerator from './BarCodeGenerator';
 import PropTypes from 'prop-types'; 
 import { QRCode } from 'react-qrcode-logo';
+import Barcode from 'react-barcode';
 
 const PrintButton = ({ id }) => {
   const ref = useRef(QRCode)
+  // const ref = useRef(Barcode)
 
   return (
     <div>
@@ -21,9 +23,13 @@ const PrintButton = ({ id }) => {
         content={() => ref.current.download()}
       />
      
-     <div style={{ display: 'none' }}>
-          <BarCodeGenerator ref={ref} id={id} />
-        </div>
+      <div style={{ display: 'none' }}>
+        <BarCodeGenerator ref={ref} id={id} />
+      </div>
+
+      {/* <div>
+        recipientDetails:
+      </div> */}
       
     </div>
   );

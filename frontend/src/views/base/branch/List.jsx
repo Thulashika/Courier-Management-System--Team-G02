@@ -21,7 +21,7 @@ import { Link } from 'react-router-dom'
 import CIcon from '@coreui/icons-react'
 import { cilPencil, cilTrash } from '@coreui/icons'
 import axios from 'axios'
-import NFB from '../../../assets/images/NF.avif'
+import NFB from '../../../assets/images/NoData.png'
 
 const List = () => {
 
@@ -176,7 +176,7 @@ const List = () => {
                   (
                     <CTableRow>
                       <CTableDataCell colSpan="9">
-                        <CImage rounded src={NFB} width={200} height={200} align="center"/>
+                        <CImage rounded src={NFB} width={300} height={300} align="center"/>
                       </CTableDataCell>
                     </CTableRow>
                     )}

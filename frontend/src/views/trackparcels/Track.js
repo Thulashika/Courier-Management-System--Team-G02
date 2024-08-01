@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { 
   CCard, 
   CCol,
@@ -19,8 +19,25 @@ import { useSelector } from 'react-redux';
 import { AuthContext } from '../pages/register/AuthProvider';
 import NFRN from '../../assets/images/NF1.avif'
 import background1 from '../../assets/images/Tr.jpg'
+import { useParams } from 'react-router-dom';
+import track, { useTracking } from 'react-tracking';
 
 const Track = () => {
+
+  // const { trackingNo } = useParams()
+  // const [orderData, setOrderData] = useState([])
+
+  // useEffect(() => {
+  //   async function getTrackingDetails() {
+  //     try{
+  //       const trackingDetails = await axios.post('http://localhost:6431/fedex/track', {trackingNo})
+  //       setOrderData(trackingDetails.data.reverse())
+  //     }catch (error) {
+  //       console.log("Something is wrong", error)
+  //     }
+  //   }
+  //   getTrackingDetails()
+  // }, [trackingNo])
 
   const [trackingNumber, setTrackingNumber] = useState('');
   // const [trackingStatus, setTrackingStatus] = useState([]);
