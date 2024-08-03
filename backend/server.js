@@ -752,7 +752,7 @@ app.get('/parcel/:id', (req,res) => {
 
 app.get('/QRCode/:id', (req,res) => {
     // const getByIdQuery = 'select status, senderDetails, recipientDetails, parcelDetails from parcel where id = ?'
-    const getByIdQRQuery = 'select recipientDetails from parcel where id = ?'
+    const getByIdQRQuery = 'select recipientDetails, status from parcel where id = ?'
 
     const values = [
         req.params.id
@@ -770,7 +770,8 @@ app.get('/QRCode/:id', (req,res) => {
                 recipientFirstName: recipientDetails.firstName,
                 recipientLastName: recipientDetails.lastName,
                 recipientAddress: recipientDetails.address,
-                recipientContactNumber: recipientDetails.contactNumber
+                recipientContactNumber: recipientDetails.contactNumber,
+                status: parcel.status
             }
         })
 

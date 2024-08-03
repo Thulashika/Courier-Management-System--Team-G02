@@ -97,10 +97,12 @@ const Details = () => {
             <CCardBody>
               <CCardText>
                 <CRow>
+                {console.log(parcel)}
                 Recipient : <br/>
-                    FullName:<br/>
-                    Address:<br/>
-                    Telphone Number:
+                    FullName:{`${parcel?.recipientFirstName} ${parcel?.recipientLastName}`}<br/>
+                    Address:{parcel?.recipientAddress}<br/>
+                    Telphone Number:{parcel?.recipientContactNumber}<br/>
+                    Status:{parcel?.status}
                 </CRow>
                 {/* <CRow>
                   <>parcel & parcel.map((data, index) => ()
@@ -108,21 +110,23 @@ const Details = () => {
                   ))</>
                 </CRow> */}
 
-                <CRow>
+                {/* <CRow>
+                {console.log(parcel)}
                   {parcel && Array.isArray(parcel) && parcel.map((data, index) => {
+                    {console.log(parcel)}
                     const recipientDetails = data.recipientDetails ? JSON.parse(data.recipientDetails) : {};
-                    const { firstName, lastName } = recipientDetails;
+                    const { recipientFirstName, recipientLastName } = recipientDetails;
                     return (
                       <CCol key={index}>
-                        {`${firstName || ''} ${lastName || ''}`}
+                        {`${recipientFirstName || ''} ${recipientLastName || ''}`}
                       </CCol>
                     );
                   })}
-                </CRow>
+                </CRow> */}
 
                 <br/>
                 
-                <CCard>
+                {/* <CCard>
                   <CRow className="mb-3">
                     <CCol xs={12}>
                       <CCardHeader>
@@ -156,17 +160,28 @@ const Details = () => {
                       }
                     </CCol>
                   </CRow>
-                </CCard>
+                </CCard> */}
 
                 <br/>
 
-                <CRow>
+                {/* <CRow>
                   <CFormCheck id="accepted" label="Accepted"/>
                   <CFormCheck id="collected" label="Collected"/>
                   <CFormCheck id="shipped" label="Shipped"/>
                   <CFormCheck id="in-transitted" label="In-Transitted"/>
                   <CFormCheck id="delivered" label="Delivered"/>
-                </CRow>
+                </CRow> */}
+
+                <br/>
+
+                {/* <div className="position-relative m-4">
+                  <div className="progress" role="progressbar" aria-label="Progress" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100" style="height: 1px;">
+                    <div className="progress-bar" style="width: 50%"></div>
+                  </div>
+                  <CButton type="button" className="position-absolute top-0 start-0 translate-middle btn btn-sm btn-primary rounded-pill" style="width: 2rem; height:2rem;">1</CButton>
+                  <CButton type="button" className="position-absolute top-0 start-50 translate-middle btn btn-sm btn-primary rounded-pill" style="width: 2rem; height:2rem;">2</CButton>
+                  <CButton type="button" className="position-absolute top-0 start-100 translate-middle btn btn-sm btn-secondary rounded-pill" style="width: 2rem; height:2rem;">3</CButton>
+                </div> */}
               </CCardText>
             </CCardBody>
           </CCard>

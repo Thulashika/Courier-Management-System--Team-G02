@@ -19,6 +19,8 @@ import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import { STAFF_ERRORS } from '../../../const'
 import background1 from '../../../assets/images/AS.jpg'
+import { cilCheckAlt, cilX } from '@coreui/icons'
+import CIcon from '@coreui/icons-react'
 
 const AddNewStaff = () => {
 
@@ -155,6 +157,7 @@ const AddNewStaff = () => {
                                 <CRow className="mb-3">
                                     <CCol xs={4} className='position-relative'>
                                         <CButton color='primary' type='submit'>
+                                            <CIcon icon={cilCheckAlt}/>
                                             Save
                                         </CButton>
                                     </CCol>
@@ -164,6 +167,7 @@ const AddNewStaff = () => {
                                             type='submit'
                                             onClick={() => window.confirm('Are you sure you want to cancel this form?') ? navigate('/staff') : ''}
                                         >
+                                            <CIcon icon={cilX}/>
                                             Cancel
                                         </CButton>
                                     </CCol>

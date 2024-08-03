@@ -23,7 +23,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { PARCEL_ERRORS } from '../../../const';
 import CIcon from '@coreui/icons-react';
-import { cilTrash } from '@coreui/icons';
+import { cilCheckAlt, cilTrash, cilX } from '@coreui/icons';
 // import ParcelService from '../../../services/ParcelService';
 
 const NewParcels = () => {
@@ -618,6 +618,7 @@ const NewParcels = () => {
 
             <div className='d-grid gap-2 d-md-flex'>
               <CButton color='success' type='submit'>
+                <CIcon icon={cilCheckAlt}/>
                 Submit
               </CButton>
               <CButton 
@@ -625,6 +626,7 @@ const NewParcels = () => {
                 type='submit' 
                 onClick={() => window.confirm('Are you sure you want to cancel this form?') ? navigate('/parcel') : ''} 
               >
+                <CIcon icon={cilX}/>
                 Cancel
               </CButton>
             </div>
