@@ -17,6 +17,8 @@ import { useNavigate } from 'react-router-dom'
 import { BRANCH_ERRORS } from '../../../const'
 import { AuthContext } from '../../pages/register/AuthProvider'
 import background1 from '../../../assets/images/AB.png'
+import CIcon from '@coreui/icons-react'
+import { cibDell, cilCheck, cilCheckAlt, cilContrast, cilSave, cilX } from '@coreui/icons'
 
 const AddNew = () => {
 
@@ -207,13 +209,14 @@ const AddNew = () => {
                 </CRow>
 
 
-                <CRow>
+                <CRow className="mb-3">
                   <CCol xs='auto'>
                     <CButton 
                       color='primary' 
                       type='submit' 
                       className='mb-3'
                     >
+                      <CIcon icon={cilCheckAlt}/>
                       Save
                     </CButton>
                   </CCol>
@@ -224,6 +227,7 @@ const AddNew = () => {
                       className='mb-3'
                       onClick={() => window.confirm('Are you sure you want to cancel this form?') ? navigate('/branch') : ''}
                     >
+                      <CIcon icon={cilX}/>
                       Cancel
                     </CButton>
                   </CCol>
