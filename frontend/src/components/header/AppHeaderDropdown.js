@@ -60,16 +60,16 @@ const AppHeaderDropdown = () => {
       <CDropdownMenu className="pt-0" placement="bottom-end">
         <CDropdownItem href="/profile">
           <CIcon icon={cilUser} className="me-2" />
-          Profile
+            Profile
         </CDropdownItem>
         <CDropdownItem href="/settings">
           <CIcon icon={cilSettings} className="me-2" />
-          Settings
+            Settings
         </CDropdownItem>
         <CDropdownDivider />
-        <CDropdownItem href="/home">
+        <CDropdownItem href="/landingPage">
           <CIcon icon={cilLockLocked} className="me-2" />
-          Lock Account
+            Lock Account
         </CDropdownItem>
       </CDropdownMenu>
     </CDropdown>

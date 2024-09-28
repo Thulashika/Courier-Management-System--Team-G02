@@ -13,6 +13,9 @@ import {
 import axios from 'axios'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { BRANCH_ERRORS } from '../../../const'
+import CIcon from '@coreui/icons-react'
+import { cilCheckAlt, cilX } from '@coreui/icons'
+
 
 function useQuery() {
     const {search} = useLocation()
@@ -102,8 +105,8 @@ const UpdateBranch = () => {
 
   return (
     <CRow>
-      <CCol>
-        <CCard>
+      <CCol xs={12}>
+        <CCard style={{ width: '24rem' }}>
           <CCardHeader>
             <strong>Update Branch</strong>
           </CCardHeader>
@@ -206,7 +209,10 @@ const UpdateBranch = () => {
 
             <CRow>
               <CCol xs='auto'>
-                <CButton color='success' type='submit' className='mb-3'>Update</CButton>
+                <CButton color='success' type='submit' className='mb-3'>
+                  <CIcon icon={cilCheckAlt}/>
+                  Update
+                </CButton>
               </CCol>
               <CCol xs='auto'>
                 <CButton 
@@ -215,6 +221,7 @@ const UpdateBranch = () => {
                   className='mb-3'
                   onClick={() => window.confirm('Are you sure you want to cancel this update form?') ? navigate('/branch') : ''} 
                 >
+                  <CIcon icon={cilX}/>
                   Cancel
                 </CButton>
               </CCol>

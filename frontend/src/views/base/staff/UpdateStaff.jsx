@@ -13,6 +13,8 @@ import {
 import { useLocation, useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import { STAFF_ERRORS } from '../../../const'
+import CIcon from '@coreui/icons-react'
+import { cilCheckAlt, cilX } from '@coreui/icons'
 
 function useQuery() {
     const {search} = useLocation()
@@ -103,90 +105,103 @@ const [allBranches, setAllBranches] = useState([])
   return (
     <CRow>
         <CCol xs={12}>
-            <CCard style={{ width: '18rem' }}>
+            <CCard style={{ width: '24rem' }}>
                 <CCardHeader>
                     <strong>Update Staff</strong>
                 </CCardHeader>
                 <CCardBody>
                     <CForm className="row g-3" onSubmit={handleUpdate}>
-                        
+                        <CRow className="mb-3"></CRow>
                         <CRow className="mb-3">
-                            <CFormInput
-                                id='staffId'  
-                                type='text'
-                                label='Staff Id'
-                                onChange={(e) => setStaff({...staff, staffId:e.target.value})}
-                                required
-                                defaultValue={staff?.staffId}
-                                readOnly
-                            />
+                            <CCol xs="auto">
+                                <CFormInput
+                                    id='staffId'  
+                                    type='text'
+                                    label='Staff Id'
+                                    onChange={(e) => setStaff({...staff, staffId:e.target.value})}
+                                    required
+                                    defaultValue={staff?.staffId}
+                                    readOnly
+                                />
+                            </CCol>
                         </CRow>
 
                         <CRow className="mb-3">
-                            <CFormInput
-                                id='fullName'
-                                type='text'
-                                label='Full Name'
-                                onChange={(e) => setStaff({...staff,fullName:e.target.value})}
-                                required
-                                defaultValue={staff?.fullName}
-                            />
+                            <CCol xs="auto">
+                                <CFormInput
+                                    id='fullName'
+                                    type='text'
+                                    label='Full Name'
+                                    onChange={(e) => setStaff({...staff,fullName:e.target.value})}
+                                    required
+                                    defaultValue={staff?.fullName}
+                                />
+                            </CCol>
                         </CRow>
 
                         <CRow className="mb-3">
-                            <CFormSelect
-                                id='Branch'
-                                type='text'
-                                label='Branch'
-                                required
-                                onChange={(e) => setStaff({...staff, branch: e.target.value})}
-                                value={staff?.branch}
+                            <CCol xs="auto">
+                                <CFormSelect
+                                    id='Branch'
+                                    type='text'
+                                    label='Branch'
+                                    required
+                                    onChange={(e) => setStaff({...staff, branch: e.target.value})}
+                                    value={staff?.branch}
                                 >
-                                    <option selected='' value=''>
-                                        Open this select menu
-                                    </option>
-                                    {Array.isArray(allBranches) && allBranches.map((branch, index) => (
-                                        <option key={index} value={branch.branchCode}>
-                                            {branch.branchName}
+                                        <option selected='' value=''>
+                                            Open this select menu
                                         </option>
-                                    ))}
-                            </CFormSelect>
+                                        {/* {Array.isArray(allBranches) && allBranches.map((branch, index) => (
+                                            <option key={index} value={branch.branchCode}>
+                                                {branch.branchName}
+                                            </option>
+                                        ))} */}
+                                        <option value='BR001'>BR001</option>
+                                        <option value='BR002'>BR002</option>
+                                </CFormSelect>
+                            </CCol>
                         </CRow>
 
                         <CRow className="mb-3">
-                            <CFormInput
-                            type='text'
-                            label='Contact Number'
-                            id='Contact Number'
-                            onChange={(e) => setStaff({...staff,contactNumber:e.target.value})}
-                            required
-                            defaultValue={staff?.contactNumber}
-                            />
+                            <CCol xs="auto">
+                                <CFormInput
+                                    type='text'
+                                    label='Contact Number'
+                                    id='Contact Number'
+                                    onChange={(e) => setStaff({...staff,contactNumber:e.target.value})}
+                                    required
+                                    defaultValue={staff?.contactNumber}
+                                />
+                            </CCol>
                             {!isValid && error === STAFF_ERRORS.CONTACTNUMBER_LENGTH_VALIDATION && <p>{error}</p>}
                             {!isValid && error === STAFF_ERRORS.CONTACTNUMBER_FORMAT_VALIDATION && <p>{error}</p>}
                         </CRow>
 
                         <CRow className="mb-3">
-                            <CFormSelect
-                            type='text'
-                            label='Position'
-                            id='Position'
-                            required
-                            value={staff?.position}
-                            >
-                                <option selected='' value=''>
-                                    Open this select menu
-                                </option>
-                                <option value='ADMIN'>Admin</option>
-                                <option value='Manager'>Manager</option>
-                                <option value='Staff'>Staff</option>                                
-                                <option value='DELIVERY_PERSON'>Galle</option>
-                            </CFormSelect>
+                            <CCol xs="auto">
+                                <CFormSelect
+                                    type='text'
+                                    label='Position'
+                                    id='Position'
+                                    required
+                                    value={staff?.position}
+                                >
+                                    <option selected='' value=''>
+                                        Open this select menu
+                                    </option>
+                                    <option value='ADMIN'>Admin</option>
+                                    <option value='Manager'>Manager</option>
+                                    <option value='Staff'>Staff</option>                                
+                                    <option value='DELIVERY_PERSON'>Galle</option>
+                                </CFormSelect>
+                            </CCol>
                         </CRow>
 
                         <CRow className="mb-3">
                             <CCol xs={4} className='position-relative'>
-                                <CButton color='primary' type='submit'>
+                                <CButton color='success' type='submit'>
+                                    <CIcon icon={cilCheckAlt}/>
                                     Save
                                 </CButton>
                             </CCol>
@@ -195,7 +210,8 @@ const [allBranches, setAllBranches] = useState([])
                                     color='secondary' 
                                     type='submit'
                                     onClick={() => window.confirm('Are you sure you want to cancel this update form?') ? navigate('/staff') : ''}
-                                    >
+                                >
+                                    <CIcon icon={cilX}/>
                                     Cancel
                                 </CButton>
                             </CCol>
