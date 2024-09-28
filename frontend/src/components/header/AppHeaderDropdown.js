@@ -67,7 +67,7 @@ const AppHeaderDropdown = () => {
           Settings
         </CDropdownItem>
         <CDropdownDivider />
-        <CDropdownItem href="/home">
+        <CDropdownItem href="/landingPage">
           <CIcon icon={cilLockLocked} className="me-2" />
           Lock Account
         </CDropdownItem>
