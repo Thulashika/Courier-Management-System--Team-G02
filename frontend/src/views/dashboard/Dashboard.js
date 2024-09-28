@@ -23,7 +23,6 @@ import {
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
 import {
-  cibCcAmex,
   cibCcApplePay,
   cibCcMastercard,
   cibCcPaypal,
@@ -36,7 +35,6 @@ import {
   cifEs,
   cifFr,
   cifIn,
-  cifPl,
   cifUs,
   cibTwitter,
   cilCloudDownload,
@@ -45,12 +43,11 @@ import {
   cilUserFemale,
 } from '@coreui/icons'
 
-import avatar1 from '../../assets/images/avatars/1.jpg'
+import avatar1 from '../../assets/images/avatars/10.jpg'
 import avatar2 from '../../assets/images/avatars/2.jpg'
 import avatar3 from '../../assets/images/avatars/3.jpg'
 import avatar4 from '../../assets/images/avatars/4.jpg'
 import avatar5 from '../../assets/images/avatars/5.jpg'
-import avatar6 from '../../assets/images/avatars/6.jpg'
 
 import WidgetsBrand from '../widgets/WidgetsBrand'
 import WidgetsDropdown from '../widgets/WidgetsDropdown'
@@ -160,22 +157,6 @@ const Dashboard = () => {
       payment: { name: 'Google Wallet', icon: cibCcApplePay },
       activity: 'Last week',
     },
-    // {
-    //   avatar: { src: avatar6, status: 'danger' },
-    //   user: {
-    //     name: 'Friderik Dávid',
-    //     new: true,
-    //     registered: 'March 24, 2024',
-    //   },
-    //   district: { name: 'Poland', flag: cifPl },
-    //   usage: {
-    //     value: 43,
-    //     period: 'Jun 06, 2024 - Jul 05, 2024',
-    //     color: 'success',
-    //   },
-    //   payment: { name: 'Amex', icon: cibCcAmex },
-    //   activity: 'Last week',
-    // },
   ]
 
   return (

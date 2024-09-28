@@ -29,7 +29,7 @@ import CIcon from '@coreui/icons-react';
 import { cilPrint } from '@coreui/icons';
 import axios from 'axios';
 import NFPR from '../../assets/images/NFPR.avif'
-import background1 from '../../assets/images/R2.jpg'
+import background1 from '../../assets/images/report.jpg'
 
 const Reports = () => {
 

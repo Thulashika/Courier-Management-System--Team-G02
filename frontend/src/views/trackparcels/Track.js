@@ -18,7 +18,7 @@ import { PARCEL_ERRORS } from '../../const';
 import { useSelector } from 'react-redux';
 import { AuthContext } from '../pages/register/AuthProvider';
 import NFRN from '../../assets/images/NF1.avif'
-import background1 from '../../assets/images/Tr.jpg'
+import background1 from '../../assets/images/track1.avif'
 import { useParams } from 'react-router-dom';
 import track, { useTracking } from 'react-tracking';
 

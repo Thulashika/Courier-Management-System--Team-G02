@@ -62,24 +62,24 @@ const _nav = [
   //   icon: <CIcon icon={cilHome} customClassName="nav-icon" />,
   //   to: '/home'
   // },
-  {
-    component: CNavItem,
-    name: 'Ourservices',
-    icon: <CIcon icon={cilTruck} customClassName="nav-icon" />,
-    to: '/ourservices'
-  },
-  {
-    component: CNavItem,
-    name: 'Contact us',
-    icon: <CIcon icon={cilChatBubble} customClassName="nav-icon" />,
-    to: '/contactus'
-  },
-  {
-    component: CNavItem,
-    name: 'Find us',
-    icon: <CIcon icon={cilHappy} customClassName="nav-icon" />,
-    to: '/findus'
-  },  
+  // {
+  //   component: CNavItem,
+  //   name: 'Ourservices',
+  //   icon: <CIcon icon={cilTruck} customClassName="nav-icon" />,
+  //   to: '/ourservices'
+  // },
+  // {
+  //   component: CNavItem,
+  //   name: 'Contact us',
+  //   icon: <CIcon icon={cilChatBubble} customClassName="nav-icon" />,
+  //   to: '/contactus'
+  // },
+  // {
+  //   component: CNavItem,
+  //   name: 'Find us',
+  //   icon: <CIcon icon={cilHappy} customClassName="nav-icon" />,
+  //   to: '/findus'
+  // },  
   // {
   //   component: CNavItem,
   //   name: 'Widgets',

@@ -210,429 +210,439 @@ const NewParcels = () => {
 
   return (
     <CRow>
-      <CHeader>
-        <strong>New Parcel</strong>
-      </CHeader>
-      <CCard className='mb-4'>
-        <CCardHeader>
-          <CRow className='justify-content-around'>
-            <CCol xs={6}>
-              <strong>Sender Information</strong>
-            </CCol>
-            <CCol xs={6}>
-              <strong>Recipient Information</strong>
-            </CCol>
-          </CRow>
-        </CCardHeader>
-
-        <CCardBody>
-          <CForm onSubmit={handleSubmit}>
-            <CRow>
+      <CCol xs={12}>
+        <CCard className='mb-3'>
+          <CCardHeader>
+            <strong>New Parcel</strong>
+          </CCardHeader>
+        </CCard>
+        <CCard className='mb-4'>
+          <CCardHeader>
+            <CRow className='justify-content-around'>
               <CCol xs={6}>
-                <CInputGroup className='mb-3'>
-                  <CInputGroupText>Name</CInputGroupText>
-                  <CFormInput
-                    type='text'
-                    placeholder='First Name'
-                    onChange={(e) =>
-                      setParcel({
-                        ...parcel,
-                        senderDetails: { ...parcel.senderDetails, firstName: e.target.value }
-                      })
-                    }
-                    required
-                  />
-                  <CFormInput
-                    type='text'
-                    placeholder='Last Name'
-                    onChange={(e) =>
-                      setParcel({
-                        ...parcel,
-                        senderDetails: { ...parcel.senderDetails, lastName: e.target.value }
-                      })
-                    }
-                    required
-                  />
-                </CInputGroup>
+                <strong>Sender Information</strong>
               </CCol>
               <CCol xs={6}>
-                <CInputGroup className='mb-3'>
-                  <CInputGroupText>Name</CInputGroupText>
-                  <CFormInput
-                    type='text'
-                    placeholder='First Name'
-                    onChange={(e) =>
-                      setParcel({
-                        ...parcel,
-                        recipientDetails: { ...parcel.recipientDetails, firstName: e.target.value }
-                      })
-                    }
-                    required
-                  />
-                  <CFormInput
-                    type='text'
-                    placeholder='Last Name'
-                    onChange={(e) =>
-                      setParcel({
-                        ...parcel,
-                        recipientDetails: { ...parcel.recipientDetails, lastName: e.target.value }
-                      })
-                    }
-                    required
-                  />
-                </CInputGroup>
+                <strong>Recipient Information</strong>
               </CCol>
             </CRow>
-            {!isValid && error === PARCEL_ERRORS.NAME_FORMAT_VALIDATION && <p>{error}</p>}
+          </CCardHeader>
 
-            <CRow>
-              <CCol xs={6}>
-                <CInputGroup className='mb-3'>
-                  <CInputGroupText>Address</CInputGroupText>
-                  <CFormInput
-                    type='text'
-                    onChange={(e) =>
-                      setParcel({ ...parcel, senderDetails: { ...parcel.senderDetails, address: e.target.value } })
-                    }
-                    required
-                  />
-                </CInputGroup>
-              </CCol>
-              <CCol xs={6}>
-                <CInputGroup className='mb-3'>
-                  <CInputGroupText>Address</CInputGroupText>
-                  <CFormInput
-                    type='text'
-                    onChange={(e) =>
-                      setParcel({
-                        ...parcel,
-                        recipientDetails: { ...parcel.recipientDetails, address: e.target.value }
-                      })
-                    }
-                    required
-                  />
-                </CInputGroup>
-              </CCol>
-            </CRow>
-
-            <CRow>
-              <CCol xs={6}>
-                <CInputGroup className='mb-3'>
-                  <CInputGroupText>Contact Number</CInputGroupText>
-                  <CFormInput
-                    type='text'
-                    onChange={(e) =>
-                      setParcel({
-                        ...parcel,
-                        senderDetails: { ...parcel.senderDetails, contactNumber: e.target.value }
-                      })
-                    }
-                    required
-                  />
-                </CInputGroup>
-              </CCol>
-              <CCol xs={6}>
-                <CInputGroup className='mb-3'>
-                  <CInputGroupText>Contact Number</CInputGroupText>
-                  <CFormInput
-                    type='text'
-                    onChange={(e) =>
-                      setParcel({
-                        ...parcel,
-                        recipientDetails: { ...parcel.recipientDetails, contactNumber: e.target.value }
-                      })
-                    }
-                    required
-                  />
-                </CInputGroup>
-              </CCol>
-            </CRow>
-            {!isValid && error === PARCEL_ERRORS.CONTACTNUMBER_LENGTH_VALIDATION && <p>{error}</p>}
-            {!isValid && error === PARCEL_ERRORS.CONTACTNUMBER_FORMAT_VALIDATION && <p>{error}</p>}
-
-            <CRow>
-              <CCol xs={6}>
-                <CInputGroup className='mb-3'>
-                  <CInputGroupText>NIC</CInputGroupText>
-                  <CFormInput
-                    type='text'
-                    onChange={(e) =>
-                      setParcel({
-                        ...parcel,
-                        senderDetails: { ...parcel.senderDetails, NIC: e.target.value }
-                      })
-                    }
-                    required
-                  />
-                </CInputGroup>
-              </CCol>
-              <CCol xs={6}>
-                <CInputGroup className='mb-3'>
-                  <CInputGroupText>NIC</CInputGroupText>
-                  <CFormInput
-                    type='text'
-                    onChange={(e) =>
-                      setParcel({
-                        ...parcel,
-                        recipientDetails: { ...parcel.recipientDetails, NIC: e.target.value }
-                      })
-                    }
-                    required
-                  />
-                </CInputGroup>
-              </CCol>
-            </CRow>
-            {!isValid && error === PARCEL_ERRORS.NIC_LENGTH_VALIDATION && <p>{error}</p>}
-            {!isValid && error === PARCEL_ERRORS.NIC_FORMAT_VALIDATION && <p>{error}</p>}
-
-            <CRow>
-              <CCol xs={6}>
-                <CInputGroup className='mb-3'>
-                  <CInputGroupText>Date</CInputGroupText>
-                  <CFormInput
-                    type='date'
-                    value={parcel.senderDetails.date}
-                    onChange={(e) => setParcel({
-                      ...parcel,
-                      senderDetails: {
-                        ...parcel.senderDetails,
-                        date: e.target.value
+          <CCardBody>
+            <CForm onSubmit={handleSubmit}>
+              <CRow>
+                <CCol xs={6}>
+                  <CInputGroup className='mb-3'>
+                    <CInputGroupText>Name</CInputGroupText>
+                    <CFormInput
+                      type='text'
+                      placeholder='First Name'
+                      onChange={(e) =>
+                        setParcel({
+                          ...parcel,
+                          senderDetails: { ...parcel.senderDetails, firstName: e.target.value }
+                        })
                       }
-                    })}
-                    required
-                  />
-                </CInputGroup>
-                <CInputGroup className='mb-3'>
-                  <CInputGroupText>Time</CInputGroupText>
-                  <CFormInput
-                    type='time'
-                    value={parcel.senderDetails.time}
-                    onChange={(e) => setParcel({
-                      ...parcel,
-                      senderDetails: {
-                        ...parcel.senderDetails,
-                        time: e.target.value
+                      required
+                    />
+                    <CFormInput
+                      type='text'
+                      placeholder='Last Name'
+                      onChange={(e) =>
+                        setParcel({
+                          ...parcel,
+                          senderDetails: { ...parcel.senderDetails, lastName: e.target.value }
+                        })
                       }
-                    })}
-                    required
-                  />
-                </CInputGroup>
-              </CCol>
+                      required
+                    />
+                  </CInputGroup>
+                </CCol>
+                <CCol xs={6}>
+                  <CInputGroup className='mb-3'>
+                    <CInputGroupText>Name</CInputGroupText>
+                    <CFormInput
+                      type='text'
+                      placeholder='First Name'
+                      onChange={(e) =>
+                        setParcel({
+                          ...parcel,
+                          recipientDetails: { ...parcel.recipientDetails, firstName: e.target.value }
+                        })
+                      }
+                      required
+                    />
+                    <CFormInput
+                      type='text'
+                      placeholder='Last Name'
+                      onChange={(e) =>
+                        setParcel({
+                          ...parcel,
+                          recipientDetails: { ...parcel.recipientDetails, lastName: e.target.value }
+                        })
+                      }
+                      required
+                    />
+                  </CInputGroup>
+                </CCol>
+              </CRow>
+              {!isValid && error === PARCEL_ERRORS.NAME_FORMAT_VALIDATION && <p>{error}</p>}
 
-              <CCol xs={6}>
-                <CInputGroup className='mb-3'>
-                  <CInputGroupText>Date</CInputGroupText>
-                  <CFormInput
-                    type='date'
-                    value={parcel.recipientDetails.date}
-                    onChange={(e) => setParcel({
-                      ...parcel,
-                      recipientDetails: {
-                        ...parcel.recipientDetails,
-                        date: e.target.value
+              <CRow>
+                <CCol xs={6}>
+                  <CInputGroup className='mb-3'>
+                    <CInputGroupText>Address</CInputGroupText>
+                    <CFormInput
+                      type='text'
+                      onChange={(e) =>
+                        setParcel({ ...parcel, senderDetails: { ...parcel.senderDetails, address: e.target.value } })
                       }
-                    })}
-                    required
-                    min={parcel.senderDetails.date}
-                  />
-                </CInputGroup>
-                <CInputGroup className='mb-3'>
-                  <CInputGroupText>Time</CInputGroupText>
-                  <CFormInput
-                    type='time'
-                    value={parcel.recipientDetails.time}
-                    onChange={(e) => setParcel({
-                      ...parcel,
-                      recipientDetails: {
-                        ...parcel.recipientDetails,
-                        time: e.target.value
+                      required
+                    />
+                  </CInputGroup>
+                </CCol>
+                <CCol xs={6}>
+                  <CInputGroup className='mb-3'>
+                    <CInputGroupText>Address</CInputGroupText>
+                    <CFormInput
+                      type='text'
+                      onChange={(e) =>
+                        setParcel({
+                          ...parcel,
+                          recipientDetails: { ...parcel.recipientDetails, address: e.target.value }
+                        })
                       }
-                    })}
-                    required
-                  />
-                </CInputGroup>
-              </CCol>
-            </CRow>
+                      required
+                    />
+                  </CInputGroup>
+                </CCol>
+              </CRow>
 
-            <CRow>
-              <CCol xs={6}>
-                <CInputGroup className='mb-3'>
-                  <CInputGroupText>Branch Processed</CInputGroupText>
-                  <CFormSelect
-                    onChange={(e) =>
-                      setParcel({
+              <CRow>
+                <CCol xs={6}>
+                  <CInputGroup className='mb-3'>
+                    <CInputGroupText>Contact Number</CInputGroupText>
+                    <CFormInput
+                      type='text'
+                      onChange={(e) =>
+                        setParcel({
+                          ...parcel,
+                          senderDetails: { ...parcel.senderDetails, contactNumber: e.target.value }
+                        })
+                      }
+                      required
+                    />
+                  </CInputGroup>
+                </CCol>
+                <CCol xs={6}>
+                  <CInputGroup className='mb-3'>
+                    <CInputGroupText>Contact Number</CInputGroupText>
+                    <CFormInput
+                      type='text'
+                      onChange={(e) =>
+                        setParcel({
+                          ...parcel,
+                          recipientDetails: { ...parcel.recipientDetails, contactNumber: e.target.value }
+                        })
+                      }
+                      required
+                    />
+                  </CInputGroup>
+                </CCol>
+              </CRow>
+              {!isValid && error === PARCEL_ERRORS.CONTACTNUMBER_LENGTH_VALIDATION && <p>{error}</p>}
+              {!isValid && error === PARCEL_ERRORS.CONTACTNUMBER_FORMAT_VALIDATION && <p>{error}</p>}
+
+              <CRow>
+                <CCol xs={6}>
+                  <CInputGroup className='mb-3'>
+                    <CInputGroupText>NIC</CInputGroupText>
+                    <CFormInput
+                      type='text'
+                      onChange={(e) =>
+                        setParcel({
+                          ...parcel,
+                          senderDetails: { ...parcel.senderDetails, NIC: e.target.value }
+                        })
+                      }
+                      required
+                    />
+                  </CInputGroup>
+                </CCol>
+                <CCol xs={6}>
+                  <CInputGroup className='mb-3'>
+                    <CInputGroupText>NIC</CInputGroupText>
+                    <CFormInput
+                      type='text'
+                      onChange={(e) =>
+                        setParcel({
+                          ...parcel,
+                          recipientDetails: { ...parcel.recipientDetails, NIC: e.target.value }
+                        })
+                      }
+                      required
+                    />
+                  </CInputGroup>
+                </CCol>
+              </CRow>
+              {!isValid && error === PARCEL_ERRORS.NIC_LENGTH_VALIDATION && <p>{error}</p>}
+              {!isValid && error === PARCEL_ERRORS.NIC_FORMAT_VALIDATION && <p>{error}</p>}
+
+              <CRow>
+                <CCol xs={6}>
+                  <CInputGroup className='mb-3'>
+                    <CInputGroupText>Date</CInputGroupText>
+                    <CFormInput
+                      type='date'
+                      value={parcel.senderDetails.date}
+                      onChange={(e) => setParcel({
                         ...parcel,
-                        senderDetails: { ...parcel.senderDetails, branchProcessed: e.target.value }
-                      })
-                    }
-                    required
-                  >
-                    <option value=''>Please Select Branch</option>
-                    <option value='JAFFNA'>Jaffna</option>
-                    <option value='COLOMBO'>Colombo</option>
-                  </CFormSelect>
-                </CInputGroup>
-              </CCol>
-              <CCol xs={6}>
-                <CInputGroup className='mb-3'>
-                  <CInputGroupText>Pickup Branch</CInputGroupText>
-                  <CFormSelect
-                    onChange={(e) =>
-                      setParcel({
+                        senderDetails: {
+                          ...parcel.senderDetails,
+                          date: e.target.value
+                        }
+                      })}
+                      required
+                    />
+                  </CInputGroup>
+                  <CInputGroup className='mb-3'>
+                    <CInputGroupText>Time</CInputGroupText>
+                    <CFormInput
+                      type='time'
+                      value={parcel.senderDetails.time}
+                      onChange={(e) => setParcel({
                         ...parcel,
-                        recipientDetails: { ...parcel.recipientDetails, branchProcessed: e.target.value }
-                      })
-                    }
-                    required
-                  >
-                    <option value=''>Please Select Branch</option>
-                    <option value='JAFFNA'>Jaffna</option>
-                    <option value='COLOMBO'>Colombo</option>
-                  </CFormSelect>
-                </CInputGroup>
-              </CCol>
-            </CRow>
+                        senderDetails: {
+                          ...parcel.senderDetails,
+                          time: e.target.value
+                        }
+                      })}
+                      required
+                    />
+                  </CInputGroup>
+                </CCol>
 
-            <CCardHeader>
-              <strong>Parcel Details</strong>
-            </CCardHeader>
+                <CCol xs={6}>
+                  <CInputGroup className='mb-3'>
+                    <CInputGroupText>Date</CInputGroupText>
+                    <CFormInput
+                      type='date'
+                      value={parcel.recipientDetails.date}
+                      onChange={(e) => setParcel({
+                        ...parcel,
+                        recipientDetails: {
+                          ...parcel.recipientDetails,
+                          date: e.target.value
+                        }
+                      })}
+                      required
+                      min={parcel.senderDetails.date}
+                    />
+                  </CInputGroup>
+                  <CInputGroup className='mb-3'>
+                    <CInputGroupText>Time</CInputGroupText>
+                    <CFormInput
+                      type='time'
+                      value={parcel.recipientDetails.time}
+                      onChange={(e) => setParcel({
+                        ...parcel,
+                        recipientDetails: {
+                          ...parcel.recipientDetails,
+                          time: e.target.value
+                        }
+                      })}
+                      required
+                    />
+                  </CInputGroup>
+                </CCol>
+              </CRow>
 
-            <CTable>
-              <CTableHead>
-                <CTableRow>
-                  <CTableHeaderCell>Reference Number</CTableHeaderCell>
-                  <CTableHeaderCell>Weight</CTableHeaderCell>
-                  <CTableHeaderCell>Delivery Charge</CTableHeaderCell>
-                  <CTableHeaderCell>Total Amount</CTableHeaderCell>
-                  <CTableHeaderCell>Due Amount</CTableHeaderCell>
-                  <CTableHeaderCell>paymentMethod</CTableHeaderCell>
-                  <CTableHeaderCell>Status</CTableHeaderCell>
-                  <CTableHeaderCell>Actions</CTableHeaderCell>
-                </CTableRow>
-              </CTableHead>
-              <CTableBody>
-                {parcel.parcelDetails && parcel.parcelDetails.map((item, index) => (
-                  <CTableRow key={index}>
+              <CRow>
+                <CCol xs={6}>
+                  <CInputGroup className='mb-3'>
+                    <CInputGroupText>Branch Processed</CInputGroupText>
+                    <CFormSelect
+                      onChange={(e) =>
+                        setParcel({
+                          ...parcel,
+                          senderDetails: { ...parcel.senderDetails, branchProcessed: e.target.value }
+                        })
+                      }
+                      required
+                    >
+                      <option value=''>Please Select Branch</option>
+                      <option value='JAFFNA'>Jaffna</option>
+                      <option value='COLOMBO'>Colombo</option>
+                    </CFormSelect>
+                  </CInputGroup>
+                </CCol>
+                <CCol xs={6}>
+                  <CInputGroup className='mb-3'>
+                    <CInputGroupText>Pickup Branch</CInputGroupText>
+                    <CFormSelect
+                      onChange={(e) =>
+                        setParcel({
+                          ...parcel,
+                          recipientDetails: { ...parcel.recipientDetails, branchProcessed: e.target.value }
+                        })
+                      }
+                      required
+                    >
+                      <option value=''>Please Select Branch</option>
+                      <option value='JAFFNA'>Jaffna</option>
+                      <option value='COLOMBO'>Colombo</option>
+                    </CFormSelect>
+                  </CInputGroup>
+                </CCol>
+              </CRow>
 
-                    <CTableDataCell>
-                      <CFormInput
-                        type='text'
-                        name='referenceNumber'
-                        value={item.referenceNumber}
-                        onChange={(e) => handleInputChange(index, e)}
-                        required
-                      />
-                    </CTableDataCell>
-                    {!isValid && error === PARCEL_ERRORS.NUMBER_LENGTH_VALIDATION && <p>{error}</p>}
-                    {!isValid && error === PARCEL_ERRORS.NUMBER_FORMAT_VALIDATION && <p>{error}</p>}
+              <CRow>
+                <CCol md={12}>
+                  <CCard className='mb-3'>
+                    <CCardHeader>
+                      <strong>Parcel Details</strong>
+                    </CCardHeader>
+                  </CCard>
 
-                    <CTableDataCell>
-                      <CFormInput
-                        type='number'
-                        name='weight'
-                        value={item.weight}
-                        onChange={(e) => handleInputChange(index, e)}
-                        required
-                      />
-                    </CTableDataCell>
+                  <CTable>
+                    <CTableHead>
+                      <CTableRow>
+                        <CTableHeaderCell>Reference Number</CTableHeaderCell>
+                        <CTableHeaderCell>Weight</CTableHeaderCell>
+                        <CTableHeaderCell>Delivery Charge</CTableHeaderCell>
+                        <CTableHeaderCell>Total Amount</CTableHeaderCell>
+                        <CTableHeaderCell>Due Amount</CTableHeaderCell>
+                        <CTableHeaderCell>paymentMethod</CTableHeaderCell>
+                        <CTableHeaderCell>Status</CTableHeaderCell>
+                        <CTableHeaderCell>Actions</CTableHeaderCell>
+                      </CTableRow>
+                    </CTableHead>
+                    <CTableBody>
+                      {parcel.parcelDetails && parcel.parcelDetails.map((item, index) => (
+                        <CTableRow key={index}>
 
-                    <CTableDataCell>
-                      <CFormInput
-                        type='number'
-                        name='deliveryCharge'
-                        value={item.deliveryCharge}
-                        onChange={(e) => handleInputChange(index, e)}
-                        required
-                      />
-                    </CTableDataCell>
+                          <CTableDataCell>
+                            <CFormInput
+                              type='text'
+                              name='referenceNumber'
+                              value={item.referenceNumber}
+                              onChange={(e) => handleInputChange(index, e)}
+                              required
+                            />
+                          </CTableDataCell>
+                          {!isValid && error === PARCEL_ERRORS.NUMBER_LENGTH_VALIDATION && <p>{error}</p>}
+                          {!isValid && error === PARCEL_ERRORS.NUMBER_FORMAT_VALIDATION && <p>{error}</p>}
 
-                    <CTableDataCell>
-                      <CFormInput
-                        type='number'
-                        name='totalAmount'
-                        value={item.totalAmount}
-                        readOnly
-                      />
-                    </CTableDataCell>
+                          <CTableDataCell>
+                            <CFormInput
+                              type='number'
+                              name='weight'
+                              value={item.weight}
+                              onChange={(e) => handleInputChange(index, e)}
+                              required
+                            />
+                          </CTableDataCell>
 
-                    <CTableDataCell>
-                      <CFormInput
-                        type='number'
-                        name='dueAmount'
-                        value={item.dueAmount}
-                        readOnly
-                      />
-                    </CTableDataCell>
+                          <CTableDataCell>
+                            <CFormInput
+                              type='number'
+                              name='deliveryCharge'
+                              value={item.deliveryCharge}
+                              onChange={(e) => handleInputChange(index, e)}
+                              required
+                            />
+                          </CTableDataCell>
 
-                    <CTableDataCell>
-                      <CFormSelect  
-                        type='select'
-                        name='paymentMethod'
-                        value={item.paymentMethod}
-                        onChange={(e) => handleInputChange(index, e)}                    
-                        required>
-                          <option value=''>Please Select Method</option>
-                          <option value='CASH ON'>Cash on</option>
-                          <option value='CASH ON DELIVERY'>Cash on delivery</option>
-                          <option value='ONLINE PAYMENT'>Online payment</option>
-                          <option value='CARD PAYMENT'>Card payment</option>
-                      </CFormSelect>
-                    </CTableDataCell>
+                          <CTableDataCell>
+                            <CFormInput
+                              type='number'
+                              name='totalAmount'
+                              value={item.totalAmount}
+                              readOnly
+                            />
+                          </CTableDataCell>
 
-                    <CTableDataCell>
-                      <CFormSelect  
-                        type='select'
-                        name='status'
-                        value={item.status}
-                        onChange={(e) => handleInputChange(index, e)}                    
-                        required>
-                          <option value=''>Please Select Status</option>
-                          <option value='ACCEPTED'>Accepted</option>
-                          <option value='COLLECTED'>Collected</option>
-                          <option value='SHIPPED'>Shipped</option>
-                          <option value='IN-TRANSIT'>In-transit</option>
-                          <option value='DELIVERED'>Delivered</option>
-                      </CFormSelect>
-                    </CTableDataCell>
+                          <CTableDataCell>
+                            <CFormInput
+                              type='number'
+                              name='dueAmount'
+                              value={item.dueAmount}
+                              readOnly
+                            />
+                          </CTableDataCell>
 
-                    <CTableDataCell>
-                      <CButton
-                        color='danger'
-                        variant='ghost'
-                        onClick={() => deleteItem(index)}
-                      >
-                        <CIcon icon={cilTrash}/>
-                      </CButton>
-                    </CTableDataCell>
-                    
-                  </CTableRow>
-                ))}
-              </CTableBody>
-            </CTable>
+                          <CTableDataCell>
+                            <CFormSelect  
+                              type='select'
+                              name='paymentMethod'
+                              value={item.paymentMethod}
+                              onChange={(e) => handleInputChange(index, e)}                    
+                              required>
+                                <option value=''>Please Select Method</option>
+                                <option value='CASH ON'>Cash on</option>
+                                <option value='CASH ON DELIVERY'>Cash on delivery</option>
+                                <option value='ONLINE PAYMENT'>Online payment</option>
+                                <option value='CARD PAYMENT'>Card payment</option>
+                            </CFormSelect>
+                          </CTableDataCell>
 
-            <CRow className="mb-3">
-              <div className="d-grid gap-2 d-md-flex justify-content-md-end">
-                <CButton type='button' className='me-md-2' color='primary' variant='outline' onClick={addItem}>Add Parcel</CButton>
+                          <CTableDataCell>
+                            <CFormSelect  
+                              type='select'
+                              name='status'
+                              value={item.status}
+                              onChange={(e) => handleInputChange(index, e)}                    
+                              required>
+                                <option value=''>Please Select Status</option>
+                                <option value='ACCEPTED'>Accepted</option>
+                                <option value='COLLECTED'>Collected</option>
+                                <option value='SHIPPED'>Shipped</option>
+                                <option value='IN-TRANSIT'>In-transit</option>
+                                <option value='DELIVERED'>Delivered</option>
+                            </CFormSelect>
+                          </CTableDataCell>
+
+                          <CTableDataCell>
+                            <CButton
+                              color='danger'
+                              variant='ghost'
+                              onClick={() => deleteItem(index)}
+                            >
+                              <CIcon icon={cilTrash}/>
+                            </CButton>
+                          </CTableDataCell>
+                          
+                        </CTableRow>
+                      ))}
+                    </CTableBody>
+                  </CTable>
+
+                  <CRow className="mb-3">
+                    <div className="d-grid gap-2 d-md-flex justify-content-md-end">
+                      <CButton type='button' className='me-md-2' color='primary' variant='outline' onClick={addItem}>Add Parcel</CButton>
+                    </div>
+                  </CRow>
+                </CCol>
+              </CRow>
+
+              <div className='d-grid gap-2 d-md-flex'>
+                <CButton color='success' type='submit'>
+                  <CIcon icon={cilCheckAlt}/>
+                  Save
+                </CButton>
+                <CButton 
+                  color='secondary' 
+                  type='submit' 
+                  onClick={() => window.confirm('Are you sure you want to cancel this form?') ? navigate('/parcel') : ''} 
+                >
+                  <CIcon icon={cilX}/>
+                  Cancel
+                </CButton>
               </div>
-            </CRow>
-
-            <div className='d-grid gap-2 d-md-flex'>
-              <CButton color='success' type='submit'>
-                <CIcon icon={cilCheckAlt}/>
-                Submit
-              </CButton>
-              <CButton 
-                color='secondary' 
-                type='submit' 
-                onClick={() => window.confirm('Are you sure you want to cancel this form?') ? navigate('/parcel') : ''} 
-              >
-                <CIcon icon={cilX}/>
-                Cancel
-              </CButton>
-            </div>
-          </CForm>
-        </CCardBody>
-      </CCard>
+            </CForm>
+          </CCardBody>
+        </CCard>
+      </CCol>
     </CRow>
   );
 };

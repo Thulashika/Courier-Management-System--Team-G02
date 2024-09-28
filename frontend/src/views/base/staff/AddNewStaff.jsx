@@ -50,7 +50,7 @@ const AddNewStaff = () => {
         setError('')
         setIsValid(true)
 
-        const BCregex = /^(?:S)?[0-9]{4}$/;  
+        const BCregex = /^(?:Y)?[AMSD][0-9]{3}$/;  ///^(?:S)?[0-9]{4}$/;
 
         if(staff.staffId.length !== 5) {
             setError(STAFF_ERRORS.ID_LENGTH_VALIDATION)
@@ -96,7 +96,7 @@ const AddNewStaff = () => {
     //         <CCardImageOverlay> 
         <CRow className='mb-3'>
             <CCol xs={12}>
-                <CCard style={{ width: '940px' }}>
+                <CCard style={{ width: '540px' }}>
                     <CCardHeader>
                         <strong>New Staff</strong>
                     </CCardHeader>
@@ -107,61 +107,69 @@ const AddNewStaff = () => {
                                 <CRow className="mb-3"></CRow>
 
                                 <CRow className="mb-3">
-                                    <CFormInput
-                                        id='staffId'
-                                        type='text'
-                                        label='Staff Id'
-                                        onChange={(e) => setStaff({...staff,staffId:e.target.value})}
-                                    />
+                                    <CCol xs="auto">
+                                        <CFormInput
+                                            id='staffId'
+                                            type='text'
+                                            label='Staff Id'
+                                            onChange={(e) => setStaff({...staff,staffId:e.target.value})}
+                                        />
+                                    </CCol>
                                     {!isValid && error === STAFF_ERRORS.ID_LENGTH_VALIDATION && <p>{error}</p>}
                                     {!isValid && error === STAFF_ERRORS.ID_FORMAT_VALIDATION && <p>{error}</p>}
                                 </CRow>
                         
                                 <CRow className="mb-3">
-                                <CFormSelect
-                                    id='Branch'
-                                    type='text'
-                                    label='Branch'
-                                    required
-                                    onChange={(e) => setStaff({...staff, branch: e.target.value})}
-                                    value={staff?.branch}
-                                    >
-                                        <option selected='' value=''>
-                                            Open this select menu
-                                        </option>
-                                        {Array.isArray(allBranches) && allBranches.map((branch, index) => (
-                                            <option key={index} value={branch.branchCode}>
-                                                {branch.branchName}
+                                    <CCol xs="auto">
+                                        <CFormSelect
+                                            id='Branch'
+                                            type='text'
+                                            label='Branch'
+                                            required
+                                            onChange={(e) => setStaff({...staff, branch: e.target.value})}
+                                            value={staff?.branch}
+                                        >
+                                            <option selected='' value=''>
+                                                Open this select menu
                                             </option>
-                                        ))}
-                                </CFormSelect>
+                                            {/* {Array.isArray(allBranches) && allBranches.map((branch, index) => (
+                                                <option key={index} value={branch.branchCode}>
+                                                    {branch.branchName}
+                                                </option>
+                                            ))} */}
+                                            <option value='BR001'>BR001</option>
+                                            <option value='BR002'>BR002</option>
+                                        </CFormSelect>
+                                    </CCol>
                                 </CRow>
                                 
                                 <CRow className="mb-3">
-                                    <CFormSelect
-                                        type='text'
-                                        label='Position'
-                                        id='Position'
-                                        onChange={(e) => setStaff({...staff, position: e.target.value})}
-                                    >
-                                        <option selected='' value=''>
-                                            Open this select menu
-                                        </option>
-                                        <option value='ADMIN'>Admin</option>
-                                        <option value='MANAGER'>Manager</option>
-                                        <option value='STAFF'>Staff</option>                                
-                                        <option value='DELIVERY_PERSON'>Delivery Person</option>
-                                    </CFormSelect>
+                                    <CCol xs="auto">
+                                        <CFormSelect
+                                            type='text'
+                                            label='Position'
+                                            id='Position'
+                                            onChange={(e) => setStaff({...staff, position: e.target.value})}
+                                        >
+                                            <option selected='' value=''>
+                                                Open this select menu
+                                            </option>
+                                            <option value='ADMIN'>Admin</option>
+                                            <option value='MANAGER'>Manager</option>
+                                            <option value='STAFF'>Staff</option>                                
+                                            <option value='DELIVERY_PERSON'>Delivery Person</option>
+                                        </CFormSelect>
+                                    </CCol>
                                 </CRow>
 
                                 <CRow className="mb-3">
-                                    <CCol xs={4} className='position-relative'>
-                                        <CButton color='primary' type='submit'>
+                                    <CCol xs='auto' className='position-relative'>
+                                        <CButton color='success' type='submit'>
                                             <CIcon icon={cilCheckAlt}/>
                                             Save
                                         </CButton>
                                     </CCol>
-                                    <CCol xs={4} className='position-relative'>
+                                    <CCol xs='auto' className='position-relative'>
                                         <CButton 
                                             color='secondary' 
                                             type='submit'

@@ -114,7 +114,7 @@ const AddNew = () => {
   return (
     <CRow>
       <CCol>
-        <CCard style={{ width: '840px' }}>
+        <CCard style={{ width: '540px' }}>
           <CCardHeader>
             <strong>New Branch</strong>
           </CCardHeader>
@@ -212,7 +212,7 @@ const AddNew = () => {
                 <CRow className="mb-3">
                   <CCol xs='auto'>
                     <CButton 
-                      color='primary' 
+                      color='success' 
                       type='submit' 
                       className='mb-3'
                     >
