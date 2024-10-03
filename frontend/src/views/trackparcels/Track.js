@@ -11,14 +11,15 @@ import {
   CContainer,
   CCarousel,
   CCarouselItem,
-  CCardImageOverlay
+  CCardImageOverlay,
+  CBadge
 } from '@coreui/react'
 import axios from 'axios';
 import { PARCEL_ERRORS } from '../../const';
 import { useSelector } from 'react-redux';
 import { AuthContext } from '../pages/register/AuthProvider';
-import NFRN from '../../assets/images/NF1.avif'
-import background1 from '../../assets/images/track1.avif'
+import NFRN from '../../assets/images/NoData.png'
+import background1 from '../../assets/images/tra1.jpg'
 import { useParams } from 'react-router-dom';
 import track, { useTracking } from 'react-tracking';
 
@@ -115,7 +116,7 @@ const Track = () => {
             setParcel(res.data);
             setError('');
           } else {
-            <CImage rounded src={NFRN} width={200} height={200} align="center"/>
+            <CImage rounded style={{ background: 'transparent', backgroundColor: 'red' }} src={NFRN} width={200} height={200} align="center"/>
             alert('Not found parcel');
           }
         })
@@ -125,11 +126,28 @@ const Track = () => {
             setParcel(null);
             return
           }
-          setError(<CImage rounded src={NFRN} width={200} height={200} align="center"/>)
+          setError(<CImage rounded style={{ background: 'transparent', backgroundColor: 'gray' }} src={NFRN} width={200} height={200} align="center"/>)
           // alert('Not found');
         });
     }
   };
+
+  const getStatus = (status) => {
+    switch (status) {
+      case 'COLLECTED':
+        return 'primary'
+      case 'ACCEPTED':
+        return 'info'
+      case 'SHIPPED':
+        return 'secondary'
+      case 'IN-TRANSIT':
+        return 'warning'
+      case 'DELIVERED':
+        return 'success' 
+      default:
+        return 'danger'
+    }
+  }
 
   return (
     <CContainer className='mb-4'>
@@ -138,21 +156,28 @@ const Track = () => {
           <CCard className='justify-content-center'>
             <CImage className="d-block w-100" src={background1} alt="slide 1" />
             <CCardImageOverlay> 
-              <CCard>
+              {/* <CCard> */}
                 <CRow className="mb-3">
                   <CCol xs={12}>
-                    <CCardHeader>
-                      <strong>Track</strong>
-                    </CCardHeader>
+                    {/* <CCardHeader> */}
+                      <h3 className="text-dark"><strong>Track</strong></h3> 
+                    {/* </CCardHeader> */}
                     <CRow className="mb-3"/>
                     <CRow className="mb-3 text-center">
-                      <CFormLabel htmlFor="inputTrackingNumber" className="col-sm-4 col-form-label">Enter Tracking Number</CFormLabel>
+                      <CFormLabel 
+                        htmlFor="inputTrackingNumber" 
+                        className="col-sm-4 col-form-label"
+                        style={{ backgroundColor: 'transparent', color: 'black' }}
+                      >
+                        Enter Tracking Number
+                      </CFormLabel>
                       <CCol sm={4}>
                         <CFormInput 
                           type="text" 
                           id="inputTrackingNumber"
                           value={trackingNumber} 
                           onChange={(e) => setTrackingNumber(e.target.value)}
+                          style={{ backgroundColor: 'transparent', color: 'black' }}
                         />
                       </CCol>
                       <CCol sm={4}>
@@ -161,7 +186,7 @@ const Track = () => {
                     </CRow>
                     {error && (
                       <CRow className="mb-3 text-center">
-                        <p style={{ color: 'red' }}>{error}</p>
+                        <h5 style={{ color: 'red' }}>{error}</h5>
                       </CRow>
                     )}
 
@@ -174,12 +199,12 @@ const Track = () => {
 
                       {parcel && 
                         <CRow className="mb-3 text-center">
-                          <p>Status: {parcel.status.status}  </p>
+                          <h4><span className={`badge bg-${getStatus(parcel.status.status)}`}> Status: {parcel.status.status} </span></h4>
                         </CRow>
                       }
                   </CCol>
                 </CRow>
-              </CCard>
+              {/* </CCard> */}
             </CCardImageOverlay>
           </CCard>
         </CCarouselItem>
