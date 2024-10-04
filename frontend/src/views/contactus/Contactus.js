@@ -1,6 +1,6 @@
  import React, { Component } from 'react';
  import { Link } from 'react-router-dom';
- import './Contactus.css';
+//  import './Contactus.css';
  import { CCard, CCardBody, CCol, CForm, CFormInput, CFormLabel, CFormTextarea, CImage, CRow, CContainer } from '@coreui/react';
  import ContactUs_1 from '../../assets/images/ContactUs_1.jpg';
 
