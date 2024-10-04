@@ -1,5 +1,6 @@
 import { 
   CButton,
+  CCallout,
   CCard, 
   CCardBody, 
   CCardImageOverlay, 
@@ -11,6 +12,8 @@ import {
   CContainer, 
   CForm, 
   CFormInput,
+  CFormLabel,
+  CFormTextarea,
   CImage, 
   CNav, 
   CNavbar, 
@@ -32,6 +35,32 @@ import companyImg from '../../assets/images/Company.png'
 import aboutusImg from '../../../src/assets/images/AU.jpg'
 import aboutImg from '../../../src/assets/images/white.avif'
 import whiteImg from '../../assets/images/white.png'
+import expressImage from '../../assets/images/express.jpg'; 
+import parcelTrackingImage from '../../assets/images/track.jpg'; 
+import securePackagingImage from '../../assets/images/pack.jpg'; 
+import warehouseImage from '../../assets/images/management.jpg'; 
+import officeToOfficeImage from '../../assets/images/office.jpg'; 
+import backgroundImage from '../../assets/images/background_1.jpg';
+import ContactUs_1 from '../../assets/images/ContactUs_1.jpg';
+
+const calloutStyle = {
+  position: 'relative',
+  color: 'gray',
+  background: 'white',
+  padding: '2rem',
+  marginBottom: '2rem',
+};
+
+const headerStyle = {
+  color: 'blue',
+};
+
+const imageStyle = {
+  width: '100%',
+  maxWidth: '400px',
+  height: 'auto',
+  margin: '1rem 0',
+};
 
 function Landingpage() {
   const [scrolled, setScrolled] = useState(false);
@@ -50,6 +79,62 @@ function Landingpage() {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  const [showMore, setShowMore] = useState({
+    express: false,
+    tracking: false,
+    packaging: false,
+    warehouse: false,
+    office: false,
+  });
+
+  const toggleShowMore = (section) => {
+    setShowMore((prevState) => ({
+      ...prevState,
+      [section]: !prevState[section],
+    }));
+  };
+
+  const locationParagraphStyle = {
+    margin: '0',
+    color: '#333333', // Dark gray color
+    fontSize: '1.2rem',
+    textAlign: 'center', // Center align text
+    fontFamily: 'Open Sans, sans-serif',
+ };
+
+ const backgroundStyle = {
+  backgroundImage: `url(${backgroundImage})`,
+  backgroundSize: 'cover', // Ensure the image covers the entire section
+  backgroundPosition: 'center', // Center the image
+  padding: '20px', // Add padding for better spacing
+  color: 'white', // Ensure text is readable on the background
+};
+
+// const headerStyle = {
+//   marginBottom: '2rem',
+//   textAlign: 'center',
+//   color: 'black',
+//   fontSize: '3rem',
+//   fontFamily: 'Georgia, serif',
+//   fontWeight: 'bold',
+// };
+
+const locationStyle = {
+  background: 'transparent',
+  border: 'none',
+  boxShadow: 'none',
+  marginBottom: '1rem',
+  padding: '1rem',
+};
+
+const locationHeaderStyle = {
+  marginTop: '0',
+  color: '#003366', // Dark blue color
+  fontSize: '1.5rem',
+  textAlign: 'center', // Center align header
+  fontFamily: 'Georgia, serif',
+};
 
   return (
     <CRow className='mb-3'>
@@ -391,12 +476,12 @@ function Landingpage() {
         </CCardImageOverlay>
       </CCard>
 
-      <CRow className="mb-5"></CRow>
+      {/* <CRow className="mb-5"></CRow> */}
 
       <CCard>
-        <CImage className="d-block w-100" src={whiteImg} alt="slide 1"  height={700}/>
-        <CCardImageOverlay>
-            <CContainer className="justify-content-center">
+        {/* <CImage className="d-block w-100" src={whiteImg} alt="slide 1"  height={700}/>
+        <CCardImageOverlay> */}
+            {/* <CContainer className="justify-content-center">
               <br/><br/><br/><br/>
               <CCardText className="d-none d-md-block justify-content-center">
                 <p style={{ color: 'orange' }}>Opportunity in every direction</p>
@@ -406,13 +491,223 @@ function Landingpage() {
                   portfolio of services to ease the needs of the customers.
                 </h6>
               </CCardText>
-          </CContainer>
+            </CContainer> */}
+
+            <CContainer className="services-container" style={{ position: 'relative', overflow: 'hidden' }}>
+              <CRow className="justify-content-center mb-4">
+                <CCol xs="auto">
+                  <h1 style={headerStyle} className="text-center">Our Services</h1>
+                </CCol>
+              </CRow>
+              <p className="text-end">YOGA Transport goes the extra mile in delivering logistics solutions to our customers with a portfolio of services to ease the needs of the customers.</p>
+      
+              {/* Express Delivery Section */}
+              <CCallout color="primary" style={calloutStyle}>
+                <h3 style={headerStyle}>Express Delivery</h3>
+                <CImage
+                  src={expressImage}
+                  alt="Express Delivery"
+                  style={imageStyle}
+                />
+                {/* <p className="text-end">Fast and reliable express delivery service.</p> */}
+                <p><strong>Express delivery service:</strong> Provides the fastest shipping options with guaranteed delivery times.</p>
+                {showMore.express && (
+                  <p>This service ensures that your packages are delivered as quickly as possible, with real-time tracking and priority handling. Our express delivery covers both local and international destinations.</p>
+                )}
+                <CButton onClick={() => toggleShowMore('express')} color="link">
+                  {showMore.express ? 'Read Less' : 'Read More'}
+                </CButton>
+              </CCallout>
+      
+              {/* Parcel Tracking Section */}
+              <CCallout color="secondary" style={calloutStyle}>
+                <h3 style={headerStyle}>Parcel Tracking</h3>
+                <CImage
+                  src={parcelTrackingImage}
+                  alt="Parcel Tracking"
+                  style={imageStyle}
+                />
+                {/* <p className="text-end">Real-time tracking of your parcels.</p> */}
+                <p><strong>Parcel tracking service:</strong> Allows you to monitor your parcel&apos;s journey in real-time.</p>
+                {showMore.tracking && (
+                  <p>With our advanced tracking system, you can view the current status of your shipment, estimated delivery times, and any updates along the way. Stay informed with instant notifications and detailed tracking reports.</p>
+                )}
+                <CButton onClick={() => toggleShowMore('tracking')} color="link">
+                  {showMore.tracking ? 'Read Less' : 'Read More'}
+                </CButton>
+              </CCallout>
+              
+              {/* Secure Packaging Section */}
+              <CCallout color="success" style={calloutStyle}>
+                <h3 style={headerStyle}>Secure Packaging</h3>
+                <CImage
+                  src={securePackagingImage}
+                  alt="Secure Packaging"
+                  style={imageStyle}
+                />
+                {/* <p className="text-end">Secure packaging to ensure safe delivery.</p> */}
+                <p><strong>Secure packaging service:</strong> Ensures that your items are packed safely for transport.</p>
+                {showMore.packaging && (
+                  <p>Our secure packaging solutions use high-quality materials and techniques to prevent damage during transit. Whether you’re shipping fragile items or bulk goods, we guarantee safe and intact delivery.</p>
+                )}
+                <CButton onClick={() => toggleShowMore('packaging')} color="link">
+                  {showMore.packaging ? 'Read Less' : 'Read More'}
+                </CButton>
+              </CCallout>
+      
+              {/* Warehouse Management Section */}
+              <CCallout color="danger" style={calloutStyle}>
+                <h3 style={headerStyle}>Warehouse Management Solution</h3>
+                <CImage
+                  src={warehouseImage}
+                  alt="Warehouse Management Solution"
+                  style={imageStyle}
+                />
+                {/* <p className="text-end">Efficient management of warehouse operations.</p> */}
+                <p><strong>Warehouse management service:</strong> Streamlines inventory management and order fulfillment.</p>
+                {showMore.warehouse && (
+                  <p>Our warehouse management solutions optimize storage, reduce handling time, and improve order accuracy. Advanced software integration and real-time inventory tracking ensure your goods are always managed efficiently.</p>
+                )}
+                <CButton onClick={() => toggleShowMore('warehouse')} color="link">
+                  {showMore.warehouse ? 'Read Less' : 'Read More'}
+                </CButton>
+              </CCallout>
+              
+              {/* Office to Office Service Section */}
+              <CCallout color="warning" style={calloutStyle}>
+                <h3 style={headerStyle}>Office to Office Service</h3>
+                <CImage
+                  src={officeToOfficeImage}
+                  alt="Office to Office Service"
+                  style={imageStyle}
+                />
+                {/* <p className="text-end">Office to office delivery around the city, where your product will be at your doorstep within 24-48 hours.</p> */}
+                <p className="text-end">* Offices hold packages for 7 days.</p>
+                <p><strong>Office to office delivery service:</strong> Provides fast and convenient delivery between business locations.</p>
+                {showMore.office && (
+                  <p>This service is ideal for urgent business documents, packages, and other office materials. Our office-to-office service ensures timely delivery with the convenience of pickup and drop-off scheduling.</p>
+                )}
+                <CButton onClick={() => toggleShowMore('office')} color="link">
+                  {showMore.office ? 'Read Less' : 'Read More'}
+                </CButton>
+              </CCallout>
+            </CContainer>
 
           <div className=" min-vh-50 d-flex flex-row align-items-center">
 
           </div>
-          </CCardImageOverlay>
+          {/* </CCardImageOverlay> */}
       </CCard>
+
+      {/* <CRow className="mb-5"></CRow> */}
+
+      {/* <CCard> */}
+        <CContainer fluid style={backgroundStyle}>
+          <CRow className="justify-content-center">
+              <div style={headerStyle}>
+                <h2>Find Us</h2>
+              </div>
+          </CRow>
+          <CRow className="justify-content-center">
+              <div style={locationStyle}>
+                <h3 style={locationHeaderStyle}>Main Office</h3>
+                <p style={locationParagraphStyle}>123 Main Street</p>
+                <p style={locationParagraphStyle}>New York, NY 10001</p>
+                <p style={locationParagraphStyle}>Phone: (123) 456-7890</p>
+              </div>
+              <div style={locationStyle}>
+                <h3 style={locationHeaderStyle}>Branch Office</h3>
+                <p style={locationParagraphStyle}>456 Branch Avenue</p>
+                <p style={locationParagraphStyle}>Los Angeles, CA 90001</p>
+                <p style={locationParagraphStyle}>Phone: (456) 789-0123</p>
+              </div>
+          </CRow>
+        </CContainer>
+      {/* </CCard> */}
+
+      <CRow className="mb-5"></CRow>
+
+      {/* <CCard> */}
+        <CContainer style={{ width: '80%', margin: '0 auto' }}>
+          <CRow className='align-items-center'>
+            <CCol xs={12} md={6}>
+              <CCard style={{ width: '100%', padding: '0.5rem', minHeight: '200px' }}>
+                  <h2 style={{ fontSize: '1.2rem', marginBottom: '0.5rem' }}><strong>Contact Us</strong></h2>
+                <CCardBody style={{ padding: '0.5rem' }}>
+                    <CForm className="row g-2" >
+                      <CRow className='mb-2'>
+                        <CCol xs={12}>
+                          <CFormLabel style={{ marginBottom: '0.1rem', fontSize: '0.8rem' }}>
+                            Name:
+                          </CFormLabel>
+                          <CFormInput 
+                            type='text' 
+                            name="name" 
+                          //  value={this.state.name} 
+                          //   onChange={this.handleChange} 
+                            required 
+                            style={{ marginBottom: '0.3rem', fontSize: '0.8rem', padding: '0.25rem' }} 
+                          />
+                        </CCol>
+                        <CCol xs={12}>
+                          <CFormLabel style={{ marginBottom: '0.1rem', fontSize: '0.8rem' }}>
+                              Email:
+                          </CFormLabel>
+                          <CFormInput 
+                              type='email' 
+                              name="email" 
+                            //  value={this.state.email} 
+                            //  onChange={this.handleChange} 
+                              required 
+                              style={{ marginBottom: '0.3rem', fontSize: '0.8rem', padding: '0.25rem' }} 
+                          />
+                        </CCol>
+                        <CCol xs={12}>
+                          <CFormLabel style={{ marginBottom: '0.1rem', fontSize: '0.8rem' }}>
+                              Phone Number:
+                          </CFormLabel>                                  
+                          <CFormInput 
+                              type='tel' 
+                              name="phone" 
+                            //  value={this.state.phone} 
+                            //  onChange={this.handleChange} 
+                              style={{ marginBottom: '0.3rem', fontSize: '0.8rem', padding: '0.25rem' }} 
+                          />
+                        </CCol>
+                        <CCol xs={12}>
+                          <CFormLabel style={{ marginBottom: '0.1rem', fontSize: '0.8rem' }}>
+                            Message:
+                          </CFormLabel>
+                          <CFormTextarea
+                            name="message"
+                          //  value={this.state.message}
+                          //  onChange={this.handleChange}
+                            placeholder="Leave a comment here"
+                            id="floatingTextarea2"
+                            style={{ height: '50px', marginBottom: '0.3rem', fontSize: '0.8rem', padding: '0.25rem' }}
+                            required
+                          />
+                        </CCol>
+                        <CCol xs={12}>
+                          <button 
+                            type="submit" 
+                            className="btn btn-primary mt-1" 
+                            style={{ fontSize: '0.8rem', padding: '0.3rem 0.5rem' }}
+                          >
+                            Submit
+                          </button>
+                        </CCol>
+                      </CRow>
+                    </CForm>
+                </CCardBody>
+              </CCard>
+            </CCol>
+            <CCol xs={12} md={6} className="d-flex align-items-center justify-content-center">
+              <CImage src={ContactUs_1} width={300} />
+            </CCol>
+          </CRow>
+        </CContainer>
+      {/* </CCard> */}
     </CRow>
   )
 }
