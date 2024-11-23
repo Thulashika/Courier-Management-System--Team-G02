@@ -62,8 +62,8 @@ const WidgetsBrand = (props) => {
           })}
           icon={<CIcon icon={cibFacebook} height={52} className="my-4 text-white" />}
           values={[
-            { title: 'friends', value: '89K' },
-            { title: 'feeds', value: '459' },
+            { title: 'friends', value: '5' },
+            { title: 'feeds', value: '10' },
           ]}
           style={{
             '--cui-card-cap-bg': '#3b5998',
@@ -96,8 +96,8 @@ const WidgetsBrand = (props) => {
           })}
           icon={<CIcon icon={cibTwitter} height={52} className="my-4 text-white" />}
           values={[
-            { title: 'followers', value: '973k' },
-            { title: 'tweets', value: '1.792' },
+            { title: 'followers', value: '10' },
+            { title: 'tweets', value: '50' },
           ]}
           style={{
             '--cui-card-cap-bg': '#00aced',
@@ -130,8 +130,8 @@ const WidgetsBrand = (props) => {
           })}
           icon={<CIcon icon={cibLinkedin} height={52} className="my-4 text-white" />}
           values={[
-            { title: 'contacts', value: '500' },
-            { title: 'feeds', value: '1.292' },
+            { title: 'contacts', value: '5' },
+            { title: 'feeds', value: '24' },
           ]}
           style={{
             '--cui-card-cap-bg': '#4875b4',

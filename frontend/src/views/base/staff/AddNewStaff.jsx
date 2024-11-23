@@ -64,15 +64,15 @@ const AddNewStaff = () => {
         return;
         }
 
-        const confirmSubmit = window.confirm('Are you sure you want to submit this form?');
+        // const confirmSubmit = window.confirm('Are you sure you want to submit this form?');
 
-        if(isValid && confirmSubmit) {
+        if(isValid) {
         axios('http://localhost:6431/staff', {
             data:staff,
             method:'POST'
         }).then(res => {
             if (res.data.statusCode === 201) {
-                alert("Successfully created")
+                // alert("Successfully created")
                 navigate('/staff')
             } else {
             alert("Not created successfully")
@@ -88,12 +88,6 @@ const AddNewStaff = () => {
     }
 
     return (
-    //     <CContainer className='mb-4'>
-    //   <CCarousel>
-    //     <CCarouselItem>
-    //       <CCard className='justify-content-center'>
-    //         <CImage className="d-block w-100" src={background1} alt="slide 1" />
-    //         <CCardImageOverlay> 
         <CRow className='mb-3'>
             <CCol xs={12}>
                 <CCard style={{ width: '540px' }}>
@@ -166,6 +160,7 @@ const AddNewStaff = () => {
                                     <CCol xs='auto' className='position-relative'>
                                         <CButton color='success' type='submit'>
                                             <CIcon icon={cilCheckAlt}/>
+                                            {'  '}
                                             Save
                                         </CButton>
                                     </CCol>
@@ -176,6 +171,7 @@ const AddNewStaff = () => {
                                             onClick={() => window.confirm('Are you sure you want to cancel this form?') ? navigate('/staff') : ''}
                                         >
                                             <CIcon icon={cilX}/>
+                                            {'  '}
                                             Cancel
                                         </CButton>
                                     </CCol>

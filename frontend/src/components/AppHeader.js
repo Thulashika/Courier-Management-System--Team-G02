@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef, useState } from 'react'
+import React, { useContext, useEffect, useRef } from 'react'
 import { NavLink } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 import {
@@ -40,7 +40,7 @@ const AppHeader = () => {
     })
   }, [])
 
-  const { userDetails } = useContext(AuthContext)
+  const { userDetails, staffDetails } = useContext(AuthContext)
 
   return (
     <CHeader position="sticky" className="mb-4 p-0" ref={headerRef}>
@@ -59,6 +59,14 @@ const AppHeader = () => {
           </CNavItem>
         </CHeaderNav>
         <CHeaderNav className="ms-auto">
+        <CNavItem>
+            <CNavLink href="/">
+              {userDetails.role}
+            </CNavLink>
+          </CNavItem>
+          <li className="nav-item py-1">
+              <div className="vr h-100 mx-2 text-body text-opacity-75"></div>
+            </li>
         <CDropdown variant="nav-item" placement="bottom-end">
             <CDropdownToggle caret={false}>
               {colorMode === 'dark' ? (

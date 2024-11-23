@@ -66,7 +66,6 @@ const UpdateBranch = () => {
       return;
     }
 
-    // Validate zip code (assuming it should be a 5-digit number)
     const ZCodeRegex = /^[0-9]{5}$/;
 
     if(branch.zipCode.length !== 5) {
@@ -211,6 +210,7 @@ const UpdateBranch = () => {
               <CCol xs='auto'>
                 <CButton color='success' type='submit' className='mb-3'>
                   <CIcon icon={cilCheckAlt}/>
+                  {'  '}
                   Update
                 </CButton>
               </CCol>
@@ -222,6 +222,7 @@ const UpdateBranch = () => {
                   onClick={() => window.confirm('Are you sure you want to cancel this update form?') ? navigate('/branch') : ''} 
                 >
                   <CIcon icon={cilX}/>
+                  {'  '}
                   Cancel
                 </CButton>
               </CCol>

@@ -35,18 +35,7 @@ const AppSidebar = () => {
       }}
     >
       <CSidebarHeader className="border-bottom">
-        {/* <CSidebarBrand to="/">
-        {
-          userDetails.role === 'ADMIN' ? <h4>Admin</h4> :
-          userDetails.role === 'MANAGER' ? <h4>Manager</h4> :
-          userDetails.role === 'STAFF' ? <h4>Staff</h4> :
-          userDetails.role === 'DELIVERY_PERSON' ? <h4>Delivery Person</h4> :
-          userDetails.role === 'CUSTOMER' ? <h4>Customer</h4> :
-          null
-        }
-          
-          <CIcon customClassName="sidebar-brand-narrow" icon={sygnet} height={32} />
-        </CSidebarBrand> */}
+       
         <CSidebarBrand to="/">
           <CIcon customClassName="sidebar-brand-full" icon={logo} height={32} />
           <CIcon customClassName="sidebar-brand-narrow" icon={sygnet} height={32} />

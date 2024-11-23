@@ -61,7 +61,7 @@ const Reports = () => {
 
 const getStatus = (status) => {
   switch (status) {
-    case 'COLLECTED':
+    case 'Parcel_Handed_over_to_Delivery':
       return 'primary'
     case 'ACCEPTED':
       return 'info'
@@ -101,7 +101,7 @@ const getStatus = (status) => {
                         <option>---Select---</option>
                         <option>All</option>
                         <option value='ACCEPTED'>Accepted</option>
-                        <option value='COLLECTED'>Collected</option>
+                        <option value='Parcel_Handed_over_to_Delivery'>Parcel_Handed_over_to_Delivery</option>
                         <option value='SHIPPED'>Shipped</option>
                         <option value='IN-TRANSIT'>In-Transit</option>
                         <option value='DELIVERED'>Delivered</option>

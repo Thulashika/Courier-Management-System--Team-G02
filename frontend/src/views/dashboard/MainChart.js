@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react'
 
-import { CChartLine } from '@coreui/react-chartjs'
+import { CChartBar} from '@coreui/react-chartjs'
 import { getStyle } from '@coreui/utils'
 
 const MainChart = () => {
@@ -26,67 +26,42 @@ const MainChart = () => {
     })
   }, [chartRef])
 
-  const random = () => Math.round(Math.random() * 200)
+  // const random = () => Math.round(Math.random() * 200)
 
   return (
     <>
-      <CChartLine
+      <CChartBar
         ref={chartRef}
         style={{ height: '300px', marginTop: '40px' }}
         data={{
           labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],             
           datasets: [
             {
-              label: 'My First dataset',
-              backgroundColor: `rgba(${getStyle('--cui-info-rgb')}, .1)`,
-              borderColor: getStyle('--cui-info'),
-              pointHoverBackgroundColor: getStyle('--cui-info'),
-              borderWidth: 2,
+              label: 'Customers',
+              // backgroundColor: `rgba(${getStyle('--cui-light-rgb')}, .1)`,
+              backgroundColor: 'rgba(54, 162, 235, 0.8)', 
+              // borderColor: getStyle('--cui-info'),
+              pointHoverBackgroundColor: getStyle('--cui-light'),
+              borderWidth: 1,
+              barThickness: 10,
               data: [
-                random(50, 200),
-                random(50, 200),
-                random(50, 200),
-                random(50, 200),
-                random(50, 200),
-                random(50, 200),
-                random(50, 200),
-                random(50, 200),
-                random(50, 200),
-                random(50, 200),
-                random(50, 200),
-                random(50, 200),
+                // random(78),
+                78, 82, 72, 46, 33, 15, 26, 86, 64, 51, 6, 90, 6 
               ],
               fill: true,
             },
             {
-              label: 'My Second dataset',
-              backgroundColor: 'transparent',
-              borderColor: getStyle('--cui-success'),
+              label: 'New Customers',
+              // backgroundColor: 'transparent',
+              backgroundColor: 'rgba(255, 255, 255, 0.8)', 
+              // borderColor: getStyle('--cui-success'),
               pointHoverBackgroundColor: getStyle('--cui-success'),
-              borderWidth: 2,
-              data: [
-                random(150, 300),
-                random(150, 300),
-                random(150, 300),
-                random(150, 300),
-                random(150, 300),
-                random(150, 300),
-                random(150, 300),
-                random(150, 300),
-                random(150, 300),
-                random(150, 300),
-                random(150, 300),
-                random(150, 300),
-              ],
-            },
-            {
-              label: 'My Third dataset',
-              backgroundColor: 'transparent',
-              borderColor: getStyle('--cui-danger'),
-              pointHoverBackgroundColor: getStyle('--cui-danger'),
               borderWidth: 1,
-              borderDash: [8, 5],
-              data: [65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65],
+              barThickness: 10,
+              data: [
+                // random(70),
+                70, 77, 65, 48, 30, 8, 31, 82, 65, 43, 5, 96
+              ],
             },
           ],
         }}
@@ -94,7 +69,12 @@ const MainChart = () => {
           maintainAspectRatio: false,
           plugins: {
             legend: {
-              display: false,
+              // display: false,
+              display: true, // Show the legend
+              position: 'top',
+              labels: {
+                color: getStyle('--cui-body-color'),
+              },
             },
           },
           scales: {
@@ -106,32 +86,39 @@ const MainChart = () => {
               ticks: {
                 color: getStyle('--cui-body-color'),
               },
+
+              // barPercentage: 0.5, // Decrease bar width (default is 0.9)
+              categoryPercentage: 0.7, // Adjust spacing between bars
             },
             y: {
               beginAtZero: true,
-              border: {
-                color: getStyle('--cui-border-color-translucent'),
-              },
+              // border: {
+              //   color: getStyle('--cui-border-color-translucent'),
+              // },
               grid: {
                 color: getStyle('--cui-border-color-translucent'),
               },
-              max: 250,
+              max: 100,
               ticks: {
                 color: getStyle('--cui-body-color'),
-                maxTicksLimit: 5,
-                stepSize: Math.ceil(250 / 5),
+                // maxTicksLimit: 5,
+                // stepSize: Math.ceil(100 / 5),
+                stepSize: 25, // Use consistent intervals
               },
             },
           },
           elements: {
-            line: {
-              tension: 0.4,
-            },
-            point: {
-              radius: 0,
-              hitRadius: 10,
-              hoverRadius: 4,
-              hoverBorderWidth: 3,
+            // line: {
+            //   tension: 0.4,
+            // },
+            // point: {
+            //   radius: 0,
+            //   hitRadius: 10,
+            //   hoverRadius: 4,
+            //   hoverBorderWidth: 3,
+            // },
+            bar: {
+              borderRadius: 4, // Optional: round the bar edges for a smoother look
             },
           },
         }}

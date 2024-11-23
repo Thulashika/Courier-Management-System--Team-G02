@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useRef } from 'react';
 import ReactToPrint from 'react-to-print';
 import { CButton } from '@coreui/react';
 import CIcon from '@coreui/icons-react';
@@ -25,12 +25,7 @@ const PrintButton = ({ id }) => {
      
       <div style={{ display: 'none' }}>
         <BarCodeGenerator ref={ref} id={id} />
-      </div>
-
-      {/* <div>
-        recipientDetails:
-      </div> */}
-      
+      </div>     
     </div>
   );
 };

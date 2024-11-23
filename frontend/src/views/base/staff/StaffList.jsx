@@ -8,23 +8,14 @@ import {
   CCard,
   CCardBody,
   CCardHeader,
-  CCardSubtitle,
-  CCardTitle,
   CCol,
-  CCollapse,
   CFormInput,
   CImage,
-  CListGroup,
-  CListGroupItem,
   CModal,
   CModalBody,
   CModalFooter,
   CModalHeader,
   CModalTitle,
-  COffcanvas,
-  COffcanvasBody,
-  COffcanvasHeader,
-  COffcanvasTitle,
   CPagination,
   CPaginationItem,
   CRow,
@@ -38,7 +29,7 @@ import {
 import { Link } from 'react-router-dom'
 import axios from 'axios'
 import CIcon from '@coreui/icons-react'
-import { cilPencil, cilTrash } from '@coreui/icons'
+import { cilPencil, cilPlus, cilTrash } from '@coreui/icons'
 import { debounce } from 'lodash'
 import NFS from '../../../assets/images/NoData.png'
 
@@ -75,7 +66,7 @@ const StaffList = () => {
       } catch (error) {
         console.error('Error fetching data:', error);
       }
-    }, 500), // Debounce delay in milliseconds
+    }, 500), 
     []
   );
 
@@ -105,47 +96,14 @@ const StaffList = () => {
     }
   }
 
-  // Calculate the index range for the current page
   const startIndex = (page - 1) * limit;
   const endIndex = startIndex + limit;
   const paginatedData = data.slice(startIndex, endIndex);
 
   const totalPages = Math.ceil(totalStaff / limit);
+ 
+const [selectedType, setSelectedType] = useState('ADMIN'); 
 
-  const [expandedRows, setExpandedRows] = useState([]);  // Track expanded rows
-const [selectedType, setSelectedType] = useState('ADMIN');  // Default type to display
-
-const toggleRow = (id) => {
-  if (expandedRows.includes(id)) {
-    setExpandedRows([]); // Collapse the current row if it's already expanded
-  } else {
-    setExpandedRows([id]); // Show only the selected row
-  }
-};
-
-
-const isRegistered = (staff) => {
-  // Assuming registered staff have both email and contact number
-  return staff.email && staff.contactNumber;
-};
-
-// Filter paginatedData by selected type
-const filteredData = paginatedData.filter((staff) => staff.position === selectedType);
-
-const getBorderColor = (position) => {
-  switch (position) {
-    case 'ADMIN':
-      return '#007bff';  // Blue
-    case 'MANAGER':
-      return '#28a745';  // Green
-    case 'STAFF':
-      return '#ffc107';  // Orange
-    case 'DELIVERY_PERSON':
-      return '#6f42c1';  // Purple
-    default:
-      return '#ccc';     // Default Grey
-  }
-};
 
 const filteredStaffByType = (type) => {
   return paginatedData.filter(staff => staff.position === type);
@@ -185,7 +143,6 @@ const getShadowColor = (color) => {
   }
 };
 
-const [showOffcanvas, setShowOffcanvas] = useState(false);
 const [showModal, setShowModal] = useState(false);
 
 
@@ -210,7 +167,11 @@ const [showModal, setShowModal] = useState(false);
                 </CCol>
                 <CCol>
                   <div className="d-grid gap-2 d-md-flex justify-content-md-end">
-                    <CButton href='/staff/new_branchstaff' className='me-md-2' color='primary' variant='outline'>AddNew</CButton>
+                    <CButton href='/staff/new_branchstaff' className='me-md-2' color='primary' variant='outline'>
+                      <CIcon icon={cilPlus}/>
+                      {'  '}
+                      AddNew
+                    </CButton>
                   </div>
                 </CCol>
             </CRow>

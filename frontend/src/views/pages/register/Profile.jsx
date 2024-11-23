@@ -25,7 +25,7 @@ import { AuthContext } from './AuthProvider'
 const Profile = () => {
 
   const [user, setUser] = useState({
-    image:null,
+    image: null,
     fullName:'',
     password:'',
     contactNumber:'',
@@ -76,7 +76,6 @@ const Profile = () => {
     // }
    
     const CNMPpattern = /^(?:0)?([7][01245678][0-9]{7})$/;
-    // const CNLPpattern = /^(?:0)(?:11|21|41|21|22|23|24|25|26|27|28|31|32|33|34|35|36|37|38|41)\d{7}$/;
 
     if (user.contactNumber.length !== 10) {
       setError('Contact number must be exactly 10 digits');
@@ -114,6 +113,7 @@ const Profile = () => {
       }).then(res => {
         if (res.data.statusCode === 201) {
           alert("Profile Updated successfully")
+          navigate('/')
         } else {
           alert("Not profile updated successfully")
         }

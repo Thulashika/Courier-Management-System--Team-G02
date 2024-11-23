@@ -63,6 +63,12 @@ export const RESET_PASSWORD_ERRORS = {
     CONFIRM_PASSWORD_FORMAT_VALIDATION: 'Confirm Password is not in the correct format',
 }
 
+export const CONTACT_US_ERRORS ={
+
+    PHONENUMBER_LENGTH_VALIDATION: 'Phone number must be exactly 10 digits',
+    PHONENUMBER_FORMAT_VALIDATION: 'Phone Number is not in the correct format',
+}
+
 export const Query = () => {
     function useQuery() {
         const {search} = useLocation()

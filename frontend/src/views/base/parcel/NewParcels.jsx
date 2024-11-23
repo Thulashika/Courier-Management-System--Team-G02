@@ -8,7 +8,6 @@ import {
   CForm,
   CFormInput,
   CFormSelect,
-  CHeader,
   CInputGroup,
   CInputGroupText,
   CRow,
@@ -23,8 +22,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { PARCEL_ERRORS } from '../../../const';
 import CIcon from '@coreui/icons-react';
-import { cilCheckAlt, cilTrash, cilX } from '@coreui/icons';
-// import ParcelService from '../../../services/ParcelService';
+import { cilCheckAlt, cilPlus, cilTrash, cilX } from '@coreui/icons';
 
 const NewParcels = () => {
 
@@ -106,19 +104,15 @@ const NewParcels = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
   
-    // Reset error and validity state
     setError('');
     setIsValid(true);
   
-    // Log current parcel state
     console.log('Parcel State:', parcel);
   
-    // Define validation regexes
     const BCregex = /^(?:P)?[0-9]{4}$/;
     const Nameregex = /^[A-Za-z\s]{1,50}$/;
     const CNregex = /^(?:0)?[7][01245678][0-9]{7}$/;
   
-    // Validate parcel details
     for (const item of parcel.parcelDetails) {
       if (item.referenceNumber.length !== 5) {
         console.log('Error: Reference number length is not 5');
@@ -135,7 +129,6 @@ const NewParcels = () => {
       }
     }
   
-    // Validate sender and recipient names
     const validateName = (name) => Nameregex.test(name);
   
     if (!validateName(parcel.senderDetails.firstName) || !validateName(parcel.senderDetails.lastName)) {
@@ -152,7 +145,6 @@ const NewParcels = () => {
       return;
     }
   
-    // Validate contact numbers
     const validateContactNumber = (number) => CNregex.test(number) && number.length === 10;
   
     if (!validateContactNumber(parcel.senderDetails.contactNumber)) {
@@ -169,8 +161,7 @@ const NewParcels = () => {
       return;
     }
   
-    // Validate status for each parcel detail
-    const validStatuses = ['ACCEPTED', 'COLLECTED', 'SHIPPED', 'IN-TRANSIT', 'DELIVERED'];
+    const validStatuses = ['ACCEPTED', 'Parcel_Handed_over_to_Delivery', 'SHIPPED', 'IN-TRANSIT', 'DELIVERED'];
     for (const item of parcel.parcelDetails) {
       if (!validStatuses.includes(item.status)) {
         console.log('Error: Invalid status');
@@ -180,16 +171,14 @@ const NewParcels = () => {
       }
     }
     
+    // const confirmSubmit = window.confirm('Are you sure you want to submit this form?');
 
-    // If all validations pass, send the request
-    const confirmSubmit = window.confirm('Are you sure you want to submit this form?');
-
-    if (isValid && confirmSubmit) {
+    if (isValid) {
       axios
         .post('http://localhost:6431/parcel', parcel)
         .then((res) => {
           if (res.data.statusCode === 201) {
-            alert('Created Successfully')
+            //alert('Created Successfully')
             navigate('/parcels');
           } else {
             alert('Not created successfully');
@@ -202,7 +191,6 @@ const NewParcels = () => {
           }
           alert('Created not successfully');
         });
-      // ParcelService.createParcel(parcel)
     }
   };
   
@@ -359,12 +347,15 @@ const NewParcels = () => {
                     <CInputGroupText>NIC</CInputGroupText>
                     <CFormInput
                       type='text'
-                      onChange={(e) =>
-                        setParcel({
-                          ...parcel,
-                          senderDetails: { ...parcel.senderDetails, NIC: e.target.value }
-                        })
-                      }
+                      onChange={(e) =>{
+                        const nicPattern = /^(?:\d{12}|\d{9}[Vv])$/;
+                        if(nicPattern.test(e.target.value)) {
+                          setParcel({
+                            ...parcel,
+                            senderDetails: { ...parcel.senderDetails, NIC: e.target.value }
+                          })
+                        }
+                      }}
                       required
                     />
                   </CInputGroup>
@@ -374,12 +365,15 @@ const NewParcels = () => {
                     <CInputGroupText>NIC</CInputGroupText>
                     <CFormInput
                       type='text'
-                      onChange={(e) =>
-                        setParcel({
-                          ...parcel,
-                          recipientDetails: { ...parcel.recipientDetails, NIC: e.target.value }
-                        })
-                      }
+                      onChange={(e) =>{
+                        const nicPattern = /^(?:\d{12}|\d{9}[Vv])$/;
+                        if(nicPattern.test(e.target.value)) {
+                          setParcel({
+                            ...parcel,
+                            recipientDetails: { ...parcel.recipientDetails, NIC: e.target.value }
+                          })
+                        }
+                      }}
                       required
                     />
                   </CInputGroup>
@@ -435,7 +429,6 @@ const NewParcels = () => {
                           date: e.target.value
                         }
                       })}
-                      required
                       min={parcel.senderDetails.date}
                     />
                   </CInputGroup>
@@ -451,7 +444,6 @@ const NewParcels = () => {
                           time: e.target.value
                         }
                       })}
-                      required
                     />
                   </CInputGroup>
                 </CCol>
@@ -595,9 +587,9 @@ const NewParcels = () => {
                               required>
                                 <option value=''>Please Select Status</option>
                                 <option value='ACCEPTED'>Accepted</option>
-                                <option value='COLLECTED'>Collected</option>
+                                <option value='Parcel_Handed_over_to_Delivery'>Parcel_Handed_over_to_Delivery</option>
                                 <option value='SHIPPED'>Shipped</option>
-                                <option value='IN-TRANSIT'>In-transit</option>
+                                {/* <option value='IN-TRANSIT'>In-transit</option> */}
                                 <option value='DELIVERED'>Delivered</option>
                             </CFormSelect>
                           </CTableDataCell>
@@ -619,7 +611,11 @@ const NewParcels = () => {
 
                   <CRow className="mb-3">
                     <div className="d-grid gap-2 d-md-flex justify-content-md-end">
-                      <CButton type='button' className='me-md-2' color='primary' variant='outline' onClick={addItem}>Add Parcel</CButton>
+                      <CButton type='button' className='me-md-2' color='primary' variant='outline' onClick={addItem}>
+                        <CIcon icon={cilPlus}/>
+                        {'  '}
+                        Add Parcel
+                      </CButton>
                     </div>
                   </CRow>
                 </CCol>
@@ -628,14 +624,16 @@ const NewParcels = () => {
               <div className='d-grid gap-2 d-md-flex'>
                 <CButton color='success' type='submit'>
                   <CIcon icon={cilCheckAlt}/>
+                  {'  '}
                   Save
                 </CButton>
                 <CButton 
                   color='secondary' 
                   type='submit' 
-                  onClick={() => window.confirm('Are you sure you want to cancel this form?') ? navigate('/parcel') : ''} 
+                  onClick={() => window.confirm('Are you sure you want to cancel this form?') ? navigate('/parcels') : ''} 
                 >
                   <CIcon icon={cilX}/>
+                  {'  '}
                   Cancel
                 </CButton>
               </div>

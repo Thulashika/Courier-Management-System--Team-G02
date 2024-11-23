@@ -13,7 +13,6 @@ import {
   cilUser,
 } from '@coreui/icons'
 import CIcon from '@coreui/icons-react'
-import avatar10 from './../../assets/images/avatars/10.jpg'
 import axios from 'axios'
 import { AuthContext } from '../../views/pages/register/AuthProvider'
 
@@ -62,12 +61,12 @@ const AppHeaderDropdown = () => {
           <CIcon icon={cilUser} className="me-2" />
             Profile
         </CDropdownItem>
-        <CDropdownItem href="/settings">
+        {/* <CDropdownItem href="/settings">
           <CIcon icon={cilSettings} className="me-2" />
             Settings
-        </CDropdownItem>
+        </CDropdownItem> */}
         <CDropdownDivider />
-        <CDropdownItem href="/landingPage">
+        <CDropdownItem href="/">
           <CIcon icon={cilLockLocked} className="me-2" />
             Lock Account
         </CDropdownItem>

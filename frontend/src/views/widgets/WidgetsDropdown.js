@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import PropTypes from 'prop-types'
 
 import {
@@ -25,9 +25,8 @@ import {
   CWidgetStatsE,
 } from '@coreui/react'
 import { getStyle } from '@coreui/utils'
-import { CChartBar, CChartDoughnut, CChartLine, CChartPie, CChartPolarArea } from '@coreui/react-chartjs'
+import { CChartBar, CChartLine } from '@coreui/react-chartjs'
 import CIcon from '@coreui/icons-react'
-import { cilArrowBottom, cilArrowTop, cilBuilding, cilChartPie, cilOptions } from '@coreui/icons'
 import parcel from '../../assets/images/parcel.png'
 import staff from '../../assets/images/S.jpg'
 import axios from 'axios'
@@ -102,14 +101,17 @@ const WidgetsDropdown = (props) => {
                 className="mt-3 mx-3"
                 style={{ height: '70px' }}
                 data={{
-                  labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+                  // labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+                  labels: ['January', 'February', 'March', 'April', 'May', 'June'],
+
                   datasets: [
                     {
-                      label: 'My First dataset',
+                      label: 'Parcel',
                       backgroundColor: 'transparent',
                       borderColor: 'rgba(255,255,255,.55)',
                       pointBackgroundColor: getStyle('--cui-primary'),
-                      data: [65, 59, 84, 84, 51, 55, 40],
+                      // data: [65, 59, 84, 84, 51, 55, 40, 46, 67, 31, 76, 89],
+                      data: [65, 59, 84, 84, 51, 55],
                     },
                   ],
                 }}
@@ -169,7 +171,7 @@ const WidgetsDropdown = (props) => {
                 <h1>{data.collectCount}</h1>{' '}
               </>
             }
-            title="Collected"
+            title="Parcel_Handed_over_to_Delivery"
             
             chart={
               <CChartLine
@@ -177,14 +179,17 @@ const WidgetsDropdown = (props) => {
                 className="mt-3 mx-3"
                 style={{ height: '70px' }}
                 data={{
-                  labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+                  // labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+                  labels: ['January', 'February', 'March', 'April', 'May', 'June'],
+
                   datasets: [
                     {
-                      label: 'My First dataset',
+                      label: 'Parcel',
                       backgroundColor: 'transparent',
                       borderColor: 'rgba(255,255,255,.55)',
                       pointBackgroundColor: getStyle('--cui-info'),
-                      data: [1, 18, 9, 17, 34, 22, 11],
+                      // data: [1, 18, 9, 17, 34, 22, 11, 33, 25, 15, 45, 6],
+                      data: [1, 18, 9, 17, 34, 22],
                     },
                   ],
                 }}
@@ -250,13 +255,16 @@ const WidgetsDropdown = (props) => {
               className="mt-3"
               style={{ height: '70px' }}
               data={{
-                labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+                // labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+                labels: ['January', 'February', 'March', 'April', 'May', 'June'],
+
                 datasets: [
                   {
-                    label: 'My First dataset',
+                    label: 'Parcel',
                     backgroundColor: 'rgba(255,255,255,.2)',
                     borderColor: 'rgba(255,255,255,.55)',
-                    data: [78, 81, 80, 45, 34, 12, 40],
+                    // data: [78, 81, 80, 45, 34, 12, 40, 33, 27, 69, 54, 90],
+                    data: [78, 81, 80, 45, 34, 12],
                     fill: true,
                   },
                 ],
@@ -314,23 +322,24 @@ const WidgetsDropdown = (props) => {
                     'April',
                     'May',
                     'June',
-                    'July',
-                    'August',
-                    'September',
-                    'October',
-                    'November',
-                    'December',
-                    'January',
-                    'February',
-                    'March',
-                    'April',
+                    // 'July',
+                    // 'August',
+                    // 'September',
+                    // 'October',
+                    // 'November',
+                    // 'December',
+                    // 'January',
+                    // 'February',
+                    // 'March',
+                    // 'April',
                   ],
                   datasets: [
                     {
-                      label: 'My First dataset',
+                      label: 'Parcel',
                       backgroundColor: 'rgba(255,255,255,.2)',
                       borderColor: 'rgba(255,255,255,.55)',
-                      data: [78, 81, 80, 45, 34, 12, 40, 85, 65, 23, 12, 98, 34, 84, 67, 82],
+                      // data: [78, 81, 80, 45, 34, 12, 40, 85, 65, 23, 12, 98, 34, 84, 67, 82],
+                      data: [78, 81, 80, 45, 34, 12],
                       barPercentage: 0.6,
                     },
                   ],

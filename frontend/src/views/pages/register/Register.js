@@ -77,8 +77,7 @@ const Register = () => {
     }
 
     const CNMPpattern = /^(?:0)?([7][01245678][0-9]{7})$/;
-    // const CNLPpattern = /^(?:0)(?:11|21|41|21|22|23|24|25|26|27|28|31|32|33|34|35|36|37|38|41)\d{7}$/;
-
+    
     if (user.contactNumber.length !== 10) {
       setError('Contact number must be exactly 10 digits');
       setIsValid(false);
@@ -109,8 +108,13 @@ const Register = () => {
         method:'POST'
       }).then(res => {
         if (res.data.statusCode === 201) {
-          alert("Created successfully")
-          navigate('/')
+          // alert("Created successfully")
+          if(res.data.role !== 'CUSTOMER') {
+            navigate('/dashboard')            
+          }
+          else{
+            navigate('/')
+          }
         } else {
           alert("Not created successfully")
         }
@@ -157,7 +161,13 @@ const Register = () => {
                       id="role" 
                       name="role"
                       required 
-                      onChange={(e) => setUser({...user, role:e.target.value})}
+                      onChange={(e) => {
+                        setUser({...user, role:e.target.value})
+
+                        if(e.target.value === 'CUSTOMER') {
+                          alert("We use this information to share updates about our future plans. Please continue if you agree.")
+                        }
+                      }}
                     >
                       <option value=""> Select Role</option>
                       <option value="CUSTOMER">Customer</option>

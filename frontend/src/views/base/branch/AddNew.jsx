@@ -18,7 +18,7 @@ import { BRANCH_ERRORS } from '../../../const'
 import { AuthContext } from '../../pages/register/AuthProvider'
 import background1 from '../../../assets/images/AB.png'
 import CIcon from '@coreui/icons-react'
-import { cibDell, cilCheck, cilCheckAlt, cilContrast, cilSave, cilX } from '@coreui/icons'
+import { cilCheckAlt, cilX } from '@coreui/icons'
 
 const AddNew = () => {
 
@@ -87,9 +87,9 @@ const AddNew = () => {
       return;;
     }
 
-    const confirmSubmit = window.confirm('Are you sure you want to submit this form?');
+    // const confirmSubmit = window.confirm('Are you sure you want to submit this form?');
 
-    if(isValid && confirmSubmit) {
+    if(isValid) {
       axios('http://localhost:6431/branch', {
         data:branch,
         method:'POST'
@@ -217,6 +217,7 @@ const AddNew = () => {
                       className='mb-3'
                     >
                       <CIcon icon={cilCheckAlt}/>
+                      {'  '}
                       Save
                     </CButton>
                   </CCol>
@@ -228,6 +229,7 @@ const AddNew = () => {
                       onClick={() => window.confirm('Are you sure you want to cancel this form?') ? navigate('/branch') : ''}
                     >
                       <CIcon icon={cilX}/>
+                      {'  '}
                       Cancel
                     </CButton>
                   </CCol>

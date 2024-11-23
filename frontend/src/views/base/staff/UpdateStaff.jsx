@@ -152,11 +152,6 @@ const [allBranches, setAllBranches] = useState([])
                                         <option selected='' value=''>
                                             Open this select menu
                                         </option>
-                                        {/* {Array.isArray(allBranches) && allBranches.map((branch, index) => (
-                                            <option key={index} value={branch.branchCode}>
-                                                {branch.branchName}
-                                            </option>
-                                        ))} */}
                                         <option value='BR001'>BR001</option>
                                         <option value='BR002'>BR002</option>
                                 </CFormSelect>
@@ -198,20 +193,22 @@ const [allBranches, setAllBranches] = useState([])
                             </CCol>
                         </CRow>
 
-                        <CRow className="mb-3">
-                            <CCol xs={4} className='position-relative'>
+                        <CRow>
+                            <CCol xs='auto' className='position-relative'>
                                 <CButton color='success' type='submit'>
                                     <CIcon icon={cilCheckAlt}/>
+                                    {'  '}
                                     Save
                                 </CButton>
                             </CCol>
-                            <CCol xs={4} className='position-relative'>
+                            <CCol xs='auto' className='position-relative'>
                                 <CButton 
                                     color='secondary' 
                                     type='submit'
                                     onClick={() => window.confirm('Are you sure you want to cancel this update form?') ? navigate('/staff') : ''}
                                 >
                                     <CIcon icon={cilX}/>
+                                    {'  '}
                                     Cancel
                                 </CButton>
                             </CCol>

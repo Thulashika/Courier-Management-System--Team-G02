@@ -63,9 +63,19 @@ const Login = () => {
         withCredentials: true
       }).then(res => {
         if(res.data.statusCode === 200){
-          alert("Login succesfully")
+          
           login(res.data.email, res.data.id, res.data.role, res.data.fullName, res.data.image);
-          navigate('/')
+
+          if(res.data.role !== 'CUSTOMER') {
+            navigate('/dashboard')
+            // alert("Login succesfully")
+            
+          }
+          else{
+            alert("You cannot view any other pages at the moment, but in the future, you will be able to see your parcel history.")
+            navigate('/')
+          }
+          
           // dispatch({type: 'SET_DETAILS', payload: {email: user.email, id: res.data.id}})
           // localStorage.setItem('token', res.data.token)
           // localStorage.removeItem('token')
@@ -75,15 +85,6 @@ const Login = () => {
       }).catch(err => {
         alert("Login not successfully")
       })
-
-      // const result = response.json();
-      // if (response.ok) {
-      //   // Handle successful login, e.g., store token
-      //   console.log(result);
-      // } else {
-      //   // Handle login error
-      //   console.error(result.message);
-      // }
     }
   }
 

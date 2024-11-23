@@ -46,7 +46,7 @@ const App = () => {
         }
       >
         <Routes>
-          <Route exact path="/landingPage" name="Home Page" element={<Landingpage />} />
+          <Route exact path="/" name="Home Page" element={<Landingpage />} />
           <Route exact path="/home" name="Home Page" element={<Home />} />
           <Route exact path="/login" name="Login Page" element={<Login />} />          
           <Route exact path="/reset-password" name="Reset Password" element={<Resetpassword />} />

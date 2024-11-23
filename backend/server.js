@@ -2,14 +2,13 @@ import express from 'express'
 import mysql from 'mysql'
 import cors from 'cors'
 import validator from 'validator'
-import bcrypt from 'bcrypt'; // for password hashing comparison
-import jwt from 'jsonwebtoken'; // for token generation
+import bcrypt from 'bcrypt'; 
+import jwt from 'jsonwebtoken'; 
 import path from 'path'
 import nodemailer from 'nodemailer'
 import cookieParser from 'cookie-parser';
 import multer from 'multer'
 
-// Database connection setup (adjust to your configuration)
 const db = mysql.createConnection({
     host:'localhost',
     database:'Courier-Service-Project',
@@ -19,7 +18,7 @@ const db = mysql.createConnection({
 
 const app = express()
 
-app.use(express.json()) // for parsing application/json
+app.use(express.json()) 
 
 const corsOptions = {
     origin: 'http://localhost:3000',
@@ -28,18 +27,13 @@ const corsOptions = {
 
 app.use(cors(corsOptions))
 
-app.use(express.urlencoded({ extended: true })); // to parse URL-encoded bodies
+app.use(express.urlencoded({ extended: true })); 
 
-// Set the view engine to EJS
 app.set('views', path.join('../frontend/login', 'views'));
 app.set('view engine', 'ejs');
-// app.set('views', __dirname + '/views');
 
-
-// for cookie based authentication.
 app.use(cookieParser())
 
-// for localstorage based authentication;
 const authenticationToken = (req, res, next) => {
     const token = req.headers['authentication']?.split(' ')[1];
     if(!token) return res.sendStatus(401);
@@ -51,7 +45,6 @@ const authenticationToken = (req, res, next) => {
     })
 }
 
-// for cookie based authentication.
 const verifyToken = (req, res, next) => {
     console.log(req.cookies.token)
     const token = req.cookies.token;
@@ -89,9 +82,8 @@ app.post('/userRegister', async (req, res) => {
 
     const saltRounds = 10;
     const hashedPassword = await bcrypt.hash(req.body.password.toString(), saltRounds);
-    let staffId = null; // Initialize staffId as null by default
+    let staffId = null; 
 
-    // Validate staff Id (assuming it should be a 5-digit number)
     const SIdregex = /^(?:Y)?[AMSD][0-9]{3}$/;     
     if (req.body.role === 'STAFF' && !SIdregex.test(req.body.staffId)) {
         return res.status(400).json({ message: 'Invalid staff Id' });
@@ -103,23 +95,19 @@ app.post('/userRegister', async (req, res) => {
         }
     }
 
-    // Validate email
     if (!validator.isEmail(req.body.email)) {
         return res.status(400).json({ message: 'Invalid email format' });
     }
 
-    // Validate contact number (assuming it should be a 10-digit number)
     const CNMPregex = /^(?:0)?[7][01245678][0-9]{7}$/;  
     if (!CNMPregex.test(req.body.contactNumber)){
         return res.status(400).json({ message: 'Invalid contact number' });
     }
 
-    // Validate password length
     if (req.body.password.length < 4 || req.body.password.length > 10) {
         return res.status(400).json({ error: 'Password must be between 4 and 10 characters' });
     }
 
-    // Construct values array for insertion
     const values = [
         req.body.fullName,
         req.body.role,
@@ -129,7 +117,6 @@ app.post('/userRegister', async (req, res) => {
         hashedPassword
     ];
 
-    // Validation function to check if any value is empty
     const isValid = values.every(value => value !== undefined && value !== '');
 
     if (!isValid) {
@@ -148,29 +135,24 @@ app.post('/userRegister', async (req, res) => {
 });
 
 
-// Secret key for JWT
 const JWT_SECRET = 'supersecretkey';
 
 app.post('/userLogin', async (req,res) => {
 
     const { email, password } = req.body;
 
-    // Validate email
     if (!validator.isEmail(email)) {
         return res.status(400).json({ message: 'Invalid email format' });
     }
 
-    // Ensure email is not empty
     if (!email || email.trim() === '') {
         return res.status(400).json({ message: 'Email is required' });
     }
 
-    // Validate password length
     if (password.length < 4 || password.length > 10) {
         return res.status(400).json({ error: 'Password must be between 4 and 10 characters' });
     }
 
-    // Ensure password is not empty
     if (!password || password.trim() === '') {
         return res.status(400).json({ message: 'Password is required' });
     }
@@ -188,7 +170,6 @@ app.post('/userLogin', async (req,res) => {
 
         const user = results[0];
 
-        // Check if password matches
         bcrypt.compare(password.toString(), user.password, async (err, isMatch) => {
             if (err) {
                 return res.status(500).json(err);
@@ -198,10 +179,8 @@ app.post('/userLogin', async (req,res) => {
                 return res.status(401).json({ message: 'Invalid email or password' });
             }
 
-            // Password matched, generate and return a token
             const token = jwt.sign({ id: user.id, email: user.email }, JWT_SECRET, { expiresIn: '1h' });
 
-            // for cookie authentication only
             res.cookie('token', token, { httpOnly: true, secure: true, sameSite: true});
 
             if(user.image) {
@@ -216,12 +195,10 @@ app.post('/userLogin', async (req,res) => {
 app.post('/forgot-password', async (req, res) => {
     const { email } = req.body;
 
-    // Validate email
     if (!validator.isEmail(email)) {
         return res.status(400).json({ message: 'Invalid email format' });
     }
 
-    // Check if email exists in database
     const selectQuery = 'SELECT * FROM userProfile WHERE email = ? limit 1';
     db.query(selectQuery, [email], async (err, results) => {
         if (err) {
@@ -233,17 +210,14 @@ app.post('/forgot-password', async (req, res) => {
             return res.status(404).json({ message: 'No account found with this email' });
         }
 
-        // Generate a token with a short expiry (e.g., 1 hour)
         const token = jwt.sign({ email }, JWT_SECRET, { expiresIn: '1h' });
 
         const expirationTime = new Date();
         expirationTime.setHours(expirationTime.getHours() + 1);
 
-        // Send email with password reset link
         try {
             await sendPasswordResetEmail(email, token, expirationTime.toLocaleString());
 
-             // Insert token into the password_reset table
              const insertQuery = 'INSERT INTO `password-reset` (email, token, expires) VALUES (?, ?, ?)';
              db.query(insertQuery, [email, token, expirationTime], (err) => {
                  if (err) {
@@ -259,23 +233,20 @@ app.post('/forgot-password', async (req, res) => {
     });
 })
 
-// Helper function to send password reset email
 async function sendPasswordResetEmail(email, token, expirationTime) {
     try{
-        // Configure Nodemailer transporter
         const transporter = nodemailer.createTransport({
             host: 'http://localhost:6431/reset-password',
             port: 587,
-            secure: false, // true for 465, false for other ports
+            secure: false, 
             requireTLS: true,
             service: 'gmail',
             auth: {
                 user: 'lasibala24@gmail.com',
-                pass: 'sqhr hhez canm skhd',
+                pass: 'jmiv fdly srot stod',
             },
         });
 
-        // Email content
         const mailOptions = {
             from: 'lasibala24@gmail.com',
             to: email,
@@ -288,7 +259,6 @@ async function sendPasswordResetEmail(email, token, expirationTime) {
             `,
         };
 
-        // Send email
         transporter.sendMail(mailOptions, function (error, info) {
             if (error) {
                 console.log(error);
@@ -303,42 +273,6 @@ async function sendPasswordResetEmail(email, token, expirationTime) {
     }
 }
 
-// Route to handle password reset form rendering
-// app.get('/reset-password', (req,res) => {
-//     try {
-//         const token = req.body.token  // Use req.query to get the token from the URL
-
-//         if(!token) {
-//             return res.json('404')
-//         }
-
-//         db.query(`select * from password-reset where token = ? limit 1`, [token], (err, results) => {
-//             if(err) {
-//                 return res.status(500).json('Internal Server Error');
-//             }
-
-//             if(results.length > 0) {
-
-//                 const email = results[0].email;
-//                 db.query(`select * from userprofile where email = ? limit 1`, [email], (err, result) => {
-//                     if(err) {
-//                         return res.status(500).json('Internal Server Error')
-//                     }
-                    
-//                     return res.json('reset-password', {user: result[0]})
-//                 })
-
-//             } else {
-//                 return res.json('404')
-//             }
-//         })
-
-//     } catch (error) {
-//         return res.status(500).json('Internal Server Error')
-//     }
-// })
-
-// Route to handle password reset form submission
 app.post('/reset-password', async (req, res) => {
     const { password, confirmPassword, token } = req.body;
 
@@ -346,7 +280,6 @@ app.post('/reset-password', async (req, res) => {
         return res.json({statusCode: 500, statusMessage:('reset-password', {error_message: 'Password not match'})});
     }
 
-    // Hash the new password (implement your hashing function)
     const saltRounds = 10;
     const hashedPassword = await bcrypt.hash(req.body.password.toString(), saltRounds);
 
@@ -357,7 +290,6 @@ app.post('/reset-password', async (req, res) => {
 
         const email = decoded.email;
 
-         // Find the user by token and update their password
         db.query('SELECT * FROM `password-reset` WHERE email = ? AND token = ? LIMIT 1', [email,token], (err, results) => {
             if (err) {
                 return res.status(500).json('Internal Server Error');
@@ -388,7 +320,7 @@ app.post('/reset-password', async (req, res) => {
                         }
                     });
 
-                    return res.status(200).json({statusCode: 200, statusMessage: 'reset-password-success'}); // Create this view to show a success message
+                    return res.status(200).json({statusCode: 200, statusMessage: 'reset-password-success'});
                 });
             } else {
                 return res.json('404');
@@ -409,27 +341,22 @@ app.post('/branch', (req,res) => {
         req.body.zipCode
     ]
 
-    // Validation function to check if any value is empty
     const isValid = values.every(value => value !== undefined && value !== '');
 
     if (!isValid) {
         return res.status(400).json({ error: 'All fields are required' });
     }
 
-    // Validate branch code (assuming it should be a 5-digit number)
-    // const BCregex = /^(?:Br)?[A-z]{2}?[0-9]{2}$/;  
     const BCregex = /^(?:BR)?[0-9]{3}$/;  
     if (!BCregex.test(req.body.branchCode)){
         return res.status(400).json({ message: 'Invalid branch code' });
     }
 
-    // Validate contact number (assuming it should be a 10-digit number)
     const CNregex = /^(?:0)?[7][01245678][0-9]{7}$/;    
     if (!CNregex.test(req.body.contactNumber)){
         return res.status(400).json({ message: 'Invalid contact number' });
     }
 
-    // Validate zip code (assuming it should be a 5-digit number)
     const ZCodeRegex = /^[0-9]{5}$/;
     if (!ZCodeRegex.test(req.body.zipCode)){
         return res.status(400).json({ message: 'Invalid zip code' });
@@ -452,7 +379,6 @@ app.get('/branch', (req, res) => {
     const offset = (page - 1) * limit;
     const search = req.query.search || '';
 
-    // Function to get all column names from the parcel table
     const getColumnNamesQuery = `SHOW COLUMNS FROM branch`;
 
     db.query(getColumnNamesQuery, (err, columns) => {
@@ -460,11 +386,9 @@ app.get('/branch', (req, res) => {
             return res.json(err);
         }
 
-        // Prepare the base query
         let query = `select * from branch`;
         let queryParams = [];
 
-        // Add the search filter if there is a search term
         if (search) {
             const searchPattern = `%${search}%`;
             query += ` WHERE branch.branchCode LIKE ? OR 
@@ -475,23 +399,19 @@ app.get('/branch', (req, res) => {
                               zipCode LIKE ?`;
             queryParams = Array(6).fill(searchPattern);
         }
-        
-        // Add pagination
+
         query += ' LIMIT ?, ?';
         queryParams.push(offset, limit);
 
-        // Execute the query
         db.query(query, queryParams, (err, data) => {
             if (err) {
                 return res.json(err);
             }
             return res.send({data, count: data.length});
-            // return res.status(200).json({statusCode:200, data, id: id});
         });
     });
 });
 
-// Endpoint to get total number of parcels (for pagination metadata)
 app.get('/branch/count', (req, res) => {
 
     const query = 'select count(*) as count from branch';
@@ -511,7 +431,7 @@ app.get('/dashboard/count', (req, res) => {
                           (SELECT COUNT(*) FROM parcel) AS parcelCount,
                           (SELECT COUNT(*) FROM parcel WHERE status = 'ACCEPTED') AS acceptCount,
                           (SELECT COUNT(*) FROM parcel WHERE status = 'DELIVERED') AS deliverCount,
-                          (SELECT COUNT(*) FROM parcel WHERE status = 'COLLECTED') AS collectCount,
+                          (SELECT COUNT(*) FROM parcel WHERE status = 'Parcel_Handed_over_to_Delivery') AS collectCount,
                           (SELECT COUNT(*) FROM parcel WHERE status = 'IN-TRANSIT') AS intransitCount,
                           (SELECT COUNT(*) FROM parcel WHERE status = 'SHIPPED') AS shipCount`;
 
@@ -573,20 +493,17 @@ app.put('/branch/:id', (req,res) => {
         req.params.id
     ]
 
-    // Validation function to check if any value is empty
     const isValid = values.every(value => value !== undefined && value !== '');
 
     if (!isValid) {
         return res.status(400).json({ error: 'All fields are required' });
     }
 
-    // Validate contact number (assuming it should be a 10-digit number)
     const CNregex = /^(?:0)?[7][01245678][0-9]{7}$/;    
     if (!CNregex.test(req.body.contactNumber)){
         return res.status(400).json({ message: 'Invalid contact number' });
     }
 
-    // Validate zip code (assuming it should be a 5-digit number)
     const ZCodeRegex = /^[0-9]{5}$/;
     if (!ZCodeRegex.test(req.body.zipCode)){
         return res.status(400).json({ message: 'Invalid zip code' });
@@ -619,25 +536,23 @@ app.post('/parcel', (req, res) => {
     }
 
     parcelDetails.forEach(parcel => {
-        const { referenceNumber, weight, deliveryCharge, totalAmount, dueAmount, status } = parcel;
+        const { referenceNumber, weight, deliveryCharge, totalAmount, dueAmount, status, paymentMethod } = parcel;
 
         if (!referenceNumber || !weight || !deliveryCharge || !totalAmount || !dueAmount || !status) {
             return res.status(400).json({ error: 'All parcel details fields are required' });
         }
 
-        const validStatuses = ['ACCEPTED', 'COLLECTED', 'SHIPPED', 'IN-TRANSIT', 'DELIVERED'];
+        const validStatuses = ['ACCEPTED', 'Parcel_Handed_over_to_Delivery', 'SHIPPED', 'IN-TRANSIT', 'DELIVERED'];
         if (!validStatuses.includes(status)) {
             return res.status(400).json({ error: 'Invalid status' });
         }
 
-        // Validate reference number (assuming it should be a 5-digit number)
         const RNRegex = /^(?:P)?[0-9]{4}$/;
         if (!RNRegex.test(referenceNumber)) {
             return res.status(400).json({ message: 'Invalid reference Number' });
         }
 
-        // Combine parcel details into a single JSON object
-        const parcelDetailsJSON = JSON.stringify({ weight, deliveryCharge, totalAmount, dueAmount });
+        const parcelDetailsJSON = JSON.stringify({ weight, deliveryCharge, totalAmount, dueAmount, paymentMethod });
 
         db.query(createQuery, [referenceNumber, senderDetailsJSON, recipientDetailsJSON, parcelDetailsJSON, status], (err, data) => {
             if (err) {
@@ -657,7 +572,6 @@ app.get('/parcel', (req, res) => {
     const offset = (page - 1) * limit;
     const search = req.query.search || '';
 
-    // Function to get all column names from the parcel table
     const getColumnNamesQuery = "SHOW COLUMNS FROM parcel";
 
     db.query(getColumnNamesQuery, (err, columns) => {
@@ -665,11 +579,9 @@ app.get('/parcel', (req, res) => {
             return res.json(err);
         }
 
-        // Prepare the base query
         let query = 'SELECT * FROM parcel';
         let queryParams = [];
 
-        // Add the search filter if there is a search term
         if (search) {
             const searchTerms = search.split(' ');
             const searchConditions = searchTerms.map(term => {
@@ -713,7 +625,6 @@ app.get('/parcel', (req, res) => {
 });
 
 
-// Endpoint to get total number of parcels (for pagination metadata)
 app.get('/parcel/count', (req, res) => {
 
     const query = 'select count(*) as count from parcel';
@@ -726,14 +637,24 @@ app.get('/parcel/count', (req, res) => {
     });
 });
 
-app.get('/parcel/:id', (req,res) => {
-    const getByIdQuery = 'select * from parcel where id=?'
+const executeQuery = (query, values) => {
+    return new Promise((resolve, reject) => {
+      db.query(query, values, (err, results) => {
+        if (err) {
+          return reject(err); 
+        }
+        resolve(results); 
+      });
+    });
+  };
 
-    const values = [
-        req.params.id
-    ]
+app.get('/parcel/:id', async (req,res) => {
 
-    db.query(getByIdQuery, values, (err,data) => {
+    const [parcelResult] = await executeQuery('SELECT * FROM parcel WHERE id = ?', [req.params.id]);
+
+    const details = 'select * from parcel where JSON_EXTRACT(senderDetails, "$.NIC") = ? and JSON_EXTRACT(recipientDetails, "$.NIC") = ?'
+    
+    db.query(details, [JSON.parse(parcelResult.senderDetails).NIC, JSON.parse(parcelResult.recipientDetails).NIC], (err,data) => {
         if(err) {
             return res.json(err)
         }
@@ -746,7 +667,31 @@ app.get('/parcel/:id', (req,res) => {
             status: parcel.status
         }))
 
-        return res.send(data[0])
+        const combinedParcels = [];
+
+        data.forEach(parcel => {
+            const existingParcel = combinedParcels.find(
+                p =>
+                JSON.stringify(p.senderDetails) === JSON.stringify(parcel.senderDetails) &&
+                JSON.stringify(p.recipientDetails) === JSON.stringify(parcel.recipientDetails)
+            );
+
+            if (existingParcel) {
+                existingParcel.referenceNumbers.push(parcel.referenceNumber);
+                existingParcel.parcelDetails.push(parcel.parcelDetails);
+                existingParcel.statuses.push(parcel.status);
+            } else {
+                combinedParcels.push({
+                    senderDetails: parcel.senderDetails,
+                    recipientDetails: parcel.recipientDetails,
+                    referenceNumbers: [parcel.referenceNumber],
+                    parcelDetails: [parcel.parcelDetails],
+                    statuses: [parcel.status]
+                });
+            }
+        });
+
+        res.send(combinedParcels[0])
     })
 })
 
@@ -841,16 +786,6 @@ app.delete('/parcel/:id', (req,res) => {
         return res.send('Deleted Successfully')
     })
 })
-//     const Nameregex = /^[A-Za-z\s]{1,50}$/; // Example: letters and spaces, max length 50
-
-//     if(!Nameregex.test(req.body.senderName)) {
-//         return res.status(400).json({error: 'Invalid sender name'})
-//     }
-
-//     if(!Nameregex.test(req.body.recipientName)) {
-//         return res.status(400).json({error: 'Invalid recipient name'})
-//     }
-// })
 
 app.put('/parcel/:id', (req, res) => {
     const updateQuery = 'update parcel set senderDetails=?, recipientDetails=?,  parcelDetails=?, status=? where id=?'
@@ -861,11 +796,9 @@ app.put('/parcel/:id', (req, res) => {
         return res.status(400).json({ error: 'All fields are required' });
     }
 
-    // Serialize the objects to JSON
     const senderDetailsJSON = JSON.stringify(senderDetails);
     const recipientDetailsJSON = JSON.stringify(recipientDetails);
 
-     // Check if parcelDetails is an array
     if (!Array.isArray(parcelDetails)) {
         return res.status(400).json({ error: 'parcelDetails must be an array' });
     }
@@ -877,12 +810,11 @@ app.put('/parcel/:id', (req, res) => {
             return res.status(400).json({ error: 'All parcel details fields are required' });
         }
 
-        const validStatuses = ['ACCEPTED', 'COLLECTED', 'SHIPPED', 'IN-TRANSIT', 'DELIVERED'];
+        const validStatuses = ['ACCEPTED', 'Parcel_Handed_over_to_Delivery', 'SHIPPED', 'IN-TRANSIT', 'DELIVERED'];
         if (!validStatuses.includes(status)) {
             return res.status(400).json({ error: 'Invalid status' });
         }
 
-        // Combine parcel details into a single JSON object
         const parcelDetailsJSON = JSON.stringify({ weight, deliveryCharge, totalAmount, dueAmount});
 
         db.query(updateQuery, [senderDetailsJSON, recipientDetailsJSON, parcelDetailsJSON, status,  req.params.id], (err, data) => {
@@ -921,14 +853,12 @@ app.post('/staff', async (req,res) => {
         req.body.position,
     ]
 
-    // Validation function to check if any value is empty
     const isValid = values.every(value => value !== undefined && value !== '');
 
     if (!isValid) {
         return res.status(400).json({ error: 'All fields are required' });
     }
 
-    // Validate admin Id (assuming it should be a 4-digit number)
     const AIdregex = /^(?:A)?[0-9]{3}$/;     
     if (req.body.role ==='ADMIN' && !AIdregex.test(req.body.adminId)){
         return res.status(400).json({ message: 'Invalid admin Id' });
@@ -944,14 +874,13 @@ app.post('/staff', async (req,res) => {
         return res.status(400).json({ message: 'Invalid branch code' });
     }
 
-    // Get branchId by branchCode
     const branchId = await getBranchIdByBranchCode(req.body.branch);
 
     if (!branchId) {
         return res.status(404).json({ error: 'Branch not found' });
       }
 
-    const validPosition = ['ADMIN', 'MANAGER', 'STAFF', 'DELIVERY_PERSON']; // Example statuses
+    const validPosition = ['ADMIN', 'MANAGER', 'STAFF', 'DELIVERY_PERSON']; 
 
     if(!validPosition.includes(req.body.position)){
         return res.status(400).json({error: 'Invalid position'})
@@ -976,7 +905,6 @@ app.get('/staff', (req, res) => {
     const offset = (page - 1) * limit;
     const search = req.query.search || '';
 
-    // Function to get all column names from the parcel table
     const getColumnNamesQuery = `SHOW COLUMNS FROM staff`;
 
     db.query(getColumnNamesQuery, (err, columns) => {
@@ -1002,11 +930,9 @@ app.get('/staff', (req, res) => {
             queryParams = Array(6).fill(searchPattern);
         }
         
-        // Add pagination
         query += ' LIMIT ?, ?';
         queryParams.push(offset, limit);
 
-        // Execute the query
         db.query(query, queryParams, (err, data) => {
             if (err) {
                 return res.json(err);
@@ -1016,7 +942,6 @@ app.get('/staff', (req, res) => {
     });
 });
 
-// Endpoint to get total number of staff (for pagination metadata)
 app.get('/staff/count', (req, res) => {
 
     const query = 'select count(*) as count from staff';
@@ -1098,13 +1023,12 @@ app.put('/staff/:id', async (req,res) => {
         return res.status(400).json({ message: 'Invalid branch code' });
     }
 
-    const validPosition = ['ADMIN', 'MANAGER', 'STAFF', 'DELIVERY_PERSON']; // Example statuses
+    const validPosition = ['ADMIN', 'MANAGER', 'STAFF', 'DELIVERY_PERSON']; 
 
     if(!validPosition.includes(req.body.position)){
         return res.status(400).json({error: 'Invalid position'})
     }
 
-    // Get branchId by branchCode
     const branchId = await updateBranchIdByBranchCode(req.body.branch);
 
     if (!branchId) {
@@ -1120,6 +1044,59 @@ app.put('/staff/:id', async (req,res) => {
         return res.status(201).send({statusCode:201, statusMessage:'Updated Successfully'})
     })
 })
+
+app.post('/contactus', (req,res) => {
+    const createQuery = 'insert into contact_us(`name`, `email`, `phoneNumber`, `message`) values(?)'
+
+    const values = [
+        req.body.name,
+        req.body.email,
+        req.body.phoneNumber,
+        req.body.message
+    ]
+
+    const isValid = values.every(value => value !== undefined && value !== '');
+
+    if (!isValid) {
+        return res.status(400).json({ error: 'All fields are required' });
+    }
+
+    if (!validator.isEmail(req.body.email)) {
+        return res.status(400).json({ message: 'Invalid email format' });
+    }
+
+    const phoneRegex = /^(?:0)?[7][01245678][0-9]{7}$/;    
+    if (!phoneRegex.test(req.body.phoneNumber)){
+        return res.status(400).json({ message: 'Invalid Phone number' });
+    }
+
+    db.query(createQuery, [values], (err,data) => {
+        if(err) {
+            if(err.errno === 1062) {
+                return res.status(500).json({statusCode:500, statusMessage:'Duplicate entry'})
+            }
+            {console.log(data)}
+            return res.status(500).json(err)
+        }
+        return res.status(201).json({statusCode:201, statusMessage:'contact Successfully'})
+    })
+})
+
+app.get('/contactus', (req, res) => {
+
+    const query = 'select * from contact_us'
+
+    const value = [
+        req.params.id
+    ]
+
+    db.query(query, value, (err, data) => {
+        if (err) {
+            return res.json(err);
+        }
+        return res.send(data);
+    });
+});
 
 app.use(express.static('../frontend/src/assets'))
 
@@ -1213,19 +1190,16 @@ app.put('/profile/:id', upload.single('image'), async (req, res) => {
         const saltRounds = 10;
         hashedPassword = await bcrypt.hash(req.body.password.toString(), saltRounds);
     
-        // Validate password length
         if (req.body.password.length < 4 || req.body.password.length > 10) {
             return res.status(400).json({ error: 'Password must be between 4 and 10 characters' });
         }
     }
 
-    // Validate contact number (assuming it should be a 10-digit number)
     const CNMPregex = /^(?:0)?[7][01245678][0-9]{7}$/;  
     if (!CNMPregex.test(req.body.contactNumber)){
         return res.status(400).json({ message: 'Invalid contact number' });
     }
 
-    // Construct values array for insertion
     const values = [
         image,
         req.body.fullName,
@@ -1265,7 +1239,7 @@ const getPreSignedUrl = async (bucket, key) => {
   const extractFileKey = (url) => {
     const urlParts = new URL(url);
     const path = urlParts.pathname;
-    return path.substring(1); // Remove the leading slash
+    return path.substring(1); 
   };
   
 
@@ -1312,29 +1286,6 @@ app.get('/track_parcels/:referenceNumber', (req, res) => {
     })
 })
 
-
-// app.get('/track_parcels/:trackingNumber', (req, res) => {
-//     const trackingNumber = req.params.trackingNumber;
-  
-//     // Example data
-//     const parcelData = {
-//       statusCode: 200,
-//       status: 'In-Transit',
-//       trackingEvents: [
-//         { status: 'Item accepted by Courier', date: '2024-07-17 10:00:00' },
-//         { status: 'Collected', date: '2024-07-17 12:00:00' },
-//         { status: 'Shipped', date: '2024-07-17 15:00:00' },
-//         { status: 'In-Transit', date: '2024-07-18 08:00:00' },
-//         { status: 'Delivered', date: '2024-07-18 13:00:00' }
-//       ]
-//     };
-  
-//     res.json(parcelData);
-//   });
-
-  
-
-
 // import http from 'http';
 // import formidable from 'formidable'
 // import fs from 'fs';
@@ -1361,18 +1312,14 @@ app.get('/track_parcels/:referenceNumber', (req, res) => {
 // }
 // })
 
-// In your Node.js backend
 app.post('/get-otp', (req, res) => {
     const { phoneNumber } = req.body;
-    // Your logic to generate and send OTP
     res.status(200).json({ message: 'OTP sent successfully' });
 });
 
-// In your Node.js backend
 app.post('/verify-otp', (req, res) => {
     const { otp } = req.body;
 
-    // Your logic to verify the OTP
     if (otp === "expectedOTP") {
         res.status(200).json({ message: 'OTP verified successfully' });
     } else {
@@ -1383,7 +1330,6 @@ app.post('/verify-otp', (req, res) => {
 app.post('/resend-otp', (req, res) => {
     const { phoneNumber } = req.body;
 
-    // Your logic to resend the OTP
     res.status(200).json({ message: 'OTP resent successfully' });
 });
   

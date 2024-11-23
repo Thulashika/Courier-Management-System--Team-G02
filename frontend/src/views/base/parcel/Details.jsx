@@ -1,8 +1,7 @@
-import { CButton, CCard, CCardBody, CCardHeader, CCardText, CCardTitle, CCol, CContainer, CFormCheck, CFormInput, CFormLabel, CImage, CRow  } from '@coreui/react'
-import React, { useContext, useEffect, useState } from 'react'
+import { CCard, CCardBody, CCardText, CCardTitle, CCol, CContainer, CImage, CRow  } from '@coreui/react'
+import React, { useEffect, useState } from 'react'
 import axios from 'axios';
 import { PARCEL_ERRORS } from '../../../const';
-import { AuthContext } from '../../pages/register/AuthProvider';
 import NFRN from '../../../assets/images/NF1.avif'
 import { useLocation, useParams } from 'react-router-dom';
 
@@ -20,9 +19,6 @@ const Details = () => {
   const { id } = useParams();
   const [error, setError] = useState('');
   const [isValid, setIsValid] = useState(true);
-
-  // const { userDetails } = useContext(AuthContext);
-  // console.log(userDetails)
 
   useEffect(() => {
     axios(`http://localhost:6431/QRCode/${query.get('id')}`, {

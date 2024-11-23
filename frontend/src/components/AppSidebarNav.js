@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { NavLink } from 'react-router-dom'
 import PropTypes from 'prop-types'
 
@@ -6,8 +6,11 @@ import SimpleBar from 'simplebar-react'
 import 'simplebar-react/dist/simplebar.min.css'
 
 import { CBadge, CNavLink, CSidebarNav } from '@coreui/react'
+import { AuthContext } from '../views/pages/register/AuthProvider'
 
 export const AppSidebarNav = ({ items }) => {
+  const { userDetails } = useContext(AuthContext)
+
   const navLink = (name, icon, badge, indent = false) => {
     return (
       <>

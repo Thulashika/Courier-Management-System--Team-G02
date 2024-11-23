@@ -8,7 +8,6 @@ import {
   CForm,
   CFormInput,
   CFormSelect,
-  CHeader,
   CInputGroup,
   CInputGroupText,
   CRow,
@@ -23,14 +22,12 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { PARCEL_ERRORS } from '../../../const';
 import CIcon from '@coreui/icons-react';
-import { cilTrash, cilCheckAlt, cilX } from '@coreui/icons';
-import Query from '../../../const'
+import { cilTrash, cilCheckAlt, cilX, cilPlus } from '@coreui/icons';
 
 function useQuery() {
   const {search} = useLocation()
   return React.useMemo(() => new URLSearchParams(search), [search])
 }
-// Query()
 
 const UpdateParcels = () => {
 
@@ -64,7 +61,6 @@ const UpdateParcels = () => {
       paymentMethod:'',
       status:''
     }],
-    // parcelDetails: [], // Ensure this is initialized as an empty array
   });
 
   const navigate = useNavigate();
@@ -124,14 +120,10 @@ const UpdateParcels = () => {
       method: 'get'
     }).then(res => {
       const data = res.data;
-      if (Array.isArray(data.parcelDetails)) {
-        setParcel(data);
-      } else {
-        setParcel({
-          ...data,
-          parcelDetails: parcel.parcelDetails // or handle the error accordingly
-        });
-      }
+      setParcel({
+        ...data,
+        parcelDetails: data.parcelDetails 
+      });
     });
   }, []);
   
@@ -139,18 +131,14 @@ const UpdateParcels = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
   
-    // Reset error and validity state
     setError('');
     setIsValid(true);
   
-    // Log current parcel state
     console.log('Parcel State:', parcel);
   
-    // Define validation regexes
     const Nameregex = /^[A-Za-z\s]{1,50}$/;
     const CNregex = /^(?:0)?[7][01245678][0-9]{7}$/;
   
-    // Validate sender and recipient names
     const validateName = (name) => Nameregex.test(name);
   
     if (!validateName(parcel.senderDetails.firstName) || !validateName(parcel.senderDetails.lastName)) {
@@ -167,7 +155,6 @@ const UpdateParcels = () => {
       return;
     }
   
-    // Validate contact numbers
     const validateContactNumber = (number) => CNregex.test(number) && number.length === 10;
   
     if (!validateContactNumber(parcel.senderDetails.contactNumber)) {
@@ -183,9 +170,8 @@ const UpdateParcels = () => {
       setIsValid(false);
       return;
     }
-  
-    // Validate status for each parcel detail
-    const validStatuses = ['ACCEPTED', 'COLLECTED', 'SHIPPED', 'IN-TRANSIT', 'DELIVERED'];
+
+    const validStatuses = ['ACCEPTED', 'Parcel_Handed_over_to_Delivery', 'SHIPPED', 'IN-TRANSIT', 'DELIVERED'];
     for (const item of parcel.parcelDetails) {
       if (!validStatuses.includes(item.status)) {
         console.log('Error: Invalid status');
@@ -195,10 +181,9 @@ const UpdateParcels = () => {
       }
     }
     
-    // If all validations pass, send the request
-    const confirmUpdate = window.confirm('Are you sure you want to update this form?');
+    // const confirmUpdate = window.confirm('Are you sure you want to update this form?');
 
-    if (isValid && confirmUpdate) {
+    if (isValid) {
       axios
         .put(`http://localhost:6431/parcel/${query.get('id')}`, parcel)
         .then((res) => {
@@ -388,12 +373,15 @@ const UpdateParcels = () => {
                     <CInputGroupText>NIC</CInputGroupText>
                     <CFormInput
                       type='text'
-                      onChange={(e) =>
-                        setParcel({
-                          ...parcel,
-                          senderDetails: { ...parcel.senderDetails, NIC: e.target.value }
-                        })
-                      }
+                      onChange={(e) => {
+                        const nicPattern = /^(?:\d{12}|\d{9}[Vv])$/;
+                        if(nicPattern.test(e.target.value)) {
+                          setParcel({
+                            ...parcel,
+                            senderDetails: { ...parcel.senderDetails, NIC: e.target.value }
+                          })
+                        }
+                      }}
                       required
                       disabled={!isEdit}
                       defaultValue={parcel?.senderDetails.NIC}
@@ -405,12 +393,15 @@ const UpdateParcels = () => {
                     <CInputGroupText>NIC</CInputGroupText>
                     <CFormInput
                       type='text'
-                      onChange={(e) =>
-                        setParcel({
-                          ...parcel,
-                          recipientDetails: { ...parcel.recipientDetails, NIC: e.target.value }
-                        })
+                      onChange={(e) => {
+                        const nicPattern = /^(?:\d{12}|\d{9}[Vv])$/;
+                        if(nicPattern.test(e.target.value)) {
+                          setParcel({
+                            ...parcel,
+                            recipientDetails: { ...parcel.recipientDetails, NIC: e.target.value }
+                          })
                       }
+                      }}
                       required
                       disabled={!isEdit}
                       defaultValue={parcel?.recipientDetails.NIC}
@@ -440,6 +431,20 @@ const UpdateParcels = () => {
                       defaultValue={parcel?.senderDetails.date}
                     />
                   </CInputGroup>
+                  <CInputGroup className='mb-3'>
+                    <CInputGroupText>Time</CInputGroupText>
+                    <CFormInput
+                      type='time'
+                      value={parcel.senderDetails.time}
+                      onChange={(e) => setParcel({
+                        ...parcel,
+                        senderDetails: {
+                          ...parcel.senderDetails,
+                          time: e.target.value
+                        }
+                      })}
+                    />
+                  </CInputGroup>
                 </CCol>
                 <CCol xs={6}>
                   <CInputGroup className='mb-3'>
@@ -458,6 +463,20 @@ const UpdateParcels = () => {
                       disabled={!isEdit}
                       defaultValue={parcel?.recipientDetails.date}
                       min={parcel.senderDetails.date}
+                    />
+                  </CInputGroup>
+                  <CInputGroup className='mb-3'>
+                    <CInputGroupText>Time</CInputGroupText>
+                    <CFormInput
+                      type='time'
+                      value={parcel.recipientDetails.time}
+                      onChange={(e) => setParcel({
+                        ...parcel,
+                        recipientDetails: {
+                          ...parcel.recipientDetails,
+                          time: e.target.value
+                        }
+                      })}
                     />
                   </CInputGroup>
                 </CCol>
@@ -528,17 +547,17 @@ const UpdateParcels = () => {
                       </CTableRow>
                     </CTableHead>
                     <CTableBody>
-                      {parcel.parcelDetails && parcel.parcelDetails.map((item, index) => {
+                      {parcel?.referenceNumbers && parcel?.statuses && parcel?.parcelDetails && parcel?.parcelDetails.map((item, index) => {
                           return ( <CTableRow key={index}>
                           <CTableDataCell>
                             <CFormInput
                               type='text'
                               name='referenceNumber'
-                              value={item.referenceNumber}
+                              value={parcel?.referenceNumbers[index]}
                               onChange={(e) => handleInputChange(index, e)}
                               required
                               readOnly = {true}
-                              defaultValue={parcel?.parcelDetails.referenceNumber}
+                              defaultValue={parcel?.referenceNumbers[index]}
                             />
                           </CTableDataCell>
                           {!isValid && error === PARCEL_ERRORS.NUMBER_LENGTH_VALIDATION && <p>{error}</p>}
@@ -609,17 +628,17 @@ const UpdateParcels = () => {
                             <CFormSelect  
                               type='select'
                               name='status'
-                              value={item.status}
+                              value={parcel?.statuses[index]}
                               onChange={(e) => handleInputChange(index, e)}                    
                               required
                               disabled={!isEdit}
-                              defaultValue={parcel?.parcelDetails.status}
+                              defaultValue={parcel?.statuses}
                             >
                                 <option value=''>Please Select Status</option>
                                 <option value='ACCEPTED'>Accepted</option>
-                                <option value='COLLECTED'>Collected</option>
+                                <option value='Parcel_Handed_over_to_Delivery'>Parcel_Handed_over_to_Delivery</option>
                                 <option value='SHIPPED'>Shipped</option>
-                                <option value='IN-TRANSIT'>In-transit</option>
+                                {/* <option value='IN-TRANSIT'>In-transit</option> */}
                                 <option value='DELIVERED'>Delivered</option>
                             </CFormSelect>
                           </CTableDataCell>
@@ -642,7 +661,11 @@ const UpdateParcels = () => {
 
                   { isEdit && <CRow className="mb-3">
                     <div className="d-grid gap-2 d-md-flex justify-content-md-end">
-                      <CButton type='button' className='me-md-2' color='primary' variant='outline' onClick={UpdateItem}>Update Parcel</CButton>
+                      <CButton type='button' className='me-md-2' color='primary' variant='outline' onClick={UpdateItem}>
+                        <CIcon icon={cilPlus}/>
+                        {'  '}
+                        Add more Parcel
+                      </CButton>
                     </div>
                   </CRow>}
                 </CCol>
@@ -651,6 +674,7 @@ const UpdateParcels = () => {
               <div className='d-grid gap-2 d-md-flex'>
                 {isEdit && <CButton color='success' type='submit'>
                   <CIcon icon={cilCheckAlt}/>
+                  {'  '}
                   Update
                 </CButton>}
                 <CButton 
@@ -659,6 +683,7 @@ const UpdateParcels = () => {
                   onClick={() => window.confirm('Are you sure you want to cancel this update form?') ? navigate('/parcels') : ''} 
                 >
                   {isEdit? <CIcon icon={cilX}/> : <CIcon icon={cilCheckAlt}/>}
+                  {'  '}
                   {isEdit ? 'Cancel': 'Done'}
                 </CButton>
               </div>
