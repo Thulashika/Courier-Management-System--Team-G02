@@ -23,6 +23,7 @@ app.use(express.json())
 
 const corsOptions = {
     origin: 'http://localhost:3000',
+    // origin: `${import.meta.env.REACT_APP_BACKEND_BASEURL}/`,
     credentials: true,
   };
 

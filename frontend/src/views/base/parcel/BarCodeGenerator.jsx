@@ -61,7 +61,8 @@ const BarCodeGenerator = forwardRef(( { id }, ref) => {
             {/* <span><Barcode ref={ref} value={`http://localhost:3000/parcels/${id}`}/></span> */}
         </div>
         <div>
-            <span><QRCode ref={ref} value={`http://localhost:3000/parcels?id=${id}`}/></span>
+            {/* <span><QRCode ref={ref} value={`http://localhost:3000/parcels?id=${id}`}/></span> */}
+            <span><QRCode ref={ref} value={`${import.meta.env.REACT_APP_BACKEND_BASEURL}/parcels?id=${id}`}/></span>
             {/* <span> 
                 <div> {`Recipient: ${parcel.recipientDetails.firstName} ${parcel.recipientDetails.lastName}`}</div>
                 <div> {`${parcel.senderDetails.firstName} ${parcel.senderDetails.lastName}`}</div>
