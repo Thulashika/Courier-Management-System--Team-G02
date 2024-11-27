@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 
 import {
@@ -13,15 +13,12 @@ import CIcon from '@coreui/icons-react'
 import { AppSidebarNav } from './AppSidebarNav'
 import { sygnet } from '../assets/brand/sygnet'
 import navigation from '../_nav'
-import { AuthContext } from '../views/pages/register/AuthProvider'
 import { logo } from '../assets/brand/logo'
 
 const AppSidebar = () => {
   const dispatch = useDispatch()
   const unfoldable = useSelector((state) => state.changeState.sidebarUnfoldable)
   const sidebarShow = useSelector((state) => state.changeState.sidebarShow)
-
-  const { userDetails } = useContext(AuthContext)
 
   return (
     <CSidebar

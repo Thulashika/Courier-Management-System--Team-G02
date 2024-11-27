@@ -261,36 +261,66 @@ function Landingpage() {
               <CImage src={yoga} height={75} width={75}/>
                 <strong>Yoga Transport</strong>
               <div>
-                <h6><strong>We keep improving to serve you better!</strong></h6>
+                <h6>We keep improving to serve you better!</h6>
               </div>
             </CNavbarBrand>
             <CCollapse className='navbar-collapse justify-content-end' visible>
               <CNavbarNav>
                 <CNavItem>
                   <CIcon icon={cilPhone} size="xl" style={{'--ci-primary-color': 'orange'}} />
-                  <strong>Call Us:</strong>
-                  <CNavLink href='' active>
+                  Call Us:
+                  <CNavLink
+                    href=""
+                    active
+                    style={{
+                      textDecoration: 'none', 
+                      color: 'inherit',
+                    }}
+                    onMouseEnter={(e) => e.target.style.color = 'orange'} 
+                    onMouseLeave={(e) => e.target.style.color = 'inherit'}
+                  >
                     <strong>0762110846</strong>
                   </CNavLink>
+
                 </CNavItem>
                 <CNavItem>
                   <CIcon icon={cilEnvelopeClosed} size="xl" style={{'--ci-primary-color': 'orange'}} />
-                  <strong>Email Us:</strong>
-                  <CNavLink href='https://myaccount.google.com/?hl=en&utm_source=OGB&utm_medium=act&gar=WzEyMF0&pli=1' active>
+                  Email Us:
+                  <CNavLink 
+                    href='https://myaccount.google.com/?hl=en&utm_source=OGB&utm_medium=act&gar=WzEyMF0&pli=1' 
+                    active
+                    style={{
+                      textDecoration: 'none', 
+                      color: 'inherit',
+                    }}
+                    onMouseEnter={(e) => e.target.style.color = 'orange'} 
+                    onMouseLeave={(e) => e.target.style.color = 'inherit'}
+                  >
                     <strong>Yogatransport0@gmail.com</strong>
                   </CNavLink>
                 </CNavItem>
                 <CNavItem>
                   <CIcon icon={cilClock} size="xl" style={{'--ci-primary-color': 'orange'}} />
-                  <strong>Opening Hours:</strong>
+                  Opening Hours:
                   <CNavLink active>
                     <strong>Mon-Fri: 8am – 7pm</strong>
                   </CNavLink>
                 </CNavItem>
               </CNavbarNav>
-              <CButton type='submit' color='warning' href='/login'>
+              <CButton
+                type="submit"
+                color="warning"
+                href="/login"
+                style={{ 
+                  transition: 'background-color 0.3s ease', 
+                  color: 'inherit',
+                }}
+                onMouseEnter={(e) => e.target.style.backgroundColor = 'orange'} 
+                onMouseLeave={(e) => e.target.style.backgroundColor = ''} 
+              >
                 <strong>Login</strong>
-              </CButton> 
+              </CButton>
+
           </CCollapse>
           </CContainer>
         </CNavbar>
@@ -308,7 +338,6 @@ function Landingpage() {
                   top: 0,
                   width: '100%',
                   zIndex: 999,
-                  // backgroundColor: 'rgba(0, 0, 0, 0.3)',
                 }}
               >
                 <CCol xs={6}>
@@ -522,7 +551,7 @@ function Landingpage() {
       {/* <section id="" style={{ height: "100vh", background: "#d0d0d0" }}> */}
         <CContainer>
           <br/>
-            <CCarousel controls indicators dark>
+            <CCarousel controls indicators dark margin= ' 0 auto'>
               <CCarouselItem>
                 <CImage className="d-block w-100" src={background1} alt="slide 1"  height={700}/>
                 <CCardImageOverlay>
