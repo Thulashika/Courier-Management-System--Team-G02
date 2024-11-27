@@ -17,6 +17,7 @@ const db = mysql.createConnection({
 })
 
 const app = express()
+// const port = process.env.PORT 4000;
 
 app.use(express.json()) 
 
@@ -1346,6 +1347,9 @@ app.get('/userStatus/:id', (req, res) => {
     })
 });
 
-app.listen(6431, () => {
+// const PORT = process.env.PORT || 6431;
+// app.listen(PORT, () => console.log(`Running ${PORT}`));
+
+app.listen(process.env.PORT || 6431, () => {
     console.log("Running")
 })
