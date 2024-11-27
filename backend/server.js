@@ -157,7 +157,25 @@ app.post('/userLogin', async (req,res) => {
         return res.status(400).json({ message: 'Password is required' });
     }
 
-    const selectQuery = 'select * from userProfile where email = ?'
+    const selectQuery = `
+        SELECT 
+            userProfile.*,
+            staff.position,
+            staff.branchId,
+            branch.branchCode
+        FROM 
+            userProfile
+        LEFT JOIN 
+            staff 
+        ON 
+            userProfile.staffId = staff.id
+        LEFT JOIN 
+            branch 
+        ON 
+            staff.branchId = branch.id
+        WHERE 
+            userProfile.email = ?
+    `;
     
     db.query(selectQuery, [email], (err, results) => {
         if (err) {
@@ -187,7 +205,14 @@ app.post('/userLogin', async (req,res) => {
                 user.image = await getPreSignedUrl(bucketName, extractFileKey(user.image))
             }
 
-            return res.status(200).json({statusCode:200, message: 'Login successful', token, email, id: user.id, role: user.role, fullName: user.fullName, image: user.image });
+            return res.status(200).json({
+                statusCode:200, 
+                message: 'Login successful', 
+                token, email, 
+                id: user.id, role: user.role, fullName: user.fullName, image: user.image, 
+                staffId: user.staffId, position: user.position, 
+                branchId: user.branchId, branchCode: user.branchCode 
+            });
         });
     });
 })
@@ -696,7 +721,6 @@ app.get('/parcel/:id', async (req,res) => {
 })
 
 app.get('/QRCode/:id', (req,res) => {
-    // const getByIdQuery = 'select status, senderDetails, recipientDetails, parcelDetails from parcel where id = ?'
     const getByIdQRQuery = 'select recipientDetails, status from parcel where id = ?'
 
     const values = [
@@ -901,7 +925,7 @@ app.post('/staff', async (req,res) => {
 
 app.get('/staff', (req, res) => {
     const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 10;
+    const limit = parseInt(req.query.limit) || 20;
     const offset = (page - 1) * limit;
     const search = req.query.search || '';
 
@@ -1100,31 +1124,6 @@ app.get('/contactus', (req, res) => {
 
 app.use(express.static('../frontend/src/assets'))
 
-// image stroage confing
-// const stroage = multer.diskStorage({
-//     destination: (req, file, callback) => {
-//         callback(null, '../frontend/src/assets/images')
-//     },
-//     filename: (req, file, callback) => {
-//         callback(null, file.fieldname + "_" + Date.now() + path.extname(file.originalname))
-//         // callback(null, `image-${Date.now()}.${file.originalname}`)
-//     }
-// })
-
-// //image filter
-// const isImage = (req, file, callback) => {
-//     if(file.mimetype.startsWith('image')) {
-//         callback(null, true)
-//     } else {
-//         callback(null, Error('only image is allowed'))
-//     }
-// }
-
-// const upload = multer({
-//     storage: stroage,
-//     // fileFilter: isImage
-// })
-
 // Multer configuration for file uploads
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
@@ -1149,8 +1148,6 @@ const s3 = new S3Client(
 );
 
 app.post('/profile', upload.single('image'), (req,res) => {
-    // console.log(req.file)
-    // const image = req.file.fieldname
     const image = req.file.buffer
     const updateUserProfileQuery = 'update userprofile set image=?'
     

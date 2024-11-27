@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import {
   CCard,
   CCardBody,
@@ -27,6 +27,7 @@ import CIcon from '@coreui/icons-react'
 import { cilPencil, cilPlus, cilTrash } from '@coreui/icons'
 import axios from 'axios'
 import NFB from '../../../assets/images/NoData.png'
+import { AuthContext } from '../../pages/register/AuthProvider'
 
 const List = () => {
 
@@ -35,6 +36,8 @@ const List = () => {
   const [limit, setLimit] = useState(10);
   const [totalBranches, setTotalBranches] = useState(0);
   const [search, setSearch] = useState('');
+
+  const { userDetails } = useContext(AuthContext);
 
   useEffect(() => {
     getAll()
@@ -60,7 +63,8 @@ const List = () => {
       //   'authentication': `Bearer ${getCookie('token')}`
       // }
     }).then(res => {
-      setData(res.data.data)
+        setData(res.data.data)
+    
     }).catch((err) => {
       console.error('Error fetching branches:', err);
     });
@@ -205,31 +209,43 @@ const List = () => {
                 <CModalHeader onClose={() => setVisibleModal(false)}>
                   Branch Details
                 </CModalHeader>
-                {selectedBranch && (
-                  <CModalBody>
-                    <p><strong>Branch Code:</strong> {selectedBranch.branchCode}</p>
-                    <p><strong>Branch Name:</strong> {selectedBranch.branchName}</p>
-                    <p><strong>Branch Address:</strong> {selectedBranch.branchAddress}</p>
-                    <p><strong>City:</strong> {selectedBranch.city}</p>
-                    <p><strong>Contact Number:</strong> {selectedBranch.contactNumber}</p>
-                  </CModalBody>
-                )}
-                <CModalFooter>
-                  <Link to={`/branch/updateBranch?id=${selectedBranch?.id}`}>
-                    <CButton color="primary" variant="ghost">
-                      <CIcon icon={cilPencil} />
-                    </CButton>
-                  </Link>
-                  <CButton
-                    color="danger"
-                    variant="ghost"
-                    onClick={() => handleClick(selectedBranch?.id)}
-                  >
-                    <CIcon icon={cilTrash} />
-                  </CButton>
-                </CModalFooter>
+                {selectedBranch && (() => {
+                  const hasAccess = userDetails.position === 'ADMIN' || 
+                                    (userDetails.position === 'MANAGER' && userDetails.branchCode === selectedBranch.branchCode);
+
+                  return hasAccess ? (
+                    <>
+                      <CModalBody>
+                        <p><strong>Branch Code:</strong> {selectedBranch.branchCode}</p>
+                        <p><strong>Branch Name:</strong> {selectedBranch.branchName}</p>
+                        <p><strong>Branch Address:</strong> {selectedBranch.branchAddress}</p>
+                        <p><strong>City:</strong> {selectedBranch.city}</p>
+                        <p><strong>Contact Number:</strong> {selectedBranch.contactNumber}</p>
+                      </CModalBody>
+                      <CModalFooter>
+                        <Link to={`/branch/updateBranch?id=${selectedBranch?.id}`}>
+                          <CButton color="primary" variant="ghost">
+                            <CIcon icon={cilPencil} />
+                          </CButton>
+                        </Link>
+                        <CButton
+                          color="danger"
+                          variant="ghost"
+                          onClick={() => handleClick(selectedBranch?.id)}
+                        >
+                          <CIcon icon={cilTrash} />
+                        </CButton>
+                      </CModalFooter>
+                    </>
+                  ) : (
+                    <CModalBody>
+                      <p>You do not have access to view details of this branch.</p>
+                    </CModalBody>
+                  );
+                })()}
               </CModal>
             </CRow>
+
 
             <COffcanvas placement="top" visible={isOffcanvasVisible} onHide={() => setIsOffcanvasVisible(false)}>
               <COffcanvasHeader>
@@ -252,7 +268,16 @@ const List = () => {
                     </CTableHead>
                     <CTableBody>
                       {paginatedData.length > 0 ? (
-                        paginatedData.map((branch, index) => (
+                         paginatedData
+                         .filter((branch) => {
+                           if (userDetails.position === 'ADMIN') {
+                             return true;
+                           } else {
+                             if(userDetails.position === 'MANAGER')
+                               return (branch.branchCode === userDetails.branchCode)
+                           }
+                         })
+                        .map((branch, index) => (
                           <CTableRow key={index}>
                             <CTableDataCell>{(page - 1) * limit + index + 1}</CTableDataCell>
                             <CTableDataCell>{branch.branchCode}</CTableDataCell>

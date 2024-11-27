@@ -64,7 +64,7 @@ const Login = () => {
       }).then(res => {
         if(res.data.statusCode === 200){
           
-          login(res.data.email, res.data.id, res.data.role, res.data.fullName, res.data.image);
+          login(res.data.email, res.data.id, res.data.role, res.data.fullName, res.data.image, res.data.staffId, res.data.position, res.data.branchCode);
 
           if(res.data.role !== 'CUSTOMER') {
             navigate('/dashboard')

@@ -149,7 +149,7 @@ const Dashboard = () => {
 
   return (
     <>
-      {userDetails.role === 'ADMIN' ? 
+      {userDetails.position === 'ADMIN' ? 
       <>
       <WidgetsDropdown className="mb-4" />
       <CRow>

@@ -16,8 +16,14 @@ const changeState = (state = initialState, { type, ...rest }) => {
 
 const authInitial = {
   email: '',
+  // staffId: '',
   id: 0
 }
+
+// const staffInitial = {
+//   staffId: '',
+//   id: 0
+// }
 
 const authChangeState = (state = authInitial, action) => {
   switch (action.type) {
@@ -28,10 +34,20 @@ const authChangeState = (state = authInitial, action) => {
   }
 }
 
+// const staffChangeState = (state = staffInitial, action) => {
+//   switch (action.type) {
+//     case 'SET_DETAILS':
+//       return { ...state, ...action.payload };
+//     default:
+//       return state;
+//   }
+// }
+
 // Combine the reducers into a single reducer function
 const rootReducer = combineReducers({
   changeState,
   authChangeState,
+  // staffChangeState
 });
 
 // Create the Redux store with the combined reducer

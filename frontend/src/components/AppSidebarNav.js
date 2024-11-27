@@ -11,6 +11,15 @@ import { AuthContext } from '../views/pages/register/AuthProvider'
 export const AppSidebarNav = ({ items }) => {
   const { userDetails } = useContext(AuthContext)
 
+  const filterItemsByRole = (items) => {
+    return items.filter((item) => {
+      if (!item.roles) return true;
+
+      return item.roles.includes(userDetails?.position);
+    });
+  };
+
+
   const navLink = (name, icon, badge, indent = false) => {
     return (
       <>
@@ -52,17 +61,26 @@ export const AppSidebarNav = ({ items }) => {
     const Component = component
     return (
       <Component compact as="div" key={index} toggler={navLink(name, icon)} {...rest}>
-        {item.items?.map((item, index) =>
+        {/* {item.items?.map((item, index) =>
+          item.items ? navGroup(item, index) : navItem(item, index, true),
+        )} */}
+         {filterItemsByRole(item.items)?.map((item, index) =>
           item.items ? navGroup(item, index) : navItem(item, index, true),
         )}
       </Component>
     )
   }
 
+  const filteredItems = filterItemsByRole(items)
+
   return (
     <CSidebarNav as={SimpleBar}>
-      {items &&
-        items.map((item, index) => (item.items ? navGroup(item, index) : navItem(item, index)))}
+      {/* {items &&
+        items.map((item, index) => (item.items ? navGroup(item, index) : navItem(item, index)))} */}
+        {filteredItems &&
+        filteredItems.map((item, index) =>
+          item.items ? navGroup(item, index) : navItem(item, index),
+        )}
     </CSidebarNav>
   )
 }

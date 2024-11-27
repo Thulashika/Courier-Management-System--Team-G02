@@ -40,7 +40,7 @@ const AppHeader = () => {
     })
   }, [])
 
-  const { userDetails, staffDetails } = useContext(AuthContext)
+  const { userDetails } = useContext(AuthContext)
 
   return (
     <CHeader position="sticky" className="mb-4 p-0" ref={headerRef}>
@@ -57,16 +57,24 @@ const AppHeader = () => {
               Courier Management System
             </CNavLink>
           </CNavItem>
+          <li className="nav-item py-1">
+            <div className="vr h-100 mx-2 text-body text-opacity-75"></div>
+          </li>
+          <CNavItem>
+            <CNavLink>
+              {userDetails.branchCode}
+            </CNavLink>
+          </CNavItem>
         </CHeaderNav>
         <CHeaderNav className="ms-auto">
         <CNavItem>
-            <CNavLink href="/">
-              {userDetails.role}
-            </CNavLink>
-          </CNavItem>
-          <li className="nav-item py-1">
-              <div className="vr h-100 mx-2 text-body text-opacity-75"></div>
-            </li>
+          <CNavLink>
+            {userDetails.position}
+          </CNavLink>
+        </CNavItem>
+        <li className="nav-item py-1">
+          <div className="vr h-100 mx-2 text-body text-opacity-75"></div>
+        </li>
         <CDropdown variant="nav-item" placement="bottom-end">
             <CDropdownToggle caret={false}>
               {colorMode === 'dark' ? (
@@ -111,7 +119,7 @@ const AppHeader = () => {
               <div className="vr h-100 mx-2 text-body text-opacity-75"></div>
           </li>
           <CNavItem>
-            <CNavLink href="/">
+            <CNavLink>
               {userDetails.fullName}
             </CNavLink>
           </CNavItem>
