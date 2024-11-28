@@ -20,6 +20,7 @@ module.exports = {
     // 'prettier',
   ],
   plugins: ['react', 'react-hooks'],
+  base: "/Courier-Service_Grp-Project/",
   rules: {
     // Place to specify ESLint rules. Can be used to overwrite rules specified from the extended configs
     // e.g. "@typescript-eslint/explicit-function-return-type": "off",
