@@ -40,6 +40,7 @@ const routes = [
   { path: '/track_parcels', name: 'Track Parcels', element: TrackParcels },
   { path: '/reports', name: 'Reports', element: Reports },
   { path: '/contactus', name: 'Contact us', element: Contactus},
+  { path: '/qrDetails',  exact: true, name: 'QR Code Details View Page', element: Details },
 ]
 
 export default routes

@@ -628,15 +628,15 @@ app.put('/branch/:id', (req,res) => {
         return res.status(400).json({ error: 'All fields are required' });
     }
  
-    const CNregex = /^(7[01245678][0-9]{7}|011[0-9]{7}|021[0-9]{7})$/;   
+    const CNregex = /^(07[01245678][0-9]{7}|011[0-9]{7}|021[0-9]{7})$/;   
     if (!CNregex.test(req.body.contactNumber)){
         return res.status(400).json({ message: 'Invalid contact number' });
     }
 
-    const ZCodeRegex = /^[0-9]{5}$/;
-    if (!ZCodeRegex.test(req.body.zipCode)){
-        return res.status(400).json({ message: 'Invalid zip code' });
-    }
+    // const ZCodeRegex = /^[0-9]{5}$/;
+    // if (!ZCodeRegex.test(req.body.zipCode)){
+    //     return res.status(400).json({ message: 'Invalid zip code' });
+    // }
 
     db.query(updateQuery, values, (err,data) => {
         if(err) {
@@ -825,7 +825,7 @@ app.get('/parcel/:id', async (req,res) => {
 })
 
 app.get('/QRCode/:id', (req,res) => {
-    const getByIdQRQuery = 'select recipientDetails, status from parcel where id = ?'
+    const getByIdQRQuery = 'select referenceNumber, recipientDetails, status from parcel where id = ?'
 
     const values = [
         req.params.id
@@ -840,6 +840,7 @@ app.get('/QRCode/:id', (req,res) => {
             const recipientDetails = JSON.parse(parcel.recipientDetails)
 
             return{
+                referenceNumber: parcel.referenceNumber,
                 recipientFirstName: recipientDetails.firstName,
                 recipientLastName: recipientDetails.lastName,
                 recipientAddress: recipientDetails.address,

@@ -36,7 +36,7 @@ import background3 from '../../assets/images/pB2.webp'
 import trackImg from '../../assets/images/tra1.png'
 import companyImg from '../../assets/images/Company.png'
 import expressImage from '../../assets/images/ED.gif'; 
-import parcelTrackingImage from '../../assets/images/track.gif'; 
+import parcelTrackingImage from '../../assets/images/Parcel Tracking.gif'; 
 import securePackagingImage from '../../assets/images/shipping.gif';
 import officeToOfficeImage from '../../assets/images/office.gif'; 
 import backgroundImage from '../../assets/images/background_1.jpg';
@@ -460,7 +460,6 @@ function Landingpage() {
                           <CNavItem>
                             <CNavLink href="/">
                               <h4 className="text-warning">
-                                {/* <CImage src={yoga} height={25} width={25} /> */}
                                 <strong>Yoga</strong>                               
                               </h4>
                             </CNavLink>
@@ -647,9 +646,6 @@ function Landingpage() {
                               </div>
                             </CRow>
                             {error && (
-                              // <CRow className="mb-3 text-center">
-                              //   <CBadge color="danger" style={{width:'500px', textAlign: 'center', margin: '0 auto'}}><h5>{error}</h5></CBadge>
-                              // </CRow>
                               <Dialog open={openDialog} onClose={handleDialogClose}>
                               <DialogTitle>Tracking Information</DialogTitle>
                               <DialogContent>
