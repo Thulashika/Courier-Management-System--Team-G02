@@ -68,7 +68,6 @@ const Login = () => {
 
           if(res.data.role !== 'CUSTOMER') {
             navigate('/dashboard')
-            // alert("Login succesfully")
             
           }
           else{
@@ -76,9 +75,6 @@ const Login = () => {
             navigate('/')
           }
           
-          // dispatch({type: 'SET_DETAILS', payload: {email: user.email, id: res.data.id}})
-          // localStorage.setItem('token', res.data.token)
-          // localStorage.removeItem('token')
         } else {
           alert("Not Login successfully")
         }
@@ -109,7 +105,6 @@ const Login = () => {
       }).then(res => {
         if(res.data.statusCode === 200) {
           alert('Password reset email sent')
-          // navigate('/reset-password')
         } else {
           alert('Not password reset email sent')
         }
