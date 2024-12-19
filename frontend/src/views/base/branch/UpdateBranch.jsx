@@ -53,7 +53,7 @@ const UpdateBranch = () => {
     setError('')
     setIsValid(true)
 
-    const CNregex = /^(7[01245678][0-9]{7}|011[0-9]{7}|021[0-9]{7})$/;
+    const CNregex = /^(07[01245678][0-9]{7}|011[0-9]{7}|021[0-9]{7})$/;
     
     if (branch.contactNumber.length !== 10) {
       setError(BRANCH_ERRORS.CONTACTNUMBER_LENGTH_VALIDATION);
@@ -65,20 +65,6 @@ const UpdateBranch = () => {
       setError(BRANCH_ERRORS.CONTACTNUMBER_FORMAT_VALIDATION);
       setIsValid(false);
       return;
-    }
-
-    const ZCodeRegex = /^[0-9]{5}$/;
-
-    if(branch.zipCode.length !== 5) {
-      setError(BRANCH_ERRORS.ZIPCODE_LENGTH_VALIDATION);
-      setIsValid(false);
-      return;
-    }
-
-    if (!ZCodeRegex.test(branch.zipCode)){
-      setError(BRANCH_ERRORS.ZIPCODE_FORMAT_VALIDATION);
-      setIsValid(false);
-      return;;
     }
 
     const confirmUpdate = window.confirm('Are you sure you want to update this form?');

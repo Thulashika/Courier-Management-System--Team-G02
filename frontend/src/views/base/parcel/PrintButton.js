@@ -1,38 +1,41 @@
 import React, { useRef } from 'react';
-import ReactToPrint from 'react-to-print';
 import { CButton, CImage, CTooltip } from '@coreui/react';
-import BarCodeGenerator from './BarCodeGenerator';
 import PropTypes from 'prop-types'; 
 import { QRCode } from 'react-qrcode-logo';
-import Barcode from 'react-barcode';
-import dowIcon from '../../../assets/images/qr-code.gif'
+import dowIcon from '../../../assets/images/qr-code.gif';
 
 const PrintButton = ({ id }) => {
-  const ref = useRef(QRCode)
-  // const ref = useRef(Barcode)
+  const qrRef = useRef(null); 
+
+  const handleDownload = () => {
+    const canvas = qrRef.current.querySelector('canvas'); 
+    if (canvas) {
+      const link = document.createElement('a');
+      link.href = canvas.toDataURL('image/png'); 
+      link.download = `QRCode-${id}.png`; 
+      link.click(); 
+    } else {
+      console.error('Canvas not found in QRCode');
+    }
+  };
 
   return (
     <div>
-      <ReactToPrint
-        trigger={() => (
-          <CTooltip content='QR Code' placement='bottom'>
-          <CButton color="secondary" size="sm" variant="ghost">
-            <CImage src={dowIcon} alt='view' height={25} width={25} />
-          </CButton>
-          </CTooltip>
-        )}
-        content={() => ref.current.download()}
-      />
-     
-      <div style={{ display: 'none' }}>
-        <BarCodeGenerator ref={ref} id={id} />
-      </div>     
+      <CTooltip content="Download QR Code" placement="bottom">
+        <CButton color="secondary" size="sm" variant="ghost" onClick={handleDownload}>
+          <CImage src={dowIcon} alt="download" height={25} width={25} />
+        </CButton>
+      </CTooltip>
+
+      <div ref={qrRef} style={{ display: 'none' }}>
+        <QRCode value={`http://localhost:3000/qrDetails?id=${id}`} />
+      </div>
     </div>
   );
 };
 
 PrintButton.propTypes = {
-    id: PropTypes.number.isRequired,  // Adjust the type based on what `id` should be
+  id: PropTypes.number.isRequired,
 };
 
 export default PrintButton;

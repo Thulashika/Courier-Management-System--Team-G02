@@ -60,7 +60,6 @@ const ParcelList = () => {
   useEffect(() => {
     getAll()
     getTotalCount();
-  // }, [page]);
 },[page, limit])
 
   useEffect(() => {
@@ -134,14 +133,15 @@ const ParcelList = () => {
   let [filteredData, setFilteredData] = useState(paginatedData);
 
   useEffect(() => {
-    if (selectedStatus === 'All') {
-      setFilteredData(paginatedData);
-    } else {
-      setFilteredData(
-        paginatedData.filter(parcel =>
-          parcel.status.trim().toLowerCase() === selectedStatus.toLowerCase()
-        )
+    const newFilteredData = selectedStatus === 'All' && paginatedData
+    ? paginatedData
+    : paginatedData.filter(parcel =>
+        parcel.status.trim().toLowerCase() === selectedStatus.toLowerCase()
       );
+
+    // Only set the state if the filtered data is different
+    if (JSON.stringify(newFilteredData) !== JSON.stringify(filteredData)) {
+      setFilteredData(newFilteredData);
     }
   }, [selectedStatus, paginatedData]);
 
@@ -276,26 +276,32 @@ const ParcelList = () => {
                                 </CButton>
                               </Link>
                               </CTooltip>
-                              <CTooltip content='view' placement='bottom'>
-                              <Link to={`/parcels/editViewParcel?id=${parcel.id}&type=edit`}>
-                                <CButton 
-                                  color='primary' 
-                                  size='sm' 
-                                  variant='ghost' 
-                                  className="me-md-2">
-                                  <CImage src={editIcon} alt='view' height={25} width={25} />
+                              {parcel.status !== 'DELIVERED' ?
+                              <>
+                                <CTooltip content='view' placement='bottom'>
+                                <Link to={`/parcels/editViewParcel?id=${parcel.id}&type=edit`}>
+                                  <CButton 
+                                    color='primary' 
+                                    size='sm' 
+                                    variant='ghost' 
+                                    className="me-md-2">
+                                    <CImage src={editIcon} alt='view' height={25} width={25} />
+                                  </CButton>
+                                </Link>
+                                </CTooltip>
+                                <CTooltip content='view' placement='bottom'>
+                                <CButton
+                                  color='danger'
+                                  size='sm'
+                                  variant='ghost'
+                                  onClick={() => handleClick(parcel.id)}>
+                                  <CImage src={delIcon} alt='view' height={25} width={25} />
                                 </CButton>
-                              </Link>
-                              </CTooltip>
-                              <CTooltip content='view' placement='bottom'>
-                              <CButton
-                                color='danger'
-                                size='sm'
-                                variant='ghost'
-                                onClick={() => handleClick(parcel.id)}>
-                                 <CImage src={delIcon} alt='view' height={25} width={25} />
-                              </CButton>
-                              </CTooltip>
+                                </CTooltip>
+                                </>
+                                :
+                                ''
+                                }
                               <PrintButton id={parcel.id}></PrintButton>
                             </CTableDataCell>
                           </CTableRow>
@@ -375,6 +381,8 @@ const ParcelList = () => {
                             </CButton>
                           </Link>
                           </CTooltip>
+                          {parcel.status !== 'DELIVERED' ? 
+                          <>
                           <CTooltip content='edit' placement='bottom' >
                             <Link to={`/parcels/editViewParcel?id=${parcel.id}&type=edit`}>
                               <CButton color='primary' size='sm' variant='ghost'>
@@ -387,6 +395,10 @@ const ParcelList = () => {
                           <CImage src={delIcon} alt='view' height={25} width={25} />
                           </CButton>
                           </CTooltip>
+                          </>
+                          :
+                          ''
+                          }
                           <PrintButton id={parcel.id} />
                         </div>
                       </CCardBody>

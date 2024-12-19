@@ -137,28 +137,23 @@ const UpdateParcels = () => {
     setError('');
     setIsValid(true);
   
-    console.log('Parcel State:', parcel);
-  
     const Nameregex = /^[A-Za-z\s]{1,50}$/;
     const CNregex = /^(07[01245678][0-9]{7}|011[0-9]{7}|021[0-9]{7})$/;
     const nicPattern = /^(?:\d{12}|\d{9}[Vv])$/; 
   
     const validateName = (name) => Nameregex.test(name);
-    console.log('hii');
   
     if (!validateName(parcel.senderDetails.firstName) || !validateName(parcel.senderDetails.lastName)) {
       setError(PARCEL_ERRORS.NAME_FORMAT_VALIDATION);
       setIsValid(false);
       return;
     }
-    console.log('hiiy');
   
     if (!validateName(parcel.recipientDetails.firstName) || !validateName(parcel.recipientDetails.lastName)) {
       setError(PARCEL_ERRORS.NAME_FORMAT_VALIDATION);
       setIsValid(false);
       return;
     }
-    console.log('hiibye');
   
     const validateContactNumber = (number) => CNregex.test(number) && number.length === 10;
   
@@ -167,14 +162,12 @@ const UpdateParcels = () => {
       setIsValid(false);
       return;
     }
-    console.log('hiinu');
   
     if (!validateContactNumber(parcel.recipientDetails.contactNumber)) {
       setError(PARCEL_ERRORS.CONTACTNUMBER_FORMAT_VALIDATION);
       setIsValid(false);
       return;
     }
-    console.log('himjihui');
   
     const validateNICNumber = (number) => nicPattern.test(number) && number.length === 12;
   
@@ -184,7 +177,6 @@ const UpdateParcels = () => {
       setIsValid(false);
       return;
     }
-    console.log('hi89i');
   
     if (!validateNICNumber(parcel.recipientDetails.NIC)) {
       console.log('Error: Recipient NIC number is invalid');
@@ -192,26 +184,26 @@ const UpdateParcels = () => {
       setIsValid(false);
       return;
     }
-    console.log('h678ii');
-    console.log(parcel.parcelDetails)
+
     const validStatuses = ['ACCEPTED', 'Processed_and_Ready_to_Ship', 'SHIPPING', 'IN-TRANSIT', 'DELIVERED'];
     for (const item of parcel.parcelDetails) {
-      console.log(item.status)
+      if(validateStatus(item)) {
+        setError(PARCEL_ERRORS.STATUS_FORMAT_VALIDATION);
+        setIsValid(false);
+        return;
+      }
       if (!validStatuses.includes(item.status)) {
         setError(PARCEL_ERRORS.STATUS_FORMAT_VALIDATION);
         setIsValid(false);
         return;
       }
-    }
-    console.log('h7890ii');
-  
+    }  
     
     if (isValid) {
       axios
         .put(`http://localhost:6431/parcel/${query.get('id')}`, parcel)
         .then((res) => {
           if (res.data.statusCode === 201) {
-            // alert('Updated successfully')
             navigate('/parcels');
           } else {
             alert('Not updated successfully');
@@ -226,10 +218,30 @@ const UpdateParcels = () => {
         });
     }
   };
+
+  const validateStatus = (item) => {
+    let error = '';
+
+    console.log(item.status)
+    console.log(parcel.statuses[0])
+    console.log((parcel.statuses[0] === 'Processed_and_Ready_to_Ship' && item.status === 'ACCEPTED'))
+    if (
+      parcel.statuses[0] === item.status || 
+      (parcel.statuses[0] === 'SHIPPING' && item.status === 'ACCEPTED') || 
+      (parcel.statuses[0] === 'SHIPPING' && item.status === 'Processed_and_Ready_to_Ship') || 
+      (parcel.statuses[0] === 'Processed_and_Ready_to_Ship' && item.status === 'ACCEPTED')
+    ) {
+      alert('Invalid status transition.');
+      error = 'Invalid status transition.';
+    }
+
+    return error;
+  };
   
   
 
   return (
+
     <CRow>
       <CCol xs={12}>
         <CCard className='mb-3'>
@@ -553,7 +565,6 @@ const UpdateParcels = () => {
                         <CTableHeaderCell>Due Amount</CTableHeaderCell>
                         <CTableHeaderCell>paymentMethod</CTableHeaderCell>
                         <CTableHeaderCell>Status</CTableHeaderCell>
-                        {/* <CTableHeaderCell>Actions</CTableHeaderCell> */}
                       </CTableRow>
                     </CTableHead>
                     <CTableBody>
@@ -641,24 +652,13 @@ const UpdateParcels = () => {
                               defaultValue={parcel?.statuses}
                             >
                                 <option value=''>Please Select Status</option>
+                                {}
                                 <option value='ACCEPTED'>Accepted</option>
                                 <option value='Processed_and_Ready_to_Ship'>Processed_and_Ready_to_Ship</option>
                                 <option value='SHIPPING'>Shipping</option>
-                                <option value='DELIVERED'>Delivered</option>
+                                <option value='DELIVERED' >Delivered</option>
                             </CFormSelect>
-                          </CTableDataCell>
-
-                          {/* <CTableDataCell>
-                            <CButton
-                              color='danger'
-                              variant='outline'
-                              disabled={!isEdit}
-                              onClick={() => deleteItem(index)}
-                            >
-                              <CImage src={delIcon} width={25} height={25}/>
-                            </CButton>
-                          </CTableDataCell> */}
-                          
+                          </CTableDataCell>                          
                         </CTableRow> )
                       })}
                     </CTableBody>

@@ -57,7 +57,7 @@ const NewParcels = () => {
       deliveryCharge: '',
       totalAmount: '',
       dueAmount: '',
-      paymentMethod:'', // cash on delivery or cash on or online payment or card payment
+      paymentMethod:'', 
       status:''
     }],
   });
@@ -225,9 +225,9 @@ const NewParcels = () => {
   const getAvailableStatuses = (currentStatus) => {
     const currentIndex = STATUS_FLOW.indexOf(currentStatus);
     if (currentIndex === -1) {
-      return ['ACCEPTED']; // If no valid current status, allow starting from the beginning
+      return ['ACCEPTED']; 
     }
-    return STATUS_FLOW.slice(currentIndex, currentIndex + 2); // Allow only the current and next status
+    return STATUS_FLOW.slice(currentIndex, currentIndex + 2); 
   };
   
 
@@ -625,10 +625,6 @@ const NewParcels = () => {
                                 required
                                 >
                                   <option value=''>Please Select Status</option>
-                                  {/* <option value='ACCEPTED'>Accepted</option>
-                                  <option value='Processed_and_Ready_to_Ship'>Processed_and_Ready_to_Ship</option>
-                                  <option value='SHIPPING'>Shipping</option>
-                                  <option value='DELIVERED'>Delivered</option> */}
                                    {getAvailableStatuses(item.status).map((status) => (
                                       <option key={status} value={status}>{status}</option>
                                     ))}

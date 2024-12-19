@@ -1,4 +1,4 @@
-import { CCard, CCardBody, CCardText, CCardTitle, CCol, CContainer, CImage, CRow  } from '@coreui/react'
+import { CCard, CCardBody, CCardText, CCardTitle, CCol, CContainer, CImage, CRow, CTable, CTableBody, CTableDataCell, CTableRow  } from '@coreui/react'
 import React, { useEffect, useState } from 'react'
 import axios from 'axios';
 import { PARCEL_ERRORS } from '../../../const';
@@ -24,7 +24,6 @@ const Details = () => {
     axios(`http://localhost:6431/QRCode/${query.get('id')}`, {
       method:'GET'
     }).then(res => {
-      console.log(res.data)
       setParcel(res.data)
     }).catch((error) => {
       console.error('Error fetching parcel:', error);
@@ -83,24 +82,44 @@ const Details = () => {
   };
   return (
     <div className="min-vh-100 d-flex flex-row align-items-center">
-    <CContainer>
+   <CContainer>
       <CRow className="justify-content-center">
         <CCol md={8}>
           <CCard className="p-4">
-            <CCardTitle>
+            <CCardTitle className="mb-3">
               <h3><strong>Parcel Details</strong></h3>
             </CCardTitle>
             <CCardBody>
-              <CCardText>
-                <CRow>
-                {console.log(parcel)}
-                Recipient : <br/>
-                    FullName:{`${parcel?.recipientFirstName} ${parcel?.recipientLastName}`}<br/>
-                    Address:{parcel?.recipientAddress}<br/>
-                    Telphone Number:{parcel?.recipientContactNumber}<br/>
-                    Status:{parcel?.status}
-                </CRow>                        
-              </CCardText>
+              {parcel ? (
+                <CTable borderless>
+                  <CTableBody>
+                    <CTableRow>
+                      <CTableDataCell><strong>Tracking Number:</strong></CTableDataCell>
+                      <CTableDataCell>{parcel.referenceNumber}</CTableDataCell>
+                    </CTableRow>
+                    <CTableRow>
+                      <CTableDataCell><strong>Recipient Full Name:</strong></CTableDataCell>
+                      <CTableDataCell>{`${parcel.recipientFirstName} ${parcel.recipientLastName}`}</CTableDataCell>
+                    </CTableRow>
+                    <CTableRow>
+                      <CTableDataCell><strong>Recipient Address:</strong></CTableDataCell>
+                      <CTableDataCell>{parcel.recipientAddress}</CTableDataCell>
+                    </CTableRow>
+                    <CTableRow>
+                      <CTableDataCell><strong>Telephone Number:</strong></CTableDataCell>
+                      <CTableDataCell>{parcel.recipientContactNumber}</CTableDataCell>
+                    </CTableRow>
+                    <CTableRow>
+                      <CTableDataCell><strong>Status:</strong></CTableDataCell>
+                      <CTableDataCell>{parcel.status}</CTableDataCell>
+                    </CTableRow>
+                  </CTableBody>
+                </CTable>
+              ) : (
+                <CCardText className="text-center text-danger">
+                  No parcel details found. Please scan a valid QR code.
+                </CCardText>
+              )}
             </CCardBody>
           </CCard>
         </CCol>

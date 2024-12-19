@@ -3,23 +3,13 @@ import {
   CCard, 
   CCardBody, 
   CCol, 
-  CCardHeader, 
   CRow, 
   CButton, 
-  CTable, 
-  CTableBody, 
-  CTableHead, 
-  CTableRow,
-  CTableHeaderCell,
-  CTableDataCell,
   CFormLabel,
   CFormSelect,
   CFormInput,
   CImage,
   CContainer,
-  CCarousel,
-  CCarouselItem,
-  CCardImageOverlay,
   CCardTitle,
   CCardText
 } from '@coreui/react'
@@ -28,7 +18,6 @@ import CIcon from '@coreui/icons-react';
 import { cilPrint } from '@coreui/icons';
 import axios from 'axios';
 import NFPR from '../../assets/images/NoData.png'
-import background1 from '../../assets/images/rep.jpg'
 import reportImage from '../../assets/images/click.gif'
 
 const Reports = () => {
@@ -77,19 +66,11 @@ const getStatus = (status) => {
 
   return (
     <CContainer className='mb-4'>
-      {/* <CCarousel>
-        <CCarouselItem> */}
           <CCard className='justify-content-center'>
-            {/* <CImage className="d-block w-100" src={background1} alt="slide 1" /> */}
-            {/* <CCardImageOverlay>  */}
-              {/* <CCard className='mb-4'> */}
-                {/* <CCardHeader>Reports</CCardHeader> */}
                 <h3><strong>Reports</strong></h3> 
-                {/* <CCardBody> */}
                   <CRow className="mb-3">
                     <CCol xs={3}>
                       <CFormLabel>Status</CFormLabel>
-                      {/* className="col-sm-2 col-form-label" */}
                       <CFormSelect 
                         type='select'
                         className="mb-3" 
@@ -139,10 +120,8 @@ const getStatus = (status) => {
                       </div>
                     </CCol>
                   </CRow>
-                {/* </CCardBody> */}
               
                 {showReport && (
-                  // <CCardBody>
                   <CRow>
                     <CRow className="mb-3">
                       <div className="d-grid gap-2 d-md-flex justify-content-md-end">
@@ -155,41 +134,6 @@ const getStatus = (status) => {
                         </CButton>
                       </div>
                     </CRow>
-
-                    {/* <CTable>
-                      <CTableHead>
-                        <CTableRow>
-                          <CTableHeaderCell scope='col'>Id</CTableHeaderCell>
-                          <CTableHeaderCell scope='col'>Date</CTableHeaderCell>
-                          <CTableHeaderCell scope='col'>Sender</CTableHeaderCell>
-                          <CTableHeaderCell scope='col'>Recipient</CTableHeaderCell>
-                          <CTableHeaderCell scope='col'>Amount</CTableHeaderCell>
-                          <CTableHeaderCell scope='col'>Status</CTableHeaderCell>
-                        </CTableRow>
-                      </CTableHead>
-                      <CTableBody>
-                        {data.length > 0 ? (
-                          data.map((report,index) => (
-                            <CTableRow key={index}>
-                            <CTableDataCell> {index+1} </CTableDataCell>
-                            <CTableDataCell> {`from ${report.senderDate} to ${report.recipientDate}`} </CTableDataCell>
-                            <CTableDataCell> {`${report.senderFirstName} ${report.senderLastName}`} </CTableDataCell>
-                            <CTableDataCell> {`${report.recipientFirstName} ${report.recipientLastName}`}</CTableDataCell>
-                            <CTableDataCell> {report.parcelTotalAmount} </CTableDataCell>
-                            <CTableDataCell> {report.status} </CTableDataCell>
-                          </CTableRow>
-                          ))
-                          ):(
-                            <CTableRow>
-                            <CTableDataCell colSpan="9">
-                            
-
-                              <CImage rounded src={NFPR} width={200} height={200} align="center"/>
-                            </CTableDataCell>
-                          </CTableRow>
-                          )}                
-                      </CTableBody>
-                    </CTable> */}
 
                     <style>
                             {`
@@ -235,14 +179,8 @@ const getStatus = (status) => {
                     </CRow>
 
                   </CRow>
-                  // </CCardBody>
                 )}
-              
-              {/* </CCard> */}
-            {/* </CCardImageOverlay> */}
           </CCard>
-        {/* </CCarouselItem>
-      </CCarousel> */}
     </CContainer>
   )
 }
