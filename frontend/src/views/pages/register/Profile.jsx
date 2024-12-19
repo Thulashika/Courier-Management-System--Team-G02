@@ -49,7 +49,6 @@ const Profile = () => {
       setUser(res.data.profile)
       setPreview(res.data.profile.image);
     }).catch(err => {
-      // alert('There was an error fetching the user profile!')
       console.log(err)
     })
   }, [])
@@ -66,14 +65,6 @@ const Profile = () => {
       setIsValid(false);
       return;
     }
-
-    // if(user.password) {
-    //   if (user.password.length < 4 || user.password.length > 10) {
-    //     setError('Password must be between 4 and 10 characters')
-    //     setIsValid(false)
-    //     return;
-    //   }
-    // }
    
     const CNMPpattern = /^(?:0)?([7][01245678][0-9]{7})$/;
 
@@ -174,7 +165,7 @@ const Profile = () => {
                         />
                     ) : (
                         <img
-                            src={profile} // replace with the URL of your default profile image
+                            src={profile}
                             alt="Profile"
                             height={100}
                             width={100}
@@ -207,7 +198,6 @@ const Profile = () => {
                     type={visible ? 'text' : 'password'}
                     placeholder="Set Password"
                     autoComplete="new-password"
-                    // pattern='/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[\W_]).{8,}$/'
                     onChange={(e) => setUser({...user, password:e.target.value})}
                     minLength={4}
                     maxLength={10}
