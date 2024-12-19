@@ -9,6 +9,7 @@ import {
     CForm, 
     CFormCheck, 
     CFormInput, 
+    CImage, 
     CInputGroup,
     CInputGroupText, 
     CRow 
@@ -21,6 +22,8 @@ import { eye } from 'react-icons-kit/feather/eye'
 import { useNavigate } from 'react-router-dom'
 import profile from '../../../assets/images/profile.png'
 import { AuthContext } from './AuthProvider'
+import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material'
+import SuccessImage from '../../../assets/images/success.gif'
 
 const Profile = () => {
 
@@ -53,6 +56,12 @@ const Profile = () => {
     })
   }, [])
 
+  const [open, setOpen] = useState(false); 
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault()    
     setError('')
@@ -66,7 +75,7 @@ const Profile = () => {
       return;
     }
    
-    const CNMPpattern = /^(?:0)?([7][01245678][0-9]{7})$/;
+    const CNMPpattern = /^(07[01245678][0-9]{7}|011[0-9]{7}|021[0-9]{7})$/; 
 
     if (user.contactNumber.length !== 10) {
       setError('Contact number must be exactly 10 digits');
@@ -103,8 +112,10 @@ const Profile = () => {
         method:'PUT'
       }).then(res => {
         if (res.data.statusCode === 201) {
+          // setOpen(true);
           alert("Profile Updated successfully")
-          navigate('/')
+          // alert(<CImage src={SuccessImage} height={50} width={50}/>)          
+          navigate('/dashboard')
         } else {
           alert("Not profile updated successfully")
         }
@@ -285,7 +296,28 @@ const Profile = () => {
                 </CInputGroup>
 
                 <div className="d-grid">
-                  <CButton color="success" type='submit'>Update Account</CButton>
+                  <CButton color="success" type='submit'><CImage src={SuccessImage} height={25} width={25}/>Update Account</CButton>
+                  {/* <Dialog open={open} onClose={handleClose}>
+                    <DialogTitle>Profile Updated</DialogTitle>
+                    <DialogContent>
+                      <DialogContentText>
+                        Profile Updated Successfully!
+                      </DialogContentText>
+                      <CImage
+                        rounded
+                        style={{ display: 'block', margin: '0 auto' }}
+                        src={SuccessImage}
+                        width={200}
+                        height={200}
+                        align="center"
+                      />
+                    </DialogContent>
+                    <DialogActions>
+                      <Button onClick={handleClose} color="primary" autoFocus>
+                        OK
+                      </Button>
+                    </DialogActions>
+                  </Dialog> */}
                 </div>
 
               </CForm>

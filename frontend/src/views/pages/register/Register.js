@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import {
   CButton,
   CCard,
@@ -8,6 +8,7 @@ import {
   CForm,
   CFormInput,
   CFormSelect,
+  CImage,
   CInputGroup,
   CInputGroupText,
   CRow,
@@ -20,6 +21,8 @@ import axios from 'axios'
 import { Icon } from 'react-icons-kit';
 import { eyeOff } from 'react-icons-kit/feather/eyeOff';
 import { eye } from 'react-icons-kit/feather/eye';
+import { AuthContext } from './AuthProvider'
+import createImage from '../../../assets/images/R1.gif'
 
 const Register = () => {
 
@@ -39,6 +42,8 @@ const Register = () => {
   const [isValid, setIsValid] = useState(true);
 
   const navigate = useNavigate()
+
+  const { userDetails } = useContext(AuthContext)
 
   const handleSubmit = async (e) => {
     e.preventDefault()    
@@ -76,7 +81,7 @@ const Register = () => {
       return;
     }
 
-    const CNMPpattern = /^(?:0)?([7][01245678][0-9]{7})$/;
+    const CNMPpattern = /^(07[01245678][0-9]{7}|011[0-9]{7}|021[0-9]{7})$/; 
     
     if (user.contactNumber.length !== 10) {
       setError('Contact number must be exactly 10 digits');
@@ -90,8 +95,8 @@ const Register = () => {
       return;
     }
 
-    if (!user.password || user.password.length < 4 || user.password.length > 10) {
-      setError('Password must be between 4 and 10 characters')
+    if (!user.password || user.password.length < 4 || user.password.length > 15) {
+      setError('Password must be between 4 and 15 characters')
       setIsValid(false)
       return;
     }
@@ -108,15 +113,16 @@ const Register = () => {
         method:'POST'
       }).then(res => {
         if (res.data.statusCode === 201) {
+          // userDetails(res.data.email, res.data.id, res.data.role, res.data.fullName, res.data.image, res.data.staffId, res.data.position, res.data.branchCode);
           // alert("Created successfully")
           if(res.data.role !== 'CUSTOMER') {
-            navigate('/dashboard')            
+            navigate('/login')              
           }
           else{
             navigate('/')
           }
         } else {
-          alert("Not created successfully")
+          alert("created not successfully")
         }
       }).catch(err => {
         if(err.response?.data?.statusCode === 500) {
@@ -270,7 +276,7 @@ const Register = () => {
                   {!isValid && error === 'Passwords do not match' && <p>{error}</p>}
 
                   <div className="d-grid">
-                    <CButton color="success" type='submit'>Create Account</CButton>
+                    <CButton color="success" type='submit'><CImage src={createImage} height={25} width={25}/>Create Account</CButton>
                   </div>
 
                 </CForm>

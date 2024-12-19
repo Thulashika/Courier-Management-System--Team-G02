@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import {
   CButton,
   CCard,
@@ -9,18 +9,15 @@ import {
   CForm,
   CFormInput,
   CFormSelect,
-  CContainer,
-  CCarousel,
-  CCarouselItem,
-  CCardImageOverlay,
   CImage
 } from '@coreui/react'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import { STAFF_ERRORS } from '../../../const'
 import background1 from '../../../assets/images/AS.jpg'
-import { cilCheckAlt, cilX } from '@coreui/icons'
-import CIcon from '@coreui/icons-react'
+import saveImage from '../../../assets/images/check.gif'
+import cancelImage from '../../../assets/images/delete.gif'
+import { AuthContext } from '../../pages/register/AuthProvider'
 
 const AddNewStaff = () => {
 
@@ -50,7 +47,7 @@ const AddNewStaff = () => {
         setError('')
         setIsValid(true)
 
-        const BCregex = /^(?:Y)?[AMSD][0-9]{3}$/;  ///^(?:S)?[0-9]{4}$/;
+        const BCregex = /^(?:Y)?[AMSD][0-9]{3}$/;
 
         if(staff.staffId.length !== 5) {
             setError(STAFF_ERRORS.ID_LENGTH_VALIDATION)
@@ -64,15 +61,12 @@ const AddNewStaff = () => {
         return;
         }
 
-        // const confirmSubmit = window.confirm('Are you sure you want to submit this form?');
-
         if(isValid) {
         axios('http://localhost:6431/staff', {
             data:staff,
             method:'POST'
         }).then(res => {
             if (res.data.statusCode === 201) {
-                // alert("Successfully created")
                 navigate('/staff')
             } else {
             alert("Not created successfully")
@@ -87,10 +81,12 @@ const AddNewStaff = () => {
         }
     }
 
+    const { userDetails } = useContext(AuthContext)
+
     return (
         <CRow className='mb-3'>
             <CCol xs={12}>
-                <CCard style={{ width: '540px' }}>
+                <CCard style={{ width: '640px' }}>
                     <CCardHeader>
                         <strong>New Staff</strong>
                     </CCardHeader>
@@ -109,8 +105,8 @@ const AddNewStaff = () => {
                                             onChange={(e) => setStaff({...staff,staffId:e.target.value})}
                                         />
                                     </CCol>
-                                    {!isValid && error === STAFF_ERRORS.ID_LENGTH_VALIDATION && <p>{error}</p>}
-                                    {!isValid && error === STAFF_ERRORS.ID_FORMAT_VALIDATION && <p>{error}</p>}
+                                    {!isValid && error === STAFF_ERRORS.ID_LENGTH_VALIDATION && <p style={{ color: 'red' }}>{error}</p>}
+                                    {!isValid && error === STAFF_ERRORS.ID_FORMAT_VALIDATION && <p style={{ color: 'red' }}>{error}</p>}
                                 </CRow>
                         
                                 <CRow className="mb-3">
@@ -126,13 +122,15 @@ const AddNewStaff = () => {
                                             <option selected='' value=''>
                                                 Open this select menu
                                             </option>
-                                            {/* {Array.isArray(allBranches) && allBranches.map((branch, index) => (
-                                                <option key={index} value={branch.branchCode}>
-                                                    {branch.branchName}
-                                                </option>
-                                            ))} */}
-                                            <option value='BR001'>BR001</option>
-                                            <option value='BR002'>BR002</option>
+                                            {userDetails.position === "MANAGER" ? (
+                                                <option value={userDetails.branchCode}>{userDetails.branchCode}</option>
+                                            ) : (
+                                                <>
+                                                    <option value="BR001">BR001</option>
+                                                    <option value="BR002">BR002</option>
+                                                    <option value="BR003">BR003</option>
+                                                </>
+                                            )}
                                         </CFormSelect>
                                     </CCol>
                                 </CRow>
@@ -148,18 +146,27 @@ const AddNewStaff = () => {
                                             <option selected='' value=''>
                                                 Open this select menu
                                             </option>
-                                            <option value='ADMIN'>Admin</option>
-                                            <option value='MANAGER'>Manager</option>
-                                            <option value='STAFF'>Staff</option>                                
-                                            <option value='DELIVERY_PERSON'>Delivery Person</option>
+                                            { userDetails.position === 'MANAGER' ?
+                                                <>
+                                                    <option value='STAFF'>Staff</option>                                
+                                                    <option value='DELIVERY_PERSON'>Delivery Person</option>
+                                                </>
+                                                :
+                                                <>
+                                                    <option value='ADMIN'>Admin</option>
+                                                    <option value='MANAGER'>Manager</option>
+                                                    <option value='STAFF'>Staff</option>                                
+                                                    <option value='DELIVERY_PERSON'>Delivery Person</option>
+                                                </>
+                                            }
                                         </CFormSelect>
                                     </CCol>
                                 </CRow>
 
                                 <CRow className="mb-3">
                                     <CCol xs='auto' className='position-relative'>
-                                        <CButton color='success' type='submit'>
-                                            <CIcon icon={cilCheckAlt}/>
+                                        <CButton color='success' type='submit' variant='outline'>
+                                            <CImage src={saveImage} width={25} height={25}/>
                                             {'  '}
                                             Save
                                         </CButton>
@@ -167,10 +174,11 @@ const AddNewStaff = () => {
                                     <CCol xs='auto' className='position-relative'>
                                         <CButton 
                                             color='secondary' 
+                                            variant='outline'
                                             type='submit'
                                             onClick={() => window.confirm('Are you sure you want to cancel this form?') ? navigate('/staff') : ''}
                                         >
-                                            <CIcon icon={cilX}/>
+                                            <CImage src={cancelImage} width={25} height={25}/>
                                             {'  '}
                                             Cancel
                                         </CButton>
@@ -186,11 +194,6 @@ const AddNewStaff = () => {
                 </CCard>
             </CCol>
         </CRow>
-    //     </CCardImageOverlay>
-    //       </CCard>
-    //     </CCarouselItem>
-    //   </CCarousel>
-    // </CContainer>
     )
 }
 

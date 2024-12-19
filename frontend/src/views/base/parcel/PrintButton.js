@@ -1,12 +1,11 @@
 import React, { useRef } from 'react';
 import ReactToPrint from 'react-to-print';
-import { CButton } from '@coreui/react';
-import CIcon from '@coreui/icons-react';
-import { cilArrowThickToBottom } from '@coreui/icons';
+import { CButton, CImage, CTooltip } from '@coreui/react';
 import BarCodeGenerator from './BarCodeGenerator';
 import PropTypes from 'prop-types'; 
 import { QRCode } from 'react-qrcode-logo';
 import Barcode from 'react-barcode';
+import dowIcon from '../../../assets/images/qr-code.gif'
 
 const PrintButton = ({ id }) => {
   const ref = useRef(QRCode)
@@ -16,9 +15,11 @@ const PrintButton = ({ id }) => {
     <div>
       <ReactToPrint
         trigger={() => (
+          <CTooltip content='QR Code' placement='bottom'>
           <CButton color="secondary" size="sm" variant="ghost">
-            <CIcon icon={cilArrowThickToBottom} />
+            <CImage src={dowIcon} alt='view' height={25} width={25} />
           </CButton>
+          </CTooltip>
         )}
         content={() => ref.current.download()}
       />

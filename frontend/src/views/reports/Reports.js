@@ -29,6 +29,7 @@ import { cilPrint } from '@coreui/icons';
 import axios from 'axios';
 import NFPR from '../../assets/images/NoData.png'
 import background1 from '../../assets/images/rep.jpg'
+import reportImage from '../../assets/images/click.gif'
 
 const Reports = () => {
 
@@ -61,13 +62,11 @@ const Reports = () => {
 
 const getStatus = (status) => {
   switch (status) {
-    case 'Parcel_Handed_over_to_Delivery':
-      return 'primary'
-    case 'ACCEPTED':
+    case 'Processed_and_Ready_to_Ship':
       return 'info'
-    case 'SHIPPED':
-      return 'secondary'
-    case 'IN-TRANSIT':
+    case 'ACCEPTED':
+      return 'primary'
+    case 'SHIPPING':
       return 'warning'
     case 'DELIVERED':
       return 'success' 
@@ -78,53 +77,52 @@ const getStatus = (status) => {
 
   return (
     <CContainer className='mb-4'>
-      <CCarousel>
-        <CCarouselItem>
+      {/* <CCarousel>
+        <CCarouselItem> */}
           <CCard className='justify-content-center'>
-            <CImage className="d-block w-100" src={background1} alt="slide 1" />
-            <CCardImageOverlay> 
+            {/* <CImage className="d-block w-100" src={background1} alt="slide 1" /> */}
+            {/* <CCardImageOverlay>  */}
               {/* <CCard className='mb-4'> */}
                 {/* <CCardHeader>Reports</CCardHeader> */}
-                <h3 className="text-dark"><strong>Reports</strong></h3> 
+                <h3><strong>Reports</strong></h3> 
                 {/* <CCardBody> */}
                   <CRow className="mb-3">
                     <CCol xs={3}>
-                      <CFormLabel className="text-dark">Status</CFormLabel>
+                      <CFormLabel>Status</CFormLabel>
                       {/* className="col-sm-2 col-form-label" */}
                       <CFormSelect 
                         type='select'
                         className="mb-3" 
                         value={status} 
                         onChange={(e) => setStatus(e.target.value)}
-                        style={{ backgroundColor: 'transparent', color: 'black' }}
+                        style={{ backgroundColor: 'transparent' }}
                       >
                         <option>---Select---</option>
                         <option>All</option>
                         <option value='ACCEPTED'>Accepted</option>
-                        <option value='Parcel_Handed_over_to_Delivery'>Parcel_Handed_over_to_Delivery</option>
-                        <option value='SHIPPED'>Shipped</option>
-                        <option value='IN-TRANSIT'>In-Transit</option>
+                        <option value='Processed_and_Ready_to_Ship'>Processed_and_Ready_to_Ship</option>
+                        <option value='SHIPPING'>Shipping</option>
                         <option value='DELIVERED'>Delivered</option>
                       </CFormSelect>
                     </CCol>
 
-                    <CCol xs={3} className="text-dark">
+                    <CCol xs={3} >
                       <CFormInput                        
                         label='From' 
                         type='date' 
                         value={fromDate}
                         onChange={(e) => setFromDate(e.target.value)}
-                        style={{ backgroundColor: 'transparent', color: 'black' }}
+                        style={{ backgroundColor: 'transparent' }}
                       />
                     </CCol>
 
-                    <CCol xs={3} className="text-dark">
+                    <CCol xs={3} >
                       <CFormInput
                         label='To' 
                         type='date'
                         value={toDate}
                         onChange={(e) => setToDate(e.target.value)}
-                        style={{ backgroundColor: 'transparent', color: 'black' }}
+                        style={{ backgroundColor: 'transparent'}}
                         min={fromDate}
                       />
                     </CCol>
@@ -133,7 +131,9 @@ const getStatus = (status) => {
                     <div className="d-grid gap-2 d-md-flex justify-content-md-end">
                       <CButton 
                         color="primary"
+                        variant='outline'
                         onClick={() => handleViewReport()}>
+                          <CImage src={reportImage} height={25} width={25}/>
                           View Report
                       </CButton>
                       </div>
@@ -239,10 +239,10 @@ const getStatus = (status) => {
                 )}
               
               {/* </CCard> */}
-            </CCardImageOverlay>
+            {/* </CCardImageOverlay> */}
           </CCard>
-        </CCarouselItem>
-      </CCarousel>
+        {/* </CCarouselItem>
+      </CCarousel> */}
     </CContainer>
   )
 }

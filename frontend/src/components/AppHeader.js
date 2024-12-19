@@ -57,6 +57,8 @@ const AppHeader = () => {
               Courier Management System
             </CNavLink>
           </CNavItem>
+          {userDetails.position === 'ADMIN' ? '' :
+          <>
           <li className="nav-item py-1">
             <div className="vr h-100 mx-2 text-body text-opacity-75"></div>
           </li>
@@ -65,6 +67,8 @@ const AppHeader = () => {
               {userDetails.branchCode}
             </CNavLink>
           </CNavItem>
+          </>
+          }
         </CHeaderNav>
         <CHeaderNav className="ms-auto">
         <CNavItem>

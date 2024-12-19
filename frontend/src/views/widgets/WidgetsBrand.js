@@ -1,9 +1,10 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import PropTypes from 'prop-types'
 import { CWidgetStatsD, CRow, CCol } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
 import { cibFacebook, cibLinkedin, cibTwitter, cilCalendar } from '@coreui/icons'
 import { CChart } from '@coreui/react-chartjs'
+import { AuthContext } from '../pages/register/AuthProvider'
 
 const WidgetsBrand = (props) => {
   const chartOptions = {
@@ -34,6 +35,8 @@ const WidgetsBrand = (props) => {
     },
   }
 
+  const { userDetails } = useContext(AuthContext)
+
   return (
     <CRow className={props.className} xs={{ gutter: 4 }}>
       <CCol sm={6} xl={4} xxl={3}>
@@ -62,7 +65,7 @@ const WidgetsBrand = (props) => {
           })}
           icon={<CIcon icon={cibFacebook} height={52} className="my-4 text-white" />}
           values={[
-            { title: 'friends', value: '5' },
+            { title: 'friends', value: userDetails.userCount },
             { title: 'feeds', value: '10' },
           ]}
           style={{

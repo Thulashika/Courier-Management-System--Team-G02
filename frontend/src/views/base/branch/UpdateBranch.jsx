@@ -9,12 +9,13 @@ import {
   CFormLabel,
   CFormInput,
   CButton,
+  CImage,
 } from '@coreui/react'
 import axios from 'axios'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { BRANCH_ERRORS } from '../../../const'
-import CIcon from '@coreui/icons-react'
-import { cilCheckAlt, cilX } from '@coreui/icons'
+import saveImage from '../../../assets/images/check.gif'
+import cancelImage from '../../../assets/images/delete.gif'
 
 
 function useQuery() {
@@ -52,7 +53,7 @@ const UpdateBranch = () => {
     setError('')
     setIsValid(true)
 
-    const CNregex = /^(?:0)?[7][01245678][0-9]{7}$/;
+    const CNregex = /^(7[01245678][0-9]{7}|011[0-9]{7}|021[0-9]{7})$/;
     
     if (branch.contactNumber.length !== 10) {
       setError(BRANCH_ERRORS.CONTACTNUMBER_LENGTH_VALIDATION);
@@ -126,8 +127,8 @@ const UpdateBranch = () => {
                   defaultValue={branch?.branchCode}
                 />
               </CCol>
-              {!isValid && error === BRANCH_ERRORS.CODE_LENGTH_VALIDATION && <p>{error}</p>}
-              {!isValid && error === BRANCH_ERRORS.CODE_FORMAT_VALIDATION && <p>{error}</p>}
+              {!isValid && error === BRANCH_ERRORS.CODE_LENGTH_VALIDATION && <p style={{ color: 'red' }}>{error}</p>}
+              {!isValid && error === BRANCH_ERRORS.CODE_FORMAT_VALIDATION && <p style={{ color: 'red' }}>{error}</p>}
             </CRow>
 
             <CRow className="mb-3">
@@ -184,8 +185,8 @@ const UpdateBranch = () => {
                   defaultValue={branch?.contactNumber}
                 />
               </CCol>
-              {!isValid && error === BRANCH_ERRORS.CONTACTNUMBER_LENGTH_VALIDATION && <p>{error}</p>}
-              {!isValid && error === BRANCH_ERRORS.CONTACTNUMBER_FORMAT_VALIDATION && <p>{error}</p>}
+              {!isValid && error === BRANCH_ERRORS.CONTACTNUMBER_LENGTH_VALIDATION && <p style={{ color: 'red' }}>{error}</p>}
+              {!isValid && error === BRANCH_ERRORS.CONTACTNUMBER_FORMAT_VALIDATION && <p style={{ color: 'red' }}>{error}</p>}
             </CRow>
            
             <CRow className="mb-3">
@@ -201,15 +202,15 @@ const UpdateBranch = () => {
                 />
               </CCol>
               {console.log(branch?.zipCode)}
-              {!isValid && error === BRANCH_ERRORS.ZIPCODE_LENGTH_VALIDATION && <p>{error}</p>}
-              {!isValid && error === BRANCH_ERRORS.ZIPCODE_FORMAT_VALIDATION && <p>{error}</p>}
+              {!isValid && error === BRANCH_ERRORS.ZIPCODE_LENGTH_VALIDATION && <p style={{ color: 'red' }}>{error}</p>}
+              {!isValid && error === BRANCH_ERRORS.ZIPCODE_FORMAT_VALIDATION && <p style={{ color: 'red' }}>{error}</p>}
             </CRow>
 
 
             <CRow>
               <CCol xs='auto'>
-                <CButton color='success' type='submit' className='mb-3'>
-                  <CIcon icon={cilCheckAlt}/>
+                <CButton color='success' type='submit' className='mb-3' variant='outline'>
+                  <CImage src={saveImage} width={25} height={25}/>
                   {'  '}
                   Update
                 </CButton>
@@ -219,9 +220,10 @@ const UpdateBranch = () => {
                   color='secondary' 
                   type='submit' 
                   className='mb-3'
+                  variant='outline'
                   onClick={() => window.confirm('Are you sure you want to cancel this update form?') ? navigate('/branch') : ''} 
                 >
-                  <CIcon icon={cilX}/>
+                   <CImage src={cancelImage} width={25} height={25}/>
                   {'  '}
                   Cancel
                 </CButton>

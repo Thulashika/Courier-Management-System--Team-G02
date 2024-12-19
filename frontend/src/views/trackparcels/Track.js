@@ -20,6 +20,7 @@ import background1 from '../../assets/images/tra1.jpg'
 import Stepper from '@mui/material/Stepper';
 import Step from '@mui/material/Step';
 import StepLabel from '@mui/material/StepLabel';
+import trackImage from '../../assets/images/delivery-track.gif'
 
 const Track = () => {
 
@@ -34,8 +35,8 @@ const Track = () => {
 
   const statusMap = {
     ACCEPTED: 0,
-    Parcel_Handed_over_to_Deliveryy: 1,
-    SHIPPED: 2,
+    Processed_and_Ready_to_Ship: 1,
+    SHIPPING: 2,
     DELIVERED: 3,
   };
 
@@ -88,7 +89,7 @@ const Track = () => {
             setParcel(null);
             return
           }
-          setError(<CImage rounded style={{ background: 'transparent', backgroundColor: 'gray' }} src={NFRN} width={200} height={200} align="center"/>)
+          setError(<CImage rounded style={{ background: 'transparent'}} src={NFRN} width={200} height={200} align="center"/>)
           // alert('Not found');
         });
     }
@@ -112,16 +113,16 @@ const Track = () => {
   // } 
 
   const steps = [
-    "Accepted", "Parcel_Handed_over_to_Delivery", "Shipped", "Delivered"
+    "Accepted", "Processed_and_Ready_to_Ship", "Shipping", "Delivered"
   ];
 
   return (
     <CContainer className='mb-4'>
-      <CCarousel>
-        <CCarouselItem>
+      {/* <CCarousel>
+        <CCarouselItem> */}
           <CCard className='justify-content-center'>
-            <CImage className="d-block w-100" src={background1} alt="slide 1" />
-            <CCardImageOverlay> 
+            {/* <CImage className="d-block w-100" src={background1} alt="slide 1" />
+            <CCardImageOverlay>  */}
                 <CRow className="mb-3">
                   <CCol xs={12}>
                       <h2 className="text-dark"><strong>Track</strong></h2> 
@@ -130,7 +131,7 @@ const Track = () => {
                       <CFormLabel 
                         htmlFor="inputTrackingNumber" 
                         className="col-sm-4 col-form-label"
-                        style={{ backgroundColor: 'transparent', color: 'black', fontSize: '1.3rem' }}
+                        style={{ backgroundColor: 'transparent', fontSize: '1.3rem' }}
                       >
                         Enter Tracking Number
                       </CFormLabel>
@@ -148,7 +149,10 @@ const Track = () => {
                         />
                       </CCol>
                       <CCol sm={4}>
-                        <CButton color='primary' onClick={handleSearch} style={{fontSize: '1.2rem', padding: '10px 10px'}}>Search</CButton>
+                        <CButton color='primary' variant='outline' onClick={handleSearch} style={{fontSize: '1.2rem', padding: '10px 10px'}}>
+                          <CImage src={trackImage} height={25} width={25}/>
+                          Search
+                        </CButton>
                       </CCol>
                     </CRow>
                     {error && (
@@ -167,7 +171,7 @@ const Track = () => {
 
                     <div
                       style={{
-                        backgroundColor: 'rgba(10, 0, 0, 0.5)',
+                        // backgroundColor: 'rgba(10, 0, 0, 0.5)',
                         padding: '20px',
                         borderRadius: '10px',
                       }}
@@ -176,8 +180,8 @@ const Track = () => {
                         activeStep={currentStep}
                         alternativeLabel
                         sx={{
-                          '& .MuiStepLabel-label': { fontSize: '1.3rem', color: '#483D8B' }, // Default text color
-                          '& .MuiSvgIcon-root': { fontSize: '2.5rem', color: '#696969' }, // Default icon color
+                          '& .MuiStepLabel-label': { fontSize: '1.3rem', color: '#bcbcbc' }, // Default text color
+                          '& .MuiSvgIcon-root': { fontSize: '2.5rem', color: '#bcbcbc' }, // Default icon color
                           '& .Mui-completed .MuiStepLabel-label': { color: 'green' }, // Completed step text color
                           '& .Mui-completed .MuiStepIcon-root': { color: 'green' }, // Completed step icon color
                           '& .Mui-active .MuiStepLabel-label': { color: 'black' }, // Active step text color
@@ -193,10 +197,10 @@ const Track = () => {
                     </div>
                   </CCol>
                 </CRow>
-            </CCardImageOverlay>
+            {/* </CCardImageOverlay> */}
           </CCard>
-        </CCarouselItem>
-      </CCarousel>
+        {/* </CCarouselItem>
+      </CCarousel> */}
     </CContainer>
   )
 }

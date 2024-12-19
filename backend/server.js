@@ -8,22 +8,22 @@ import path from 'path'
 import nodemailer from 'nodemailer'
 import cookieParser from 'cookie-parser';
 import multer from 'multer'
+import serverless from 'serverless-http'
 
 const db = mysql.createConnection({
-    host:'localhost',
-    database:'Courier-Service-Project',
-    user:'root',
-    password:''
+    host: 'localhost',//'bp0wtidmogtltqmcwep6-mysql.services.clever-cloud.com', //
+    database: 'Courier-Service-Project',//'bp0wtidmogtltqmcwep6',  //
+    user: 'root',//'uoqgxk5rfbu3o6iy', //
+    password: ''//'8amjaoyTmX3Mtc0CRTU1',  //''
+    //port: 3306
 })
 
 const app = express()
-// const port = process.env.PORT 4000;
 
 app.use(express.json()) 
 
 const corsOptions = {
     origin: 'http://localhost:3000',
-    // origin: `${import.meta.env.REACT_APP_BACKEND_BASEURL}/`,
     credentials: true,
   };
 
@@ -80,7 +80,7 @@ const getStaffIdByStaffId = (staffId) => {
   };
 
 app.post('/userRegister', async (req, res) => {
-    const createQuery = 'INSERT INTO userProfile (`fullName`, `role`, `staffId`, `contactNumber`, `email`, `password`) VALUES (?)';
+    const createQuery = 'INSERT INTO userprofile (`fullName`, `role`, `staffId`, `contactNumber`, `email`, `password`) VALUES (?)';
 
     const saltRounds = 10;
     const hashedPassword = await bcrypt.hash(req.body.password.toString(), saltRounds);
@@ -101,13 +101,13 @@ app.post('/userRegister', async (req, res) => {
         return res.status(400).json({ message: 'Invalid email format' });
     }
 
-    const CNMPregex = /^(?:0)?[7][01245678][0-9]{7}$/;  
+    const CNMPregex = /^(07[01245678][0-9]{7}|011[0-9]{7}|021[0-9]{7})$/;  
     if (!CNMPregex.test(req.body.contactNumber)){
         return res.status(400).json({ message: 'Invalid contact number' });
     }
 
-    if (req.body.password.length < 4 || req.body.password.length > 10) {
-        return res.status(400).json({ error: 'Password must be between 4 and 10 characters' });
+    if (req.body.password.length < 4 || req.body.password.length > 15) {
+        return res.status(400).json({ error: 'Password must be between 4 and 15 characters' });
     }
 
     const values = [
@@ -132,7 +132,7 @@ app.post('/userRegister', async (req, res) => {
             }
             return res.status(500).json(err);
         }
-        return res.status(201).json({ statusCode: 201, statusMessage: 'Created Successfully' });
+        return res.status(201).json({ statusCode: 201, statusMessage: 'Created Successfully'});
     });
 });
 
@@ -151,8 +151,8 @@ app.post('/userLogin', async (req,res) => {
         return res.status(400).json({ message: 'Email is required' });
     }
 
-    if (password.length < 4 || password.length > 10) {
-        return res.status(400).json({ error: 'Password must be between 4 and 10 characters' });
+    if (password.length < 4 || password.length > 15) {
+        return res.status(400).json({ error: 'Password must be between 4 and 15 characters' });
     }
 
     if (!password || password.trim() === '') {
@@ -161,22 +161,22 @@ app.post('/userLogin', async (req,res) => {
 
     const selectQuery = `
         SELECT 
-            userProfile.*,
+            userprofile.*,
             staff.position,
             staff.branchId,
             branch.branchCode
         FROM 
-            userProfile
+            userprofile
         LEFT JOIN 
             staff 
         ON 
-            userProfile.staffId = staff.id
+            userprofile.staffId = staff.id
         LEFT JOIN 
             branch 
         ON 
             staff.branchId = branch.id
         WHERE 
-            userProfile.email = ?
+            userprofile.email = ?
     `;
     
     db.query(selectQuery, [email], (err, results) => {
@@ -226,7 +226,7 @@ app.post('/forgot-password', async (req, res) => {
         return res.status(400).json({ message: 'Invalid email format' });
     }
 
-    const selectQuery = 'SELECT * FROM userProfile WHERE email = ? limit 1';
+    const selectQuery = 'SELECT * FROM userprofile WHERE email = ? limit 1';
     db.query(selectQuery, [email], async (err, results) => {
         if (err) {
             console.error('Error querying database:', err);
@@ -334,7 +334,7 @@ app.post('/reset-password', async (req, res) => {
             }
 
             if (results.length > 0) {
-                db.query('UPDATE `userProfile` SET password = ? WHERE email = ?', [hashedPassword, email], (err) => {
+                db.query('UPDATE `userprofile` SET password = ? WHERE email = ?', [hashedPassword, email], (err) => {
                     if (err) {
                         console.error(err);
                         return res.status(500).json('Internal Server Error');
@@ -355,6 +355,19 @@ app.post('/reset-password', async (req, res) => {
         });
     })
 })
+
+app.get('/userprofile/count/customers', (req, res) => {
+
+    const query = 'SELECT count(*) AS count FROM userprofile WHERE role = "CUSTOMER"';
+
+    db.query(query, (err, results) => {
+        if (err) {
+            return res.status(500).json({ error: err.message });
+        }
+        res.json(results[0]);
+    });
+});
+
 
 app.post('/branch', (req,res) => {
     const createQuery = 'insert into branch(`branchCode`, `branchName`, `branchAddress`, `city`, `contactNumber`, `zipCode`) values(?)'
@@ -379,7 +392,7 @@ app.post('/branch', (req,res) => {
         return res.status(400).json({ message: 'Invalid branch code' });
     }
 
-    const CNregex = /^(?:0)?[7][01245678][0-9]{7}$/;    
+    const CNregex = /^(7[01245678][0-9]{7}|011[0-9]{7}|021[0-9]{7})$/;    
     if (!CNregex.test(req.body.contactNumber)){
         return res.status(400).json({ message: 'Invalid contact number' });
     }
@@ -452,29 +465,118 @@ app.get('/branch/count', (req, res) => {
 });
 
 app.get('/dashboard/count', (req, res) => {
+    // Query to get total counts for various entities
+    const countQuery = `
+        SELECT 
+            (SELECT COUNT(*) FROM userprofile WHERE role = 'CUSTOMER') AS userCount,
+            (SELECT COUNT(*) FROM branch) AS branchCount, 
+            (SELECT COUNT(*) FROM staff) AS totalStaffCount,
+            (SELECT COUNT(*) FROM staff WHERE position = 'STAFF') AS staffCount, 
+            (SELECT COUNT(*) FROM staff WHERE position = 'DELIVERY_PERSON') AS delivery_personCount,
+            (SELECT COUNT(*) FROM parcel) AS parcelCount,
+            (SELECT COUNT(*) FROM parcel WHERE status = 'ACCEPTED') AS acceptCount,
+            (SELECT COUNT(*) FROM parcel WHERE status = 'DELIVERED') AS deliverCount,
+            (SELECT COUNT(*) FROM parcel WHERE status = 'Processed_and_Ready_to_Ship') AS collectCount,
+            (SELECT COUNT(*) FROM parcel WHERE status = 'IN-TRANSIT') AS intransitCount,
+            (SELECT COUNT(*) FROM parcel WHERE status = 'SHIPPING') AS shipCount
+    `;
 
-    const count = `SELECT (SELECT COUNT(*) FROM branch) AS branchCount, 
-                          (SELECT COUNT(*) FROM staff) AS staffCount, 
-                          (SELECT COUNT(*) FROM parcel) AS parcelCount,
-                          (SELECT COUNT(*) FROM parcel WHERE status = 'ACCEPTED') AS acceptCount,
-                          (SELECT COUNT(*) FROM parcel WHERE status = 'DELIVERED') AS deliverCount,
-                          (SELECT COUNT(*) FROM parcel WHERE status = 'Parcel_Handed_over_to_Delivery') AS collectCount,
-                          (SELECT COUNT(*) FROM parcel WHERE status = 'IN-TRANSIT') AS intransitCount,
-                          (SELECT COUNT(*) FROM parcel WHERE status = 'SHIPPED') AS shipCount`;
+    // Query to get the new and old customer count based on current and previous weeks
+    const customerCountQuery = `
+        SELECT 
+            COUNT(CASE WHEN WEEK(createdAt) = WEEK(CURDATE()) THEN 1 END) AS new_customer_count,
+            COUNT(CASE WHEN WEEK(createdAt) = WEEK(CURDATE()) - 1 THEN 1 END) AS old_customer_count
+        FROM userprofile
+        WHERE role = 'CUSTOMER';
+    `;
 
-    db.query(count, (err, results) => {
-      if (err) {
-        return res.status(500).json({ error: err.message });
-      }
-      res.json({ branchCount: results[0].branchCount, 
-                 staffCount: results[0].staffCount, 
-                 parcelCount: results[0].parcelCount,
-                 acceptCount: results[0].acceptCount,
-                 deliverCount: results[0].deliverCount,
-                 collectCount: results[0].collectCount,
-                 intransitCount: results[0].intransitCount,
-                 shipCount: results[0].shipCount
-               });
+    // Query to get the parcel counts based on the current and previous week
+    const parcelCountsQuery = `
+        SELECT 
+            DAYNAME(createdAt) AS day,
+            SUM(WEEK(createdAt) = WEEK(LAST_DAY(CURDATE()))) AS newParcelCount, 
+            SUM(WEEK(createdAt) < WEEK(LAST_DAY(CURDATE()))) AS oldParcelCount 
+        FROM parcel
+        GROUP BY 
+            DAYNAME(createdAt)
+        UNION ALL
+        SELECT 
+            'TOTAL' AS day,
+            SUM(WEEK(createdAt) = WEEK(LAST_DAY(CURDATE()))) AS newParcelCount,
+            SUM(WEEK(createdAt) < WEEK(LAST_DAY(CURDATE()))) AS oldParcelCount
+        FROM parcel
+        ORDER BY 
+            FIELD(day, 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'TOTAL');
+    `;
+
+    // Query to get monthly customer counts
+    const monthlyCustomerCountQuery = `
+        SELECT 
+            MONTHNAME(createdAt) AS month,
+            COUNT(*) AS totalCount,
+            -- New customers: Those who registered in the last week of the month
+            COUNT(CASE WHEN WEEK(createdAt) = WEEK(LAST_DAY(CURDATE())) THEN 1 END) AS newCustomerCount,
+            -- Old customers: Those who registered before the last week of the month
+            COUNT(CASE WHEN WEEK(createdAt) < WEEK(LAST_DAY(CURDATE())) THEN 1 END) AS oldCustomerCount
+        FROM 
+            userprofile
+        WHERE 
+            role = 'CUSTOMER' AND
+            YEAR(createdAt) = YEAR(CURDATE()) 
+        GROUP BY 
+            MONTH(createdAt)
+        ORDER BY 
+            MONTH(createdAt);
+    `;
+
+    // Execute the queries sequentially to get all required data
+    db.query(countQuery, (err, countResults) => {
+        if (err) {
+            return res.status(500).json({ error: err.message });
+        }
+
+        db.query(customerCountQuery, (err, customerCountResults) => {
+            if (err) {
+                return res.status(500).json({ error: err.message });
+            }
+
+            db.query(parcelCountsQuery, (err, parcelCountsResults) => {
+                if (err) {
+                    return res.status(500).json({ error: err.message });
+                }
+
+                db.query(monthlyCustomerCountQuery, (err, monthlyCustomerResults) => {
+                    if (err) {
+                        return res.status(500).json({ error: err.message });
+                    }
+
+                    // Extract daily and total parcel counts from the result
+                    const totalCounts = parcelCountsResults.find(item => item.day === 'TOTAL');
+                    const dailyCounts = parcelCountsResults.filter(item => item.day !== 'TOTAL');
+
+                    // Respond with the aggregated data
+                    res.json({
+                        userCount: countResults[0].userCount,
+                        branchCount: countResults[0].branchCount, 
+                        totalStaffCount: countResults[0].totalStaffCount,
+                        staffCount: countResults[0].staffCount, 
+                        delivery_personCount: countResults[0].delivery_personCount,
+                        parcelCount: countResults[0].parcelCount,
+                        acceptCount: countResults[0].acceptCount,
+                        deliverCount: countResults[0].deliverCount,
+                        collectCount: countResults[0].collectCount,
+                        intransitCount: countResults[0].intransitCount,
+                        shipCount: countResults[0].shipCount,
+                        dailyParcelCounts: dailyCounts,
+                        totalCurrentParcelCount: totalCounts.newParcelCount,
+                        totalOldParcelCount: totalCounts.oldParcelCount,
+                        new_customer_count: customerCountResults[0].new_customer_count,
+                        old_customer_count: customerCountResults[0].old_customer_count,
+                        monthlyCustomerCounts: monthlyCustomerResults // Monthly customer counts based on weeks
+                    });
+                });
+            });
+        });
     });
 });
 
@@ -525,8 +627,8 @@ app.put('/branch/:id', (req,res) => {
     if (!isValid) {
         return res.status(400).json({ error: 'All fields are required' });
     }
-
-    const CNregex = /^(?:0)?[7][01245678][0-9]{7}$/;    
+ 
+    const CNregex = /^(7[01245678][0-9]{7}|011[0-9]{7}|021[0-9]{7})$/;   
     if (!CNregex.test(req.body.contactNumber)){
         return res.status(400).json({ message: 'Invalid contact number' });
     }
@@ -569,7 +671,7 @@ app.post('/parcel', (req, res) => {
             return res.status(400).json({ error: 'All parcel details fields are required' });
         }
 
-        const validStatuses = ['ACCEPTED', 'Parcel_Handed_over_to_Delivery', 'SHIPPED', 'IN-TRANSIT', 'DELIVERED'];
+        const validStatuses = ['ACCEPTED', 'Processed_and_Ready_to_Ship', 'SHIPPING', 'IN-TRANSIT', 'DELIVERED'];
         if (!validStatuses.includes(status)) {
             return res.status(400).json({ error: 'Invalid status' });
         }
@@ -595,7 +697,7 @@ app.post('/parcel', (req, res) => {
 
 app.get('/parcel', (req, res) => {
     const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 10;
+    const limit = parseInt(req.query.limit) || 50;
     const offset = (page - 1) * limit;
     const search = req.query.search || '';
 
@@ -836,7 +938,7 @@ app.put('/parcel/:id', (req, res) => {
             return res.status(400).json({ error: 'All parcel details fields are required' });
         }
 
-        const validStatuses = ['ACCEPTED', 'Parcel_Handed_over_to_Delivery', 'SHIPPED', 'IN-TRANSIT', 'DELIVERED'];
+        const validStatuses = ['ACCEPTED', 'Processed_and_Ready_to_Ship', 'SHIPPING', 'IN-TRANSIT', 'DELIVERED'];
         if (!validStatuses.includes(status)) {
             return res.status(400).json({ error: 'Invalid status' });
         }
@@ -938,13 +1040,11 @@ app.get('/staff', (req, res) => {
             return res.json(err);
         }
 
-        // Prepare the base query
         let query = `select staff.id, staff.staffId, fullName, branchCode as branch, position, email, userprofile.contactNumber from staff 
                          left join userprofile on staff.id = userprofile.staffId 
                          join branch on branch.id = staff.branchId`;
         let queryParams = [];
 
-        // Add the search filter if there is a search term
         if (search) {
             const searchPattern = `%${search}%`;
             query += ` WHERE staff.staffId LIKE ? OR 
@@ -1091,7 +1191,7 @@ app.post('/contactus', (req,res) => {
         return res.status(400).json({ message: 'Invalid email format' });
     }
 
-    const phoneRegex = /^(?:0)?[7][01245678][0-9]{7}$/;    
+    const phoneRegex = /^(7[01245678][0-9]{7}|011[0-9]{7}|021[0-9]{7})$/;     
     if (!phoneRegex.test(req.body.phoneNumber)){
         return res.status(400).json({ message: 'Invalid Phone number' });
     }
@@ -1126,7 +1226,6 @@ app.get('/contactus', (req, res) => {
 
 app.use(express.static('../frontend/src/assets'))
 
-// Multer configuration for file uploads
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
@@ -1194,7 +1293,7 @@ app.put('/profile/:id', upload.single('image'), async (req, res) => {
         }
     }
 
-    const CNMPregex = /^(?:0)?[7][01245678][0-9]{7}$/;  
+    const CNMPregex = /^(07[01245678][0-9]{7}|011[0-9]{7}|021[0-9]{7})$/;   
     if (!CNMPregex.test(req.body.contactNumber)){
         return res.status(400).json({ message: 'Invalid contact number' });
     }
@@ -1209,7 +1308,6 @@ app.put('/profile/:id', upload.single('image'), async (req, res) => {
         req.params.id
     ];
 
-    // Validation function to check if any value is empty
     const isValid = values.every(value => value !== undefined && value !== '');
 
     if (!isValid) {
@@ -1262,7 +1360,7 @@ app.get('/profile/:id', (req,res) => {
     })
 })
 
-import FedexTrackingController from '../backend/controllers/FedexTrackingController.js'
+import FedexTrackingController from './controllers/FedexTrackingController.js'
 
 app.post('/fedex/track', FedexTrackingController.trackFedexShipment)
 
@@ -1284,32 +1382,6 @@ app.get('/track_parcels/:referenceNumber', (req, res) => {
         return res.json({ statusCode: 200, status: data[0]});
     })
 })
-
-// import http from 'http';
-// import formidable from 'formidable'
-// import fs from 'fs';
-  
-// http.createServer(function (req, res) {
-// if (req.url == '/fileupload') {
-//     var form = new formidable.IncomingForm();
-//     form.parse(req, function (err, fields, files) {
-//     var oldpath = files.filetoupload.filepath;
-//     var newpath = 'C:/Users/Your Name/' + files.filetoupload.originalFilename;
-//     fs.rename(oldpath, newpath, function (err) {
-//         if (err) throw err;
-//         res.write('File uploaded and moved!');
-//         res.end();
-//     });
-// });
-// } else {
-//     res.writeHead(200, {'Content-Type': 'text/html'});
-//     res.write('<form action="fileupload" method="post" enctype="multipart/form-data">');
-//     res.write('<input type="file" name="filetoupload"><br>');
-//     res.write('<input type="submit">');
-//     res.write('</form>');
-//     return res.end();
-// }
-// })
 
 app.post('/get-otp', (req, res) => {
     const { phoneNumber } = req.body;
@@ -1348,8 +1420,9 @@ app.get('/userStatus/:id', (req, res) => {
     })
 });
 
-// const PORT = process.env.PORT || 6431;
-// app.listen(PORT, () => console.log(`Running ${PORT}`));
+// app.listen(process.env.X_ZOHO_CATALYST_LISTEN_PORT || 6431, () => {
+//     console.log("Running")
+// })
 
 app.listen(process.env.PORT || 6431, () => {
     console.log("Running")
