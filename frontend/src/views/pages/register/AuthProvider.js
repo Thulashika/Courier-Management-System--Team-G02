@@ -2,10 +2,8 @@
 import React, { createContext, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 
-// Create the context
 export const AuthContext = createContext();
 
-// Create the provider component
 export const AuthProvider = ({ children }) => {
 
   const [userDetails, setUser] = useState({email: '', id: 0, role: '', fullName: '', image: null, staffId: null, position: '', branchCode: ''});
