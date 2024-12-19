@@ -45,8 +45,6 @@ const App = () => {
           </div>
         }
       >
-
-        
         <Routes>
           <Route exact path="/" name="Home Page" element={<Landingpage />} />
           <Route exact path="/home" name="Home Page" element={<Home />} />
