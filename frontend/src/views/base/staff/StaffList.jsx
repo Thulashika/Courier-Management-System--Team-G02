@@ -28,11 +28,13 @@ import {
 } from '@coreui/react'
 import { Link } from 'react-router-dom'
 import axios from 'axios'
-import CIcon from '@coreui/icons-react'
-import { cilPencil, cilPlus, cilTrash } from '@coreui/icons'
 import { debounce } from 'lodash'
 import NFS from '../../../assets/images/NoData.png'
 import { AuthContext } from '../../pages/register/AuthProvider'
+import addImage from '../../../assets/images/add.gif'
+import tableImage from '../../../assets/images/table.gif'
+import editIcon from '../../../assets/images/pencil.gif'
+import delIcon from '../../../assets/images/trash-bin.gif'
 
 const StaffList = () => {
 
@@ -170,13 +172,14 @@ const filteredStaffByType = (type) => {
                     onClick={() => setShowModal(true)}
                     className="mb-3"
                   >
+                    <CImage src={tableImage} height={25} width={25}/>
                     Show Staffs
                   </CButton>
                 </CCol>
                 <CCol>
                   <div className="d-grid gap-2 d-md-flex justify-content-md-end">
                     <CButton href='/staff/new_branchstaff' className='me-md-2' color='primary' variant='outline'>
-                      <CIcon icon={cilPlus}/>
+                      <CImage src={addImage} height={25} width={25}/>
                       {'  '}
                       AddNew
                     </CButton>
@@ -251,14 +254,14 @@ const filteredStaffByType = (type) => {
                                 size='sm' 
                                 variant='ghost' 
                                 className="me-md-2">
-                                  <CIcon icon={cilPencil}/>
+                                  <CImage src={editIcon} alt='view' height={25} width={25} />
                               </CButton>
                             </Link>
                             <CButton color='danger'
                               size='sm'
                               variant='ghost' onClick={() => handleClick(staff.id)}
                             >
-                              <CIcon icon={cilTrash}/>
+                              <CImage src={delIcon} alt='view' height={25} width={25} />
                             </CButton>
                           </CTableDataCell>
                         </CTableRow>
@@ -320,11 +323,11 @@ const filteredStaffByType = (type) => {
                             <div className="d-flex justify-content-end">
                               <Link to={`/staff/updateStaff?id=${staff.id}`}>
                                 <CButton color="primary" size="sm" variant="ghost" className="me-2">
-                                  <CIcon icon={cilPencil} />
+                                  <CImage src={editIcon} alt='view' height={25} width={25} />
                                 </CButton>
                               </Link>
                               <CButton color="danger" size="sm" variant="ghost" onClick={() => handleClick(staff.id)}>
-                                <CIcon icon={cilTrash} />
+                                <CImage src={delIcon} alt='view' height={25} width={25} />
                               </CButton>
                             </div>
                           </div>
@@ -354,11 +357,11 @@ const filteredStaffByType = (type) => {
                             <div className="d-flex justify-content-end">
                               <Link to={`/staff/updateStaff?id=${staff.id}`}>
                                 <CButton color="primary" size="sm" variant="ghost" className="me-2">
-                                  <CIcon icon={cilPencil} />
+                                  <CImage src={editIcon} alt='view' height={25} width={25} />
                                 </CButton>
                               </Link>
                               <CButton color="danger" size="sm" variant="ghost" onClick={() => handleClick(staff.id)}>
-                                <CIcon icon={cilTrash} />
+                                <CImage src={delIcon} alt='view' height={25} width={25} />
                               </CButton>
                             </div>
                           </div>
@@ -388,11 +391,11 @@ const filteredStaffByType = (type) => {
                             <div className="d-flex justify-content-end">
                               <Link to={`/staff/updateStaff?id=${staff.id}`}>
                                 <CButton color="primary" size="sm" variant="ghost" className="me-2">
-                                  <CIcon icon={cilPencil} />
+                                  <CImage src={editIcon} alt='view' height={25} width={25} />
                                 </CButton>
                               </Link>
                               <CButton color="danger" size="sm" variant="ghost" onClick={() => handleClick(staff.id)}>
-                                <CIcon icon={cilTrash} />
+                                <CImage src={delIcon} alt='view' height={25} width={25} />
                               </CButton>
                             </div>
                           </div>
@@ -422,11 +425,11 @@ const filteredStaffByType = (type) => {
                             <div className="d-flex justify-content-end">
                               <Link to={`/staff/updateStaff?id=${staff.id}`}>
                                 <CButton color="primary" size="sm" variant="ghost" className="me-2">
-                                  <CIcon icon={cilPencil} />
+                                  <CImage src={editIcon} alt='view' height={25} width={25} />
                                 </CButton>
                               </Link>
                               <CButton color="danger" size="sm" variant="ghost" onClick={() => handleClick(staff.id)}>
-                                <CIcon icon={cilTrash} />
+                                <CImage src={delIcon} alt='view' height={25} width={25} />
                               </CButton>
                             </div>
                           </div>
@@ -460,11 +463,11 @@ const filteredStaffByType = (type) => {
                             <div className="d-flex justify-content-end">
                               <Link to={`/staff/updateStaff?id=${staff.id}`}>
                                 <CButton color="primary" size="sm" variant="ghost" className="me-2">
-                                  <CIcon icon={cilPencil} />
+                                <CImage src={editIcon} alt='view' height={25} width={25} />
                                 </CButton>
                               </Link>
                               <CButton color="danger" size="sm" variant="ghost" onClick={() => handleClick(staff.id)}>
-                                <CIcon icon={cilTrash} />
+                              <CImage src={delIcon} alt='view' height={25} width={25} />
                               </CButton>
                             </div>
                           </div>
@@ -494,11 +497,11 @@ const filteredStaffByType = (type) => {
                             <div className="d-flex justify-content-end">
                               <Link to={`/staff/updateStaff?id=${staff.id}`}>
                                 <CButton color="primary" size="sm" variant="ghost" className="me-2">
-                                  <CIcon icon={cilPencil} />
+                                <CImage src={editIcon} alt='view' height={25} width={25} />
                                 </CButton>
                               </Link>
                               <CButton color="danger" size="sm" variant="ghost" onClick={() => handleClick(staff.id)}>
-                                <CIcon icon={cilTrash} />
+                              <CImage src={delIcon} alt='view' height={25} width={25} />
                               </CButton>
                             </div>
                           </div>

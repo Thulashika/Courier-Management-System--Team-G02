@@ -1,5 +1,4 @@
 import { 
-  CBadge,
   CButton,
   CCard, 
   CCardBody, 
@@ -29,33 +28,33 @@ import {
 } from '@coreui/react'
 import React, { useEffect, useState } from 'react'
 import CIcon from '@coreui/icons-react'
-import { cibFacebook, cibInstagram, cibLinkedin, cibWhatsapp, cilClock, cilEnvelopeClosed, cilLocationPin, cilPhone } from '@coreui/icons'
+import { cibFacebook, cibInstagram, cibLinkedin, cibWhatsapp, cilEnvelopeClosed, cilLocationPin, cilPhone } from '@coreui/icons'
 import yoga from '../../../src/assets/images/yoga.png'
 import background1 from '../../assets/images/t1.png'
 import background2 from '../../assets/images/del2.jpg'
 import background3 from '../../assets/images/pB2.webp'
 import trackImg from '../../assets/images/tra1.png'
 import companyImg from '../../assets/images/Company.png'
-import aboutusImg from '../../../src/assets/images/AU.jpg'
-import expressImage from '../../assets/images/express.jpg'; 
-import parcelTrackingImage from '../../assets/images/track.jpg'; 
-import securePackagingImage from '../../assets/images/pack.jpg'; 
-import warehouseImage from '../../assets/images/management.jpg'; 
-import officeToOfficeImage from '../../assets/images/office.jpg'; 
+import expressImage from '../../assets/images/ED.gif'; 
+import parcelTrackingImage from '../../assets/images/track.gif'; 
+import securePackagingImage from '../../assets/images/shipping.gif';
+import officeToOfficeImage from '../../assets/images/office.gif'; 
 import backgroundImage from '../../assets/images/background_1.jpg';
-import ContactUs_1 from '../../assets/images/contact.png';
+import ContactUs_1 from '../../assets/images/contact-us.gif';
 import office from '../../assets/images/office.png'
 import value from '../../assets/images/value.png'
 import truck from '../../assets/images/truck.png'
 import employee from '../../assets/images/employee.png'
-import customsImage from '../../assets/images/clearanceservice.jpg'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
-import { Step, StepLabel, Stepper } from '@mui/material'
+import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Step, StepLabel, Stepper } from '@mui/material'
 import { PARCEL_ERRORS } from '../../const';
 import NFRN from '../../assets/images/NoData.png'
 import { CONTACT_US_ERRORS } from '../../const'
 import { Link } from "react-scroll";
+import callImage from '../../assets/images/24-hours.gif'
+import emailImage from '../../assets/images/message.gif'
+import hourImage from '../../assets/images/time.gif'
 
 const headerStyle = {
   color: 'blue',
@@ -143,7 +142,7 @@ function Landingpage() {
     setError('')
     setIsValid(true)
 
-    const phoneRegex = /^(?:0)?[7][01245678][0-9]{7}$/;
+    const phoneRegex = /^(7[01245678][0-9]{7}|011[0-9]{7}|021[0-9]{7})$/; 
    
     if (contactus.phoneNumber.length !== 10) {
       setError(CONTACT_US_ERRORS.PHONENUMBER_LENGTH_VALIDATION);
@@ -179,17 +178,24 @@ function Landingpage() {
   };
 
   const steps = [
-    "Accepted", "Parcel_Handed_over_to_Delivery", "Shipped", "Delivered"
+    "Accepted", "Processed_and_Ready_to_Ship", "Shipping", "Delivered"
   ];
 
   const [trackingNumber, setTrackingNumber] = useState('');
   const [parcel, setParcel] = useState(null);
   const [currentStep, setCurrentStep] = useState(null);
+  const [openDialog, setOpenDialog] = useState(false); 
+  const [dialogMessage, setDialogMessage] = useState(''); 
+
+  const handleDialogClose = () => {
+    setOpenDialog(false);
+    setDialogMessage('');
+  };
 
   const statusMap = {
     ACCEPTED: 0,
-    Parcel_Handed_over_to_Delivery: 1,
-    SHIPPED: 2,
+    Processed_and_Ready_to_Ship: 1,
+    SHIPPING: 2,
     DELIVERED: 3,
   };
 
@@ -203,20 +209,21 @@ function Landingpage() {
     if (trackingNumber.trim() === '') {
       setError(PARCEL_ERRORS.NUMBER_VALIDATION)
       setIsValid(false);
+      setOpenDialog(true);
       return;
     }
 
     if (trackingNumber.length !== 5) {
-      console.log('Error: Tracking number length is not 5');
       setError(PARCEL_ERRORS.NUMBER_LENGTH_VALIDATION);
       setIsValid(false);
+      setOpenDialog(true);
       return;
     }
 
     if (!BCregex.test(trackingNumber)) {
-      console.log('Error: Tracking number format is invalid');
       setError(PARCEL_ERRORS.NUMBER_FORMAT_VALIDATION);
       setIsValid(false);
+      setOpenDialog(true);
       return;
     }
     
@@ -227,12 +234,11 @@ function Landingpage() {
           if (res.data.statusCode === 200) {
             setParcel(res.data);
             setError('');
-            console.log(statusMap.label)
-            console.log(res.data.status.status)
             setCurrentStep(statusMap[res.data.status.status] ?? null)
           } else {
             <CImage rounded style={{ background: 'transparent', backgroundColor: 'red' }} src={NFRN} width={200} height={200} align="center"/>
-            alert('Not found parcel');
+            setDialogMessage('Parcel not found');
+            setOpenDialog(true);
           }
         })
         .catch((err) => {
@@ -241,8 +247,9 @@ function Landingpage() {
             setParcel(null);
             return
           }
-          setError(<CImage rounded style={{ background: 'transparent', backgroundColor: 'gray' }} src={NFRN} width={200} height={200} align="center"/>)
-          // alert('Not found');
+          setError(<CImage rounded style={{ background: 'transparent', backgroundColor: 'red' }} src={NFRN} width={200} height={200} align="center"/>)
+          setDialogMessage('Error occurred while fetching parcel data');
+          setOpenDialog(true);
         });
     }
   };
@@ -265,7 +272,7 @@ function Landingpage() {
               <CCollapse className='navbar-collapse justify-content-end' visible>
                 <CNavbarNav>
                   <CNavItem>
-                    <CIcon icon={cilPhone} size="xl" style={{'--ci-primary-color': 'orange'}} />
+                    <CImage src={callImage} height={25} width={25}/>
                     Call Us:
                     <CNavLink
                       href=""
@@ -277,12 +284,12 @@ function Landingpage() {
                       onMouseEnter={(e) => e.target.style.color = 'orange'} 
                       onMouseLeave={(e) => e.target.style.color = 'inherit'}
                     >
-                      <strong>0762110846</strong>
+                      <strong>0779261129</strong>
                     </CNavLink>
 
                   </CNavItem>
                   <CNavItem>
-                    <CIcon icon={cilEnvelopeClosed} size="xl" style={{'--ci-primary-color': 'orange'}} />
+                    <CImage src={emailImage} height={25} width={25}/>
                     Email Us:
                     <CNavLink 
                       href='https://myaccount.google.com/?hl=en&utm_source=OGB&utm_medium=act&gar=WzEyMF0&pli=1' 
@@ -298,7 +305,7 @@ function Landingpage() {
                     </CNavLink>
                   </CNavItem>
                   <CNavItem>
-                    <CIcon icon={cilClock} size="xl" style={{'--ci-primary-color': 'orange'}} />
+                    <CImage src={hourImage} height={25} width={25}/>
                     Opening Hours:
                     <CNavLink active>
                       <strong>Mon-Fri: 8am – 7pm</strong>
@@ -363,7 +370,7 @@ function Landingpage() {
                       <CCollapse className="navbar-collapse" variant="underline-border" visible>
                         <CNavbarNav>
                           <CNavItem>
-                            <Link to="/" smooth={true} duration={500} className="text-warning mr-3">
+                            <Link to="/" smooth={true} duration={500} className="text-warning mr-3" style={{ cursor: 'pointer' }}>
                               Home
                             </Link>
                           </CNavItem>
@@ -371,7 +378,7 @@ function Landingpage() {
                           <div style={{ width: '20px' }} />
 
                           <CNavItem>
-                            <Link to="track" smooth={true} duration={500} className="text-warning mr-3">
+                            <Link to="track" smooth={true} duration={500} className="text-warning mr-3" style={{ cursor: 'pointer' }}>
                               Track & Trace
                             </Link>
                           </CNavItem>
@@ -379,7 +386,7 @@ function Landingpage() {
                           <div style={{ width: '20px' }} />
 
                           <CNavItem>
-                            <Link to="ourservices" smooth={true} duration={500} className="text-warning mr-3">
+                            <Link to="ourservices" smooth={true} duration={500} className="text-warning mr-3" style={{ cursor: 'pointer' }}>
                               Our Services
                             </Link>
                           </CNavItem>
@@ -387,7 +394,7 @@ function Landingpage() {
                           <div style={{ width: '20px' }} />
 
                           <CNavItem>
-                            <Link to="findus" smooth={true} duration={500} className="text-warning mr-3">
+                            <Link to="findus" smooth={true} duration={500} className="text-warning mr-3" style={{ cursor: 'pointer' }}>
                               Branch
                             </Link>
                           </CNavItem>
@@ -395,7 +402,7 @@ function Landingpage() {
                           <div style={{ width: '20px' }} />
 
                           <CNavItem>
-                            <Link to="conatctus" smooth={true} duration={500} className="text-warning mr-3">
+                            <Link to="conatctus" smooth={true} duration={500} className="text-warning mr-3" style={{ cursor: 'pointer' }}>
                               Contact Us
                             </Link>
                           </CNavItem>
@@ -468,7 +475,7 @@ function Landingpage() {
                       <CCollapse className="navbar-collapse" variant="underline-border" visible>
                         <CNavbarNav>
                           <CNavItem>
-                            <Link to="/" smooth={true} duration={500} className="text-warning mr-3">
+                            <Link to="/" smooth={true} duration={500} className="text-warning mr-3" style={{ cursor: 'pointer' }}>
                               <strong>Home</strong>
                             </Link>
                           </CNavItem>
@@ -476,7 +483,7 @@ function Landingpage() {
                           <div style={{ width: '20px' }} />
 
                           <CNavItem>
-                            <Link to="track" smooth={true} duration={500} className="text-warning mr-3">
+                            <Link to="track" smooth={true} duration={500} className="text-warning mr-3" style={{ cursor: 'pointer' }}>
                               <strong>Track & Trace</strong>
                             </Link>
                           </CNavItem>
@@ -484,7 +491,7 @@ function Landingpage() {
                           <div style={{ width: '20px' }} />
 
                           <CNavItem>
-                            <Link to="ourservices" smooth={true} duration={500} className="text-warning mr-3">
+                            <Link to="ourservices" smooth={true} duration={500} className="text-warning mr-3" style={{ cursor: 'pointer' }}>
                               <strong>Our Services</strong>
                             </Link>
                           </CNavItem>
@@ -492,7 +499,7 @@ function Landingpage() {
                           <div style={{ width: '20px' }} />
 
                           <CNavItem>
-                            <Link to="findus" smooth={true} duration={500} className="text-warning mr-3">
+                            <Link to="findus" smooth={true} duration={500} className="text-warning mr-3" style={{ cursor: 'pointer' }}>
                               <strong>Branch</strong>
                             </Link>
                           </CNavItem>
@@ -500,7 +507,7 @@ function Landingpage() {
                           <div style={{ width: '20px' }} />
 
                           <CNavItem>
-                            <Link to="contactus" smooth={true} duration={500} className="text-warning mr-3">
+                            <Link to="contactus" smooth={true} duration={500} className="text-warning mr-3" style={{ cursor: 'pointer' }}>
                               <strong>Contact Us</strong>
                             </Link>                            
                           </CNavItem>
@@ -543,63 +550,61 @@ function Landingpage() {
           </CCard>
         </CContainer>
 
-        {/* <section id="" style={{ height: "100vh", background: "#d0d0d0" }}> */}
-          <CContainer>
-            <br/>
-              <CCarousel controls indicators dark margin= ' 0 auto'>
-                <CCarouselItem>
-                  <CImage className="d-block w-100" src={background1} alt="slide 1"  height={700}/>
-                  <CCardImageOverlay>
-                    <CContainer>
-                      <CCardText className="d-none d-md-block">
-                      <h1 style={{ color: 'black' }}><br/><br/>Welcome to Our<br/> Courier Management System</h1>
-                      <p style={{ color: 'black' }}>Efficient, reliable, and secure courier services at your doorstep.</p>
-                      </CCardText>
-                    </CContainer>
-                  </CCardImageOverlay>
-                </CCarouselItem>
+        <CContainer>
+          <br/>
+            <CCarousel controls indicators dark margin= ' 0 auto'>
+              <CCarouselItem>
+                <CImage className="d-block w-100" src={background1} alt="slide 1"  height={700}/>
+                <CCardImageOverlay>
+                  <CContainer>
+                    <CCardText className="d-none d-md-block">
+                    <h1 style={{ color: 'black' }}><br/><br/>Welcome to Our<br/> Courier Management System</h1>
+                    <p style={{ color: 'black' }}>Efficient, reliable, and secure courier services at your doorstep.</p>
+                    </CCardText>
+                  </CContainer>
+                </CCardImageOverlay>
+              </CCarouselItem>
 
-                <CCarouselItem>
-                  <CImage className="d-block w-100" src={background2} alt="slide 2" height={700}/>
-                  <CCardImageOverlay>
-                    <CContainer>
-                      <CCardText className="d-none d-md-block text-end">
-                      <h1 style={{ color: 'black' }}>
-                      <br/><br/>
-                        Opportunity In Every Direction
-                      </h1>
-                      <p style={{ color: 'black' }}>
-                        We offer a complete array of services which can be tailor made to provide the best logistics to<br/>
-                        corporate entities and suit individual needs
-                      </p>
-                      </CCardText>
-                    </CContainer>
-                  </CCardImageOverlay>
-                </CCarouselItem>
+              <CCarouselItem>
+                <CImage className="d-block w-100" src={background2} alt="slide 2" height={700}/>
+                <CCardImageOverlay>
+                  <CContainer>
+                    <CCardText className="d-none d-md-block text-end">
+                    <h1 style={{ color: 'black' }}>
+                    <br/><br/>
+                      Opportunity In Every Direction
+                    </h1>
+                    <p style={{ color: 'black' }}>
+                      We offer a complete array of services which can be tailor made to provide the best logistics to<br/>
+                      corporate entities and suit individual needs
+                    </p>
+                    </CCardText>
+                  </CContainer>
+                </CCardImageOverlay>
+              </CCarouselItem>
 
-                <CCarouselItem>
-                  <CImage className="d-block w-100" src={background3} alt="slide 3" height={700}/>
-                  <CCardImageOverlay>
-                    <CContainer>
-                      <CCardText className="d-none d-md-block">
-                      <h1 style={{ color: 'black' }}>
-                      <br/>
-                        <br/>The Largest Domestic<br/>
-                        Courier Service<br/>
-                        Provider in Srilanka
-                      </h1>
-                      <p style={{ color: 'black' }}>
-                        We offer a complete array of services which can be tailor made to<br/>
-                        provide the best logistics to corporate entities and to suit<br/>
-                        individual needs
-                      </p>
-                      </CCardText>
-                    </CContainer>
-                  </CCardImageOverlay>
-                </CCarouselItem>
-              </CCarousel>
-          </CContainer>
-        {/* </section> */}
+              <CCarouselItem>
+                <CImage className="d-block w-100" src={background3} alt="slide 3" height={700}/>
+                <CCardImageOverlay>
+                  <CContainer>
+                    <CCardText className="d-none d-md-block">
+                    <h1 style={{ color: 'black' }}>
+                    <br/>
+                      <br/>The Largest Domestic<br/>
+                      Courier Service<br/>
+                      Provider in Srilanka
+                    </h1>
+                    <p style={{ color: 'black' }}>
+                      We offer a complete array of services which can be tailor made to<br/>
+                      provide the best logistics to corporate entities and to suit<br/>
+                      individual needs
+                    </p>
+                    </CCardText>
+                  </CContainer>
+                </CCardImageOverlay>
+              </CCarouselItem>
+            </CCarousel>
+        </CContainer>
 
         <section id="track" height={700}>
           <CCard>
@@ -642,10 +647,25 @@ function Landingpage() {
                               </div>
                             </CRow>
                             {error && (
-                              <CRow className="mb-3 text-center">
-                                <CBadge color="danger" style={{width:'500px', textAlign: 'center', margin: '0 auto'}}><h5>{error}</h5></CBadge>
-                              </CRow>
+                              // <CRow className="mb-3 text-center">
+                              //   <CBadge color="danger" style={{width:'500px', textAlign: 'center', margin: '0 auto'}}><h5>{error}</h5></CBadge>
+                              // </CRow>
+                              <Dialog open={openDialog} onClose={handleDialogClose}>
+                              <DialogTitle>Tracking Information</DialogTitle>
+                              <DialogContent>
+                                <DialogContentText>{error}</DialogContentText>
+                              </DialogContent>
+                              <DialogActions>
+                                <Button onClick={handleDialogClose} color="primary">
+                                  OK
+                                </Button>
+                              </DialogActions>
+                            </Dialog>
                             )}
+
+                            <br/><br/><br/>
+                            <br/><br/><br/>
+                            <br/><br/>
 
                             <div
                               style={{
@@ -734,43 +754,6 @@ function Landingpage() {
               </div>
             </CCardImageOverlay>
           </CCard>
-        </section>
-
-        <section id="aboutus" height={700}>
-          <div className=" min-vh-50 d-flex flex-row align-items-center">
-            <CContainer>
-            <br/><br/><br/><br/>
-              <CRow>
-                <CCol md={6}>
-                  <h1><strong>About Us</strong></h1><br/>
-                  <p>
-                      Yoga Transport (Private) Ltd. was incorporated in 1987 with the approval granted by<br/>
-                      then Foreign Investment Advisory Committee for the provision of Logistics Support<br/>
-                      Service. Yoga was able to earn its reputation for efficiency and reliability from its<br/>
-                      inception, servicing many industries in the country, including Corporate Sector,<br/>
-                      Banking, Finance, Insurance, Legal, Healthcare, Entertainment, Government,<br/>
-                      Plantation, Manufacturing Industry and also the Individual consumer market<br/>
-                      counting over 34 years of experience in the courier/logistics field. It has thus<br/>
-                      acquired adequate expertise and experience over the years to provide its services<br/>
-                      with superior quality and maintain market leadership in domestic express delivery.<br/>
-                      The company has grown into a strong brand in the logistic industry in Sri Lanka,<br/>
-                      recognized for its customized services, Speed, Security, Reliability and<br/>
-                      Accountability with a large branch network distributed across the country. We are<br/>
-                      committed to continually enhancing our operations across the region while pursuing<br/>
-                      opportunities for business growth in emerging markets. We undertake packages for<br/>
-                      collection or delivery; whether you are an individual, small business or a large<br/>
-                      enterprise, we provide affordable logistic solutions. There are no set size or weight<br/>
-                      limits, and we are ready to surpass all boundaries in giving you the freedom and<br/>
-                      convenience of sending items to any location in Sri Lanka.</p>
-                </CCol>
-                <CCol md={6}>
-                  <div className="clearfix">
-                    <CImage align="center" rounded className="d-block d-flex w-100" height={450} src={aboutusImg} alt="slide 1"/>
-                  </div>
-                </CCol>
-              </CRow>
-            </CContainer>
-          </div>
         </section>
       
         <section id="ourservices" height={700}>
@@ -883,7 +866,7 @@ function Landingpage() {
                 </div>
               </CCol>
 
-              <CCol md={6}>
+              {/* <CCol md={6}>
                 <div style={{ 
                               padding: '2rem', 
                               borderRadius: '8px',
@@ -911,7 +894,7 @@ function Landingpage() {
                     {showMore.warehouse ? 'Read Less' : 'Read More'}
                   </CButton>
                 </div>
-              </CCol>
+              </CCol> */}
 
               <CCol md={6}>
                 <div style={{ 
@@ -944,7 +927,7 @@ function Landingpage() {
                 </div>
               </CCol>
 
-              <CCol md={6}>
+              {/* <CCol md={6}>
               <div style={{ 
                               padding: '2rem', 
                               borderRadius: '8px',
@@ -972,13 +955,13 @@ function Landingpage() {
                     {showMore.customs ? 'Read Less' : 'Read More'}
                   </CButton>
                 </div>
-              </CCol>
+              </CCol> */}
 
             </CRow>
           </CContainer>
         </section>
         
-        <section id="findus"height={700}>
+        <section id="findus" height={700}>
           <CContainer fluid style={backgroundStyle}>
             <CRow className="justify-content-center">
                 <div style={headerStyle}>
@@ -988,15 +971,21 @@ function Landingpage() {
             <CRow className="justify-content-center">
                 <CCol style={locationStyle}>
                   <h3 style={locationHeaderStyle}>Main Office</h3>
-                  <p style={locationParagraphStyle}>No,33/2 W.A.Silva Mawatta</p>
+                  <p style={locationParagraphStyle}>261 1/21, 1/22 Prisma Piaza, Market Colombo-11</p>
                   <p style={locationParagraphStyle}>Colombo</p>
-                  <p style={locationParagraphStyle}>Phone: 112 058 392</p>
+                  <p style={locationParagraphStyle}>Phone: 773874263</p>
                 </CCol>
                 <CCol style={locationStyle}>
-                  <h3 style={locationHeaderStyle}>Branch Office</h3>
+                  <h3 style={locationHeaderStyle}>Branch  Jaffna Office</h3>
                   <p style={locationParagraphStyle}>Kantharmadam South West,Jaffna</p>
                   <p style={locationParagraphStyle}>Jaffna</p>
-                  <p style={locationParagraphStyle}>Phone: 212223865</p>
+                  <p style={locationParagraphStyle}>Phone: 212229042</p>
+                </CCol>
+                <CCol style={locationStyle}>
+                  <h3 style={locationHeaderStyle}>Branch Colombo Office</h3>
+                  <p style={locationParagraphStyle}>No. 166, Wolfendal Street, Colombo-13</p>
+                  <p style={locationParagraphStyle}>Jaffna</p>
+                  <p style={locationParagraphStyle}>Phone: 114389166</p>
                 </CCol>
             </CRow>
           </CContainer>
@@ -1079,7 +1068,7 @@ function Landingpage() {
                 </CCard>
               </CCol>
               <CCol xs={12} md={6} className="d-flex align-items-center justify-content-center">
-                <CImage src={ContactUs_1} width={300} />
+                <CImage src={ContactUs_1} width={500} />
               </CCol>
             </CRow>
           </CContainer>
@@ -1099,8 +1088,7 @@ function Landingpage() {
                 scrolling="no"
                 marginHeight="0"
                 marginWidth="0"
-                src="https://maps.google.com/maps?width=600&amp;height=400&amp;hl=en&amp;q=Kantharmadam South West, Jaffna, &amp;t=p&amp;z=14&amp;ie=UTF8&amp;iwloc=B&amp;output=embed"
-              ></iframe>
+                src="https://maps.google.com/maps?width=600&amp;height=400&amp;hl=en&amp;q=No2 thiruvalluvar lane, arasady road, kandarmadam, jaffna.&amp;t=&amp;z=14&amp;ie=UTF8&amp;iwloc=B&amp;output=embed"              ></iframe>
             </div>
           </div>
         </CContainer>
@@ -1128,7 +1116,7 @@ function Landingpage() {
               <CCol xs={3} className="text-light">
                 <h5><strong>Contact Us</strong></h5>
                 If you have any questions or need help, feel free to contact with our team.<br/>
-                <CIcon icon={cilPhone} size="xl" style={{'--ci-primary-color': 'orange'}} /> 0762110846 <br/>
+                <CIcon icon={cilPhone} size="xl" style={{'--ci-primary-color': 'orange'}} /> 0779261129 <br/>
                 <CIcon icon={cilEnvelopeClosed} size="xl" style={{'--ci-primary-color': 'orange'}} />   Yogatransport0@gmail.com <br/>
                 <CIcon icon={cilLocationPin} size="xl" style={{'--ci-primary-color': 'orange'}} />  Kantharmadam South West,Jaffna.     
               </CCol>

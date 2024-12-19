@@ -23,11 +23,14 @@ import {
   CCloseButton,
 } from '@coreui/react'
 import { Link } from 'react-router-dom'
-import CIcon from '@coreui/icons-react'
-import { cilPencil, cilPlus, cilTrash } from '@coreui/icons'
 import axios from 'axios'
 import NFB from '../../../assets/images/NoData.png'
 import { AuthContext } from '../../pages/register/AuthProvider'
+import addImage from '../../../assets/images/add.gif'
+import tableImage from '../../../assets/images/table.gif'
+import editIcon from '../../../assets/images/pencil.gif'
+import delIcon from '../../../assets/images/trash-bin.gif'
+import viewImage from '../../../assets/images/search.gif'
 
 const List = () => {
 
@@ -150,13 +153,14 @@ const List = () => {
             <CRow className="mb-3">
               <CCol>
                 <CButton color="primary" onClick={handleToggleOffcanvas} variant='outline'>
+                  <CImage src={tableImage} height={25} width={25}/>
                   Show Branches
                 </CButton>
               </CCol>
               <CCol>
                 <div className="d-grid gap-2 d-md-flex justify-content-md-end">
                   <CButton href='/branch/new_branch' className='me-md-2' color='primary' variant='outline'>
-                    <CIcon icon={cilPlus}/>
+                    <CImage src={addImage} height={25} width={25}/>
                     {'  '}
                     AddNew
                   </CButton>
@@ -192,6 +196,7 @@ const List = () => {
                         variant="outline"
                         onClick={() => openModal(branch)}
                       >
+                        <CImage src={viewImage} width={25} height={25}/>
                         View Details
                       </CButton>
                     </div>
@@ -225,7 +230,7 @@ const List = () => {
                       <CModalFooter>
                         <Link to={`/branch/updateBranch?id=${selectedBranch?.id}`}>
                           <CButton color="primary" variant="ghost">
-                            <CIcon icon={cilPencil} />
+                            <CImage src={editIcon} alt='view' height={25} width={25} />
                           </CButton>
                         </Link>
                         <CButton
@@ -233,7 +238,7 @@ const List = () => {
                           variant="ghost"
                           onClick={() => handleClick(selectedBranch?.id)}
                         >
-                          <CIcon icon={cilTrash} />
+                          <CImage src={delIcon} alt='view' height={25} width={25} />
                         </CButton>
                       </CModalFooter>
                     </>
@@ -288,11 +293,11 @@ const List = () => {
                             <CTableDataCell className="d-grid gap-2 d-md-flex">
                               <Link to={`/branch/updateBranch?id=${branch.id}`}>
                                 <CButton color="primary" size="sm" variant="ghost" className="me-md-2">
-                                  <CIcon icon={cilPencil} />
+                                  <CImage src={editIcon} alt='view' height={25} width={25} />
                                 </CButton>
                               </Link>
                               <CButton color="danger" size="sm" variant="ghost" onClick={() => handleClick(branch.id)}>
-                                <CIcon icon={cilTrash} />
+                                <CImage src={delIcon} alt='view' height={25} width={25} />
                               </CButton>
                             </CTableDataCell>
                           </CTableRow>

@@ -23,12 +23,12 @@ import {
   CWidgetStatsC,
   CWidgetStatsD,
   CWidgetStatsE,
+  CWidgetStatsF,
 } from '@coreui/react'
 import { getStyle } from '@coreui/utils'
-import { CChartBar, CChartLine } from '@coreui/react-chartjs'
+import { CChartBar, CChartLine, CChartPie } from '@coreui/react-chartjs'
 import CIcon from '@coreui/icons-react'
 import parcel from '../../assets/images/parcel.png'
-import staff from '../../assets/images/S.jpg'
 import axios from 'axios'
 import background1 from '../../assets/images/t1.avif'
 import background2 from '../../assets/images/B.jpg'
@@ -85,299 +85,322 @@ const WidgetsDropdown = (props) => {
     <CContainer className='mb-4'>
       <CRow className={props.className} xs={{ gutter: 4 }}>
         <CCol sm={4} xl={4} xxl={3}>
-          <CWidgetStatsA
-            // progress={{ value: 75 }}
-            color="primary"
+          <CWidgetStatsB
+            progress={{ value: (data.acceptCount / data.parcelCount) * 100, color: 'primary'}}
+            // color="primary"
             value={
               <>
-                <h1>{data.acceptCount}</h1>{' '}
+                <h1>
+                  <span>{data.acceptCount}</span>
+                  <span style={{ marginLeft: '10px', fontSize: '14px', color: 'light' }}>
+                    ({((data.acceptCount / data.parcelCount) * 100).toFixed(2)}%)
+                  </span>
+                </h1>
               </>
-            }
+            }            
             title="Accepted"
             
-            chart={
-              <CChartLine
-                ref={widgetChartRef1}
-                className="mt-3 mx-3"
-                style={{ height: '70px' }}
-                data={{
-                  // labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
-                  labels: ['January', 'February', 'March', 'April', 'May', 'June'],
+            // chart={
+            //   <CChartLine
+            //     ref={widgetChartRef1}
+            //     className="mt-3 mx-3"
+            //     style={{ height: '70px' }}
+            //     data={{
+            //       // labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+            //       labels: ['January', 'February', 'March', 'April', 'May', 'June'],
 
-                  datasets: [
-                    {
-                      label: 'Parcel',
-                      backgroundColor: 'transparent',
-                      borderColor: 'rgba(255,255,255,.55)',
-                      pointBackgroundColor: getStyle('--cui-primary'),
-                      // data: [65, 59, 84, 84, 51, 55, 40, 46, 67, 31, 76, 89],
-                      data: [65, 59, 84, 84, 51, 55],
-                    },
-                  ],
-                }}
-                options={{
-                  plugins: {
-                    legend: {
-                      display: false,
-                    },
-                  },
-                  maintainAspectRatio: false,
-                  scales: {
-                    x: {
-                      border: {
-                        display: false,
-                      },
-                      grid: {
-                        display: false,
-                        drawBorder: false,
-                      },
-                      ticks: {
-                        display: false,
-                      },
-                    },
-                    y: {
-                      min: 30,
-                      max: 89,
-                      display: false,
-                      grid: {
-                        display: false,
-                      },
-                      ticks: {
-                        display: false,
-                      },
-                    },
-                  },
-                  elements: {
-                    line: {
-                      borderWidth: 1,
-                      tension: 0.4,
-                    },
-                    point: {
-                      radius: 4,
-                      hitRadius: 10,
-                      hoverRadius: 4,
-                    },
-                  },
-                }}
-              />
-            }
+            //       datasets: [
+            //         {
+            //           label: 'Parcel',
+            //           backgroundColor: 'transparent',
+            //           borderColor: 'rgba(255,255,255,.55)',
+            //           pointBackgroundColor: getStyle('--cui-primary'),
+            //           // data: [65, 59, 84, 84, 51, 55, 40, 46, 67, 31, 76, 89],
+            //           data: [65, 59, 84, 84, 51, 55],
+            //         },
+            //       ],
+            //     }}
+            //     options={{
+            //       plugins: {
+            //         legend: {
+            //           display: false,
+            //         },
+            //       },
+            //       maintainAspectRatio: false,
+            //       scales: {
+            //         x: {
+            //           border: {
+            //             display: false,
+            //           },
+            //           grid: {
+            //             display: false,
+            //             drawBorder: false,
+            //           },
+            //           ticks: {
+            //             display: false,
+            //           },
+            //         },
+            //         y: {
+            //           min: 30,
+            //           max: 89,
+            //           display: false,
+            //           grid: {
+            //             display: false,
+            //           },
+            //           ticks: {
+            //             display: false,
+            //           },
+            //         },
+            //       },
+            //       elements: {
+            //         line: {
+            //           borderWidth: 1,
+            //           tension: 0.4,
+            //         },
+            //         point: {
+            //           radius: 4,
+            //           hitRadius: 10,
+            //           hoverRadius: 4,
+            //         },
+            //       },
+            //     }}
+            //   />
+            // }
           />
         </CCol>
         <CCol sm={4} xl={4} xxl={3}>
-          <CWidgetStatsA
-            color="info"
+          <CWidgetStatsB
+            progress={{ value: (data.collectCount / data.parcelCount) * 100, color: 'info'}}
+            // color="info"
             value={
               <>
-                <h1>{data.collectCount}</h1>{' '}
+                <h1>
+                  <span>{data.collectCount}</span>
+                  <span style={{ marginLeft: '10px', fontSize: '14px', color: 'light' }}>
+                    ({((data.collectCount / data.parcelCount) * 100).toFixed(2)}%)
+                  </span>
+                </h1>
               </>
-            }
-            title="Parcel_Handed_over_to_Delivery"
+            }    
+            title="Processed_and_Ready_to_Ship"
             
-            chart={
-              <CChartLine
-                ref={widgetChartRef2}
-                className="mt-3 mx-3"
-                style={{ height: '70px' }}
-                data={{
-                  // labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
-                  labels: ['January', 'February', 'March', 'April', 'May', 'June'],
+            // chart={
+            //   <CChartLine
+            //     ref={widgetChartRef2}
+            //     className="mt-3 mx-3"
+            //     style={{ height: '70px' }}
+            //     data={{
+            //       // labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+            //       labels: ['January', 'February', 'March', 'April', 'May', 'June'],
 
-                  datasets: [
-                    {
-                      label: 'Parcel',
-                      backgroundColor: 'transparent',
-                      borderColor: 'rgba(255,255,255,.55)',
-                      pointBackgroundColor: getStyle('--cui-info'),
-                      // data: [1, 18, 9, 17, 34, 22, 11, 33, 25, 15, 45, 6],
-                      data: [1, 18, 9, 17, 34, 22],
-                    },
-                  ],
-                }}
-                options={{
-                  plugins: {
-                    legend: {
-                      display: false,
-                    },
-                  },
-                  maintainAspectRatio: false,
-                  scales: {
-                    x: {
-                      border: {
-                        display: false,
-                      },
-                      grid: {
-                        display: false,
-                        drawBorder: false,
-                      },
-                      ticks: {
-                        display: false,
-                      },
-                    },
-                    y: {
-                      min: -9,
-                      max: 39,
-                      display: false,
-                      grid: {
-                        display: false,
-                      },
-                      ticks: {
-                        display: false,
-                      },
-                    },
-                  },
-                  elements: {
-                    line: {
-                      borderWidth: 1,
-                    },
-                    point: {
-                      radius: 4,
-                      hitRadius: 10,
-                      hoverRadius: 4,
-                    },
-                  },
-                }}
-              />
-            }
+            //       datasets: [
+            //         {
+            //           label: 'Parcel',
+            //           backgroundColor: 'transparent',
+            //           borderColor: 'rgba(255,255,255,.55)',
+            //           pointBackgroundColor: getStyle('--cui-info'),
+            //           // data: [1, 18, 9, 17, 34, 22, 11, 33, 25, 15, 45, 6],
+            //           data: [1, 18, 9, 17, 34, 22],
+            //         },
+            //       ],
+            //     }}
+            //     options={{
+            //       plugins: {
+            //         legend: {
+            //           display: false,
+            //         },
+            //       },
+            //       maintainAspectRatio: false,
+            //       scales: {
+            //         x: {
+            //           border: {
+            //             display: false,
+            //           },
+            //           grid: {
+            //             display: false,
+            //             drawBorder: false,
+            //           },
+            //           ticks: {
+            //             display: false,
+            //           },
+            //         },
+            //         y: {
+            //           min: -9,
+            //           max: 39,
+            //           display: false,
+            //           grid: {
+            //             display: false,
+            //           },
+            //           ticks: {
+            //             display: false,
+            //           },
+            //         },
+            //       },
+            //       elements: {
+            //         line: {
+            //           borderWidth: 1,
+            //         },
+            //         point: {
+            //           radius: 4,
+            //           hitRadius: 10,
+            //           hoverRadius: 4,
+            //         },
+            //       },
+            //     }}
+            //   />
+            // }
           />
         </CCol>
         <CCol sm={4} xl={4} xxl={3}>
-          <CWidgetStatsA
-            color="warning"
+          <CWidgetStatsB
+            progress={{ value: (data.shipCount / data.parcelCount) * 100, color: 'warning' }}
+            // color="warning"
             value={
               <>
-                <h1>{data.shipCount}</h1>{' '}
+                <h1>
+                  <span>{data.shipCount}</span>
+                  <span style={{ marginLeft: '10px', fontSize: '14px', color: 'light' }}>
+                    ({((data.shipCount / data.parcelCount) * 100).toFixed(2)}%)
+                  </span>
+                </h1>
               </>
-            }
-            title="Shipped"
+            }    
+            title="Shipping"
             
-            chart={
-              <CChartLine
-              className="mt-3"
-              style={{ height: '70px' }}
-              data={{
-                // labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
-                labels: ['January', 'February', 'March', 'April', 'May', 'June'],
+            // chart={
+            //   <CChartLine
+            //   className="mt-3"
+            //   style={{ height: '70px' }}
+            //   data={{
+            //     // labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+            //     labels: ['January', 'February', 'March', 'April', 'May', 'June'],
 
-                datasets: [
-                  {
-                    label: 'Parcel',
-                    backgroundColor: 'rgba(255,255,255,.2)',
-                    borderColor: 'rgba(255,255,255,.55)',
-                    // data: [78, 81, 80, 45, 34, 12, 40, 33, 27, 69, 54, 90],
-                    data: [78, 81, 80, 45, 34, 12],
-                    fill: true,
-                  },
-                ],
-              }}
-              options={{
-                plugins: {
-                  legend: {
-                    display: false,
-                  },
-                },
-                maintainAspectRatio: false,
-                scales: {
-                  x: {
-                    display: false,
-                  },
-                  y: {
-                    display: false,
-                  },
-                },
-                elements: {
-                  line: {
-                    borderWidth: 2,
-                    tension: 0.4,
-                  },
-                  point: {
-                    radius: 0,
-                    hitRadius: 10,
-                    hoverRadius: 4,
-                  },
-                },
-              }}
-            />
-            }
+            //     datasets: [
+            //       {
+            //         label: 'Parcel',
+            //         backgroundColor: 'rgba(255,255,255,.2)',
+            //         borderColor: 'rgba(255,255,255,.55)',
+            //         // data: [78, 81, 80, 45, 34, 12, 40, 33, 27, 69, 54, 90],
+            //         data: [78, 81, 80, 45, 34, 12],
+            //         fill: true,
+            //       },
+            //     ],
+            //   }}
+            //   options={{
+            //     plugins: {
+            //       legend: {
+            //         display: false,
+            //       },
+            //     },
+            //     maintainAspectRatio: false,
+            //     scales: {
+            //       x: {
+            //         display: false,
+            //       },
+            //       y: {
+            //         display: false,
+            //       },
+            //     },
+            //     elements: {
+            //       line: {
+            //         borderWidth: 2,
+            //         tension: 0.4,
+            //       },
+            //       point: {
+            //         radius: 0,
+            //         hitRadius: 10,
+            //         hoverRadius: 4,
+            //       },
+            //     },
+            //   }}
+            // />
+            // }
           />
         </CCol>
         <CCol sm={4} xl={4} xxl={3}>
-          <CWidgetStatsA
-            color="danger"
+          <CWidgetStatsB
+            progress={{ value: (data.deliverCount / data.parcelCount) * 100, color: 'success' }}
+            // color="danger"
             value={
               <>
-                <h1>{data.deliverCount}</h1>{' '}
+                <h1>
+                  <span>{data.deliverCount}</span>
+                  <span style={{ marginLeft: '10px', fontSize: '14px', color: 'light' }}>
+                    ({((data.deliverCount / data.parcelCount) * 100).toFixed(2)}%)
+                  </span>
+                </h1>
               </>
-            }
+            }    
             title="Delivered"
             
-            chart={
-              <CChartBar
-                className="mt-3 mx-3"
-                style={{ height: '70px' }}
-                data={{
-                  labels: [
-                    'January',
-                    'February',
-                    'March',
-                    'April',
-                    'May',
-                    'June',
-                    // 'July',
-                    // 'August',
-                    // 'September',
-                    // 'October',
-                    // 'November',
-                    // 'December',
-                    // 'January',
-                    // 'February',
-                    // 'March',
-                    // 'April',
-                  ],
-                  datasets: [
-                    {
-                      label: 'Parcel',
-                      backgroundColor: 'rgba(255,255,255,.2)',
-                      borderColor: 'rgba(255,255,255,.55)',
-                      // data: [78, 81, 80, 45, 34, 12, 40, 85, 65, 23, 12, 98, 34, 84, 67, 82],
-                      data: [78, 81, 80, 45, 34, 12],
-                      barPercentage: 0.6,
-                    },
-                  ],
-                }}
-                options={{
-                  maintainAspectRatio: false,
-                  plugins: {
-                    legend: {
-                      display: false,
-                    },
-                  },
-                  scales: {
-                    x: {
-                      grid: {
-                        display: false,
-                        drawTicks: false,
-                      },
-                      ticks: {
-                        display: false,
-                      },
-                    },
-                    y: {
-                      border: {
-                        display: false,
-                      },
-                      grid: {
-                        display: false,
-                        drawBorder: false,
-                        drawTicks: false,
-                      },
-                      ticks: {
-                        display: false,
-                      },
-                    },
-                  },
-                }}
-              />
-            }
+            // chart={
+            //   <CChartBar
+            //     className="mt-3 mx-3"
+            //     style={{ height: '70px' }}
+            //     data={{
+            //       labels: [
+            //         'January',
+            //         'February',
+            //         'March',
+            //         'April',
+            //         'May',
+            //         'June',
+            //         // 'July',
+            //         // 'August',
+            //         // 'September',
+            //         // 'October',
+            //         // 'November',
+            //         // 'December',
+            //         // 'January',
+            //         // 'February',
+            //         // 'March',
+            //         // 'April',
+            //       ],
+            //       datasets: [
+            //         {
+            //           label: 'Parcel',
+            //           backgroundColor: 'rgba(255,255,255,.2)',
+            //           borderColor: 'rgba(255,255,255,.55)',
+            //           // data: [78, 81, 80, 45, 34, 12, 40, 85, 65, 23, 12, 98, 34, 84, 67, 82],
+            //           data: [78, 81, 80, 45, 34, 12],
+            //           barPercentage: 0.6,
+            //         },
+            //       ],
+            //     }}
+            //     options={{
+            //       maintainAspectRatio: false,
+            //       plugins: {
+            //         legend: {
+            //           display: false,
+            //         },
+            //       },
+            //       scales: {
+            //         x: {
+            //           grid: {
+            //             display: false,
+            //             drawTicks: false,
+            //           },
+            //           ticks: {
+            //             display: false,
+            //           },
+            //         },
+            //         y: {
+            //           border: {
+            //             display: false,
+            //           },
+            //           grid: {
+            //             display: false,
+            //             drawBorder: false,
+            //             drawTicks: false,
+            //           },
+            //           ticks: {
+            //             display: false,
+            //           },
+            //         },
+            //       },
+            //     }}
+            //   />
+            // }
           />
         </CCol>
         {/* <CCol sm={4} xl={4} xxl={3}>
@@ -626,6 +649,7 @@ const WidgetsDropdown = (props) => {
           />
         </CCol> */}
       </CRow>
+
       {/* <CCarousel controls indicators>
         <CCarouselItem>
           <CCard className='justify-content-center'>

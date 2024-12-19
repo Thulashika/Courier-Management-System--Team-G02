@@ -76,7 +76,7 @@ const Resetpassword = () => {
           alert('Reset password success')
           navigate('/login')
         } else {
-          alert('Not success reset password')
+          alert('Password does not match')
         }
       }).catch(err => {
         alert('Reset password not success')

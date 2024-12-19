@@ -9,12 +9,13 @@ import {
   CForm,
   CFormInput,
   CFormSelect,
+  CImage,
 } from '@coreui/react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import { STAFF_ERRORS } from '../../../const'
-import CIcon from '@coreui/icons-react'
-import { cilCheckAlt, cilX } from '@coreui/icons'
+import saveImage from '../../../assets/images/check.gif'
+import cancelImage from '../../../assets/images/delete.gif'
 
 function useQuery() {
     const {search} = useLocation()
@@ -66,7 +67,7 @@ const [allBranches, setAllBranches] = useState([])
         setError('')
         setIsValid(true)
 
-        const CNregex = /^(?:0)?[7][01245678][0-9]{7}$/;
+        const CNregex = /^(07[01245678][0-9]{7}|011[0-9]{7}|021[0-9]{7})$/; 
     
         if (staff.contactNumber.length !== 10) {
         setError(STAFF_ERRORS.CONTACTNUMBER_LENGTH_VALIDATION);
@@ -169,8 +170,8 @@ const [allBranches, setAllBranches] = useState([])
                                     defaultValue={staff?.contactNumber}
                                 />
                             </CCol>
-                            {!isValid && error === STAFF_ERRORS.CONTACTNUMBER_LENGTH_VALIDATION && <p>{error}</p>}
-                            {!isValid && error === STAFF_ERRORS.CONTACTNUMBER_FORMAT_VALIDATION && <p>{error}</p>}
+                            {!isValid && error === STAFF_ERRORS.CONTACTNUMBER_LENGTH_VALIDATION && <p style={{ color: 'red' }}>{error}</p>}
+                            {!isValid && error === STAFF_ERRORS.CONTACTNUMBER_FORMAT_VALIDATION && <p style={{ color: 'red' }}>{error}</p>}
                         </CRow>
 
                         <CRow className="mb-3">
@@ -195,19 +196,20 @@ const [allBranches, setAllBranches] = useState([])
 
                         <CRow>
                             <CCol xs='auto' className='position-relative'>
-                                <CButton color='success' type='submit'>
-                                    <CIcon icon={cilCheckAlt}/>
+                                <CButton color='success' type='submit' variant='outline'>
+                                    <CImage src={saveImage} width={25} height={25}/>
                                     {'  '}
                                     Save
                                 </CButton>
                             </CCol>
                             <CCol xs='auto' className='position-relative'>
                                 <CButton 
-                                    color='secondary' 
+                                    color='secondary'
+                                    variant='outline' 
                                     type='submit'
                                     onClick={() => window.confirm('Are you sure you want to cancel this update form?') ? navigate('/staff') : ''}
                                 >
-                                    <CIcon icon={cilX}/>
+                                    <CImage src={cancelImage} width={25} height={25}/>
                                     {'  '}
                                     Cancel
                                 </CButton>

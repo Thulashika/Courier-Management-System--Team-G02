@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { 
   CButton,
   CCard, 
@@ -16,27 +16,27 @@ import {
   CPagination,
   CPaginationItem,
   CFormInput,
-  CImage
+  CImage,
+  CTooltip
  } from '@coreui/react'
 import axios from 'axios'
-import { cilTrash, cilPencil, cilPlus } from '@coreui/icons'
-import CIcon  from '@coreui/icons-react'
 import { Link } from 'react-router-dom';
-import eyeIcon from '../../../assets/images/eye.png'
-import QRCodeReader, { QrReader } from 'react-qr-reader';
+import eyeIcon from '../../../assets/images/assign.gif'
+import editIcon from '../../../assets/images/pencil.gif'
+import delIcon from '../../../assets/images/trash-bin.gif'
+import { QrReader } from 'react-qr-reader';
 import { debounce } from 'lodash'
-import ReactToPrint from 'react-to-print';
-import BarCodeGenerator from './BarCodeGenerator'
 import PrintButton from './PrintButton'
 import NFP from '../../../assets/images/NoData.png';
-// import { Html5QrcodeScanner } from 'html5-qrcode/minified/html5-qrcode.min.js';
-
+import addImage from '../../../assets/images/add.gif'
+import tableImage from '../../../assets/images/table.gif'
+import { AuthContext } from '../../pages/register/AuthProvider'
 
 const ParcelList = () => {
 
   const [data, setData] = useState([])
   const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(10);
+  const [limit, setLimit] = useState(50);
   const [totalParcels, setTotalParcels] = useState(0);
   const [search, setSearch] = useState('');
   const [result, setResult] = useState('');
@@ -44,11 +44,11 @@ const ParcelList = () => {
 
   const getStatus = (status) => {
     switch (status) {
-      case 'Parcel_Handed_over_to_Delivery':
+      case 'Processed_and_Ready_to_Ship':
         return 'info'
       case 'ACCEPTED':
         return 'primary'
-      case 'SHIPPED':
+      case 'SHIPPING':
         return 'warning'
       case 'DELIVERED':
         return 'success' 
@@ -60,7 +60,8 @@ const ParcelList = () => {
   useEffect(() => {
     getAll()
     getTotalCount();
-  }, [page, limit]);
+  // }, [page]);
+},[page, limit])
 
   useEffect(() => {
     getAll(search);
@@ -96,33 +97,9 @@ const ParcelList = () => {
   const handleScan = (data) => {
     if (data) {
       setResult(data);
-      // setData(QRCodeGenerator)
       setShowScanner(false); // Close scanner after successful scan
     }
   };
-
-  // const startScanner = () => {
-  //   if (scannerRef.current) {
-  //     const html5QrCodeScanner = new Html5QrcodeScanner(
-  //       "qr-reader",
-  //       { fps: 10, qrbox: 250 },
-  //       true
-  //     );
-  //     html5QrCodeScanner.render(onScanSuccess, onScanError);
-  //     setScanner(html5QrCodeScanner);
-  //   }
-  // };
-
-  // const onScanSuccess = (decodedText, decodedResult) => {
-  //   setResult(decodedText);
-  //   if (scanner) {
-  //     scanner.clear().catch((err) => console.log(err));
-  //   }
-  // };
-
-  // const onScanError = (errorMessage) => {
-  //   console.error(errorMessage);
-  // };
 
   const handleError = (err) => {
     console.error(err);
@@ -130,8 +107,6 @@ const ParcelList = () => {
 
   const handleQRCodeButtonClick = () => {
     setShowScanner(true); 
-    // setData(QRCodeGenerator)
-    // startScanner();
   };
 
   const handleClick = (id) => {
@@ -192,6 +167,8 @@ const ParcelList = () => {
     setIsTableVisible(!isTableVisible);
   };
 
+  const { userDetails } = useContext(AuthContext)
+
   return (
     <CRow>
       <CCol xs={12}>
@@ -201,16 +178,10 @@ const ParcelList = () => {
           </CCardHeader>
           <CCardBody>
             <CContainer className='py-3'>
-              <CRow className="mb-3">
-
-                {/* <CCol>
-                  <div className="d-grid gap-2 d-md-flex justify-content-md-start">
-                    <CButton onClick={handleQRCodeButtonClick} className='me-md-2' color='primary' variant='outline'>Scan QR code</CButton>
-                  </div>
-                </CCol> */}
-                
+              <CRow className="mb-3">               
                 <CCol>
                   <CButton color='primary' onClick={toggleTableVisibility} variant='outline'>
+                    <CImage src={tableImage} height={25} width={25}/>
                     {isTableVisible ? 'Hide Parcels' : 'Show Parcels'}
                   </CButton>
                 </CCol>
@@ -224,25 +195,27 @@ const ParcelList = () => {
                     />
                   </div>
                 )}
-
-                {/* <div id="qr-reader" style={{ width: '100%', height: '400px' }}></div> */}
               
                 {result && <div>Scanned QR Code Data: {result}</div>}
 
+                {userDetails.position === 'STAFF' ?
                 <CCol>
                   <div className="d-grid gap-2 d-md-flex justify-content-md-end">
                     <CButton href='/parcels/new_parcels' className='me-md-2' color='primary' variant='outline'>
-                      <CIcon icon={cilPlus}/>
+                      <CImage src={addImage} height={25} width={25}/>
                       {'  '}
                       AddNew
                     </CButton>
                   </div>
                 </CCol>
+                : ' '
+                }
               </CRow>
             </CContainer>
       
             <CRow className='mb-3'>
-              {isTableVisible && (
+              {isTableVisible ? (
+                <>
                 <CRow className="justify-content-center">
                   <CRow className="mb-3">
                     <CCol xs={6}>
@@ -250,7 +223,7 @@ const ParcelList = () => {
                         label='Show entries:' 
                         type='number' 
                         className='w-25' 
-                        value={limit}
+                        // value={limit}
                         onChange={(e) => setLimit(e.target.value)}
                       />
                     </CCol>
@@ -290,33 +263,39 @@ const ParcelList = () => {
                             <CTableDataCell>{parcel.senderDetails ? JSON.parse(parcel.senderDetails).date : ''}</CTableDataCell>
                             <CTableDataCell>{`${parcel.recipientDetails ? JSON.parse(parcel.recipientDetails).firstName : ''} ${parcel.recipientDetails ? JSON.parse(parcel.recipientDetails).lastName : ''}`}</CTableDataCell>
                             <CTableDataCell>{parcel.recipientDetails ? JSON.parse(parcel.recipientDetails).date : ''}</CTableDataCell>
-                            <CTableDataCell><span className={`badge text-bg-${getStatus(parcel.status)}`}>{parcel.status}</span></CTableDataCell>
-                            <CTableDataCell> 
+                            <CTableDataCell><span className={`badge bg-${getStatus(parcel.status)}`}>{parcel.status}</span></CTableDataCell>
+                            <CTableDataCell>
+                            <CTooltip content='view' placement='bottom'>
                               <Link to={`/parcels/editViewParcel?id=${parcel.id}&type=view`}>
                                 <CButton
                                   color='dark'
                                   size='sm'
                                   variant='ghost'
                                   className="me-md-2">
-                                  <img src={eyeIcon} alt='view' height={20} width={20}/>
+                                  <img src={eyeIcon} alt='view' height={30} width={30}/>
                                 </CButton>
                               </Link>
+                              </CTooltip>
+                              <CTooltip content='view' placement='bottom'>
                               <Link to={`/parcels/editViewParcel?id=${parcel.id}&type=edit`}>
                                 <CButton 
                                   color='primary' 
                                   size='sm' 
                                   variant='ghost' 
                                   className="me-md-2">
-                                  <CIcon icon={cilPencil}/>
+                                  <CImage src={editIcon} alt='view' height={25} width={25} />
                                 </CButton>
                               </Link>
+                              </CTooltip>
+                              <CTooltip content='view' placement='bottom'>
                               <CButton
                                 color='danger'
                                 size='sm'
                                 variant='ghost'
                                 onClick={() => handleClick(parcel.id)}>
-                                  <CIcon icon={cilTrash}/>
+                                 <CImage src={delIcon} alt='view' height={25} width={25} />
                               </CButton>
+                              </CTooltip>
                               <PrintButton id={parcel.id}></PrintButton>
                             </CTableDataCell>
                           </CTableRow>
@@ -349,12 +328,12 @@ const ParcelList = () => {
                     </CRow>
                   )}
                 </CRow>
-              )}   
-            </CRow>     
-
+                </>
+              ):(     
+              <>
             <CRow className="mb-4">
               <CCol>
-                {['All', 'Accepted', 'Parcel_Handed_over_to_Delivery', 'Shipped', 'Delivered'].map(status => (
+                {['All', 'Accepted', 'Processed_and_Ready_to_Ship', 'Shipping', 'Delivered'].map(status => (
                   <CButton
                     key={status}
                     color={selectedStatus === status ? 'dark' : 'secondary'}
@@ -388,26 +367,26 @@ const ParcelList = () => {
                         <p><strong>Recipient Name:</strong> {`${parcel.recipientDetails ? JSON.parse(parcel.recipientDetails).firstName : ''} ${parcel.recipientDetails ? JSON.parse(parcel.recipientDetails).lastName : ''}`}</p>
                         <p><strong>Recipient Date:</strong> {parcel.recipientDetails ? JSON.parse(parcel.recipientDetails).date : 'N/A'}</p>
                         <p><strong>Status:</strong> <span className={`badge bg-${getStatus(parcel.status)}`}>{parcel.status}</span></p>
-                        {/* Optional Progress Bar */}
-                        {/* {parcel.status === 'In Transit' && (
-                          <CProgress>
-                            <CProgressBar value={50} color="info">50% Delivered</CProgressBar>
-                          </CProgress>
-                        )} */}
                         <div className="d-flex justify-content-between mt-3">
+                        <CTooltip content='view' placement='bottom'>
                           <Link to={`/parcels/editViewParcel?id=${parcel.id}&type=view`}>
                             <CButton color='dark' size='sm' variant='ghost'>
-                              <img src={eyeIcon} alt='view' height={20} width={20} />
+                              <CImage src={eyeIcon} alt='view' height={30} width={30} />
                             </CButton>
                           </Link>
-                          <Link to={`/parcels/editViewParcel?id=${parcel.id}&type=edit`}>
-                            <CButton color='primary' size='sm' variant='ghost'>
-                              <CIcon icon={cilPencil} />
-                            </CButton>
-                          </Link>
+                          </CTooltip>
+                          <CTooltip content='edit' placement='bottom' >
+                            <Link to={`/parcels/editViewParcel?id=${parcel.id}&type=edit`}>
+                              <CButton color='primary' size='sm' variant='ghost'>
+                              <CImage src={editIcon} alt='view' height={25} width={25} />
+                              </CButton>
+                            </Link>
+                          </CTooltip>
+                          <CTooltip content='delete' placement='bottom'>
                           <CButton color='danger' size='sm' variant='ghost' onClick={() => handleClick(parcel.id)}>
-                            <CIcon icon={cilTrash} />
+                          <CImage src={delIcon} alt='view' height={25} width={25} />
                           </CButton>
+                          </CTooltip>
                           <PrintButton id={parcel.id} />
                         </div>
                       </CCardBody>
@@ -420,6 +399,9 @@ const ParcelList = () => {
                 </CCol>
               )}
             </CRow>
+            </>
+          )}
+          </CRow>
           </CCardBody>
         </CCard>
       </CCol>

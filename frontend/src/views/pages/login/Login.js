@@ -9,6 +9,7 @@ import {
   CContainer,
   CForm,
   CFormInput,
+  CImage,
   CInputGroup,
   CInputGroupText,
   CModal,
@@ -26,7 +27,7 @@ import { eyeOff } from 'react-icons-kit/feather/eyeOff';
 import { eye } from 'react-icons-kit/feather/eye';
 import { LOGIN_ERRORS } from '../../../const'
 import { AuthContext } from '../register/AuthProvider'
-
+import  registerImg  from '../../../assets/images/sign-up.gif'
 
 const Login = () => {
 
@@ -50,8 +51,8 @@ const Login = () => {
     setError('')
     setIsValid(true)
 
-    if (!user.password || user.password.length < 4 || user.password.length > 10) {
-      setError('Password must be between 4 and 10 characters')
+    if (!user.password || user.password.length < 4 || user.password.length > 15) {
+      setError('Password must be between 4 and 15 characters')
       setIsValid(false)
       return;
     }
@@ -67,23 +68,17 @@ const Login = () => {
           login(res.data.email, res.data.id, res.data.role, res.data.fullName, res.data.image, res.data.staffId, res.data.position, res.data.branchCode);
 
           if(res.data.role !== 'CUSTOMER') {
-            navigate('/dashboard')
-            // alert("Login succesfully")
-            
+            navigate('/dashboard')            
           }
           else{
             alert("You cannot view any other pages at the moment, but in the future, you will be able to see your parcel history.")
             navigate('/')
           }
-          
-          // dispatch({type: 'SET_DETAILS', payload: {email: user.email, id: res.data.id}})
-          // localStorage.setItem('token', res.data.token)
-          // localStorage.removeItem('token')
         } else {
-          alert("Not Login successfully")
+          alert("Login not successfully")
         }
       }).catch(err => {
-        alert("Login not successfully")
+        alert("Invalid email or password")
       })
     }
   }
@@ -108,8 +103,8 @@ const Login = () => {
         method: 'POST'
       }).then(res => {
         if(res.data.statusCode === 200) {
-          alert('Password reset email sent')
-          // navigate('/reset-password')
+          alert('Email was sent successfully')
+          // navigate('/login')
         } else {
           alert('Not password reset email sent')
         }
@@ -231,11 +226,13 @@ const Login = () => {
               <CCard className="text-white bg-primary py-5" style={{ width: '44%' }}>
                 <CCardBody className="text-center">
                   <div>
-                    <h2>Sign up</h2>
-                    <p>
+                    {/* <h2>Sign up</h2> */}
+                    <CImage src={registerImg} height={100} width={100} rounded/>
+                    {/* <p>
                       Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
                       tempor incididunt ut labore et dolore magna aliqua.
-                    </p>
+                    </p> */}
+                    <br/>
                     <Link to="/register">
                       <CButton color="primary" className="mt-3" active tabIndex={-1}>
                         Register Now!

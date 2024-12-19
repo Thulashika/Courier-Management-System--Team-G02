@@ -8,6 +8,7 @@ import {
   CForm,
   CFormInput,
   CFormSelect,
+  CImage,
   CInputGroup,
   CInputGroupText,
   CRow,
@@ -21,8 +22,10 @@ import {
 import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { PARCEL_ERRORS } from '../../../const';
-import CIcon from '@coreui/icons-react';
-import { cilTrash, cilCheckAlt, cilX, cilPlus } from '@coreui/icons';
+import saveImage from '../../../assets/images/check.gif'
+import cancelImage from '../../../assets/images/delete.gif'
+import addImage from '../../../assets/images/add.gif'
+import delIcon from '../../../assets/images/trash-bin.gif'
 
 function useQuery() {
   const {search} = useLocation()
@@ -137,58 +140,78 @@ const UpdateParcels = () => {
     console.log('Parcel State:', parcel);
   
     const Nameregex = /^[A-Za-z\s]{1,50}$/;
-    const CNregex = /^(?:0)?[7][01245678][0-9]{7}$/;
+    const CNregex = /^(07[01245678][0-9]{7}|011[0-9]{7}|021[0-9]{7})$/;
+    const nicPattern = /^(?:\d{12}|\d{9}[Vv])$/; 
   
     const validateName = (name) => Nameregex.test(name);
+    console.log('hii');
   
     if (!validateName(parcel.senderDetails.firstName) || !validateName(parcel.senderDetails.lastName)) {
-      console.log('Error: Sender name format is invalid');
       setError(PARCEL_ERRORS.NAME_FORMAT_VALIDATION);
       setIsValid(false);
       return;
     }
+    console.log('hiiy');
   
     if (!validateName(parcel.recipientDetails.firstName) || !validateName(parcel.recipientDetails.lastName)) {
-      console.log('Error: Recipient name format is invalid');
       setError(PARCEL_ERRORS.NAME_FORMAT_VALIDATION);
       setIsValid(false);
       return;
     }
+    console.log('hiibye');
   
     const validateContactNumber = (number) => CNregex.test(number) && number.length === 10;
   
     if (!validateContactNumber(parcel.senderDetails.contactNumber)) {
-      console.log('Error: Sender contact number is invalid');
       setError(PARCEL_ERRORS.CONTACTNUMBER_FORMAT_VALIDATION);
       setIsValid(false);
       return;
     }
+    console.log('hiinu');
   
     if (!validateContactNumber(parcel.recipientDetails.contactNumber)) {
-      console.log('Error: Recipient contact number is invalid');
       setError(PARCEL_ERRORS.CONTACTNUMBER_FORMAT_VALIDATION);
       setIsValid(false);
       return;
     }
-
-    const validStatuses = ['ACCEPTED', 'Parcel_Handed_over_to_Delivery', 'SHIPPED', 'IN-TRANSIT', 'DELIVERED'];
+    console.log('himjihui');
+  
+    const validateNICNumber = (number) => nicPattern.test(number) && number.length === 12;
+  
+    if (!validateNICNumber(parcel.senderDetails.NIC)) {
+      console.log('Error: Sender NIC number is invalid');
+      setError(PARCEL_ERRORS.NIC_FORMAT_VALIDATION);
+      setIsValid(false);
+      return;
+    }
+    console.log('hi89i');
+  
+    if (!validateNICNumber(parcel.recipientDetails.NIC)) {
+      console.log('Error: Recipient NIC number is invalid');
+      setError(PARCEL_ERRORS.NIC_FORMAT_VALIDATION);
+      setIsValid(false);
+      return;
+    }
+    console.log('h678ii');
+    console.log(parcel.parcelDetails)
+    const validStatuses = ['ACCEPTED', 'Processed_and_Ready_to_Ship', 'SHIPPING', 'IN-TRANSIT', 'DELIVERED'];
     for (const item of parcel.parcelDetails) {
+      console.log(item.status)
       if (!validStatuses.includes(item.status)) {
-        console.log('Error: Invalid status');
         setError(PARCEL_ERRORS.STATUS_FORMAT_VALIDATION);
         setIsValid(false);
         return;
       }
     }
+    console.log('h7890ii');
+  
     
-    // const confirmUpdate = window.confirm('Are you sure you want to update this form?');
-
     if (isValid) {
       axios
         .put(`http://localhost:6431/parcel/${query.get('id')}`, parcel)
         .then((res) => {
           if (res.data.statusCode === 201) {
-            alert('Updated successfully')
+            // alert('Updated successfully')
             navigate('/parcels');
           } else {
             alert('Not updated successfully');
@@ -241,8 +264,7 @@ const UpdateParcels = () => {
                           senderDetails: { ...parcel.senderDetails, firstName: e.target.value }
                         })
                       }
-                      required
-                      disabled={!isEdit}
+                      disabled
                       defaultValue={parcel?.senderDetails.firstName}
                     />
                     <CFormInput
@@ -254,8 +276,7 @@ const UpdateParcels = () => {
                           senderDetails: { ...parcel.senderDetails, lastName: e.target.value }
                         })
                       }
-                      required
-                      disabled={!isEdit}
+                      disabled
                       defaultValue={parcel?.senderDetails.lastName}
                     />
                   </CInputGroup>
@@ -272,8 +293,7 @@ const UpdateParcels = () => {
                           recipientDetails: { ...parcel.recipientDetails, firstName: e.target.value }
                         })
                       }
-                      required
-                      disabled={!isEdit}
+                      disabled
                       defaultValue={parcel?.recipientDetails.firstName}
                     />
                     <CFormInput
@@ -285,8 +305,7 @@ const UpdateParcels = () => {
                           recipientDetails: { ...parcel.recipientDetails, lastName: e.target.value }
                         })
                       }
-                      required
-                      disabled={!isEdit}
+                      disabled
                       defaultValue={parcel?.recipientDetails.lastName}
                     />
                   </CInputGroup>
@@ -303,8 +322,7 @@ const UpdateParcels = () => {
                       onChange={(e) =>
                         setParcel({ ...parcel, senderDetails: { ...parcel.senderDetails, address: e.target.value } })
                       }
-                      required
-                      disabled={!isEdit}
+                      disabled
                       defaultValue={parcel?.senderDetails.address}
                     />
                   </CInputGroup>
@@ -320,8 +338,7 @@ const UpdateParcels = () => {
                           recipientDetails: { ...parcel.recipientDetails, address: e.target.value }
                         })
                       }
-                      required
-                      disabled={!isEdit}
+                      disabled
                       defaultValue={parcel?.recipientDetails.address}
                     />
                   </CInputGroup>
@@ -340,8 +357,7 @@ const UpdateParcels = () => {
                           senderDetails: { ...parcel.senderDetails, contactNumber: e.target.value }
                         })
                       }
-                      required
-                      disabled={!isEdit}
+                      disabled
                       defaultValue={parcel?.senderDetails.contactNumber}
                     />
                   </CInputGroup>
@@ -357,15 +373,14 @@ const UpdateParcels = () => {
                           recipientDetails: { ...parcel.recipientDetails, contactNumber: e.target.value }
                         })
                       }
-                      required
-                      disabled={!isEdit}
+                      disabled
                       defaultValue={parcel?.recipientDetails.contactNumber}
                     />
                   </CInputGroup>
                 </CCol>
               </CRow>
-              {!isValid && error === PARCEL_ERRORS.CONTACTNUMBER_LENGTH_VALIDATION && <p>{error}</p>}
-              {!isValid && error === PARCEL_ERRORS.CONTACTNUMBER_FORMAT_VALIDATION && <p>{error}</p>}
+              {!isValid && error === PARCEL_ERRORS.CONTACTNUMBER_LENGTH_VALIDATION && <p style={{ color: 'red' }}>{error}</p>}
+              {!isValid && error === PARCEL_ERRORS.CONTACTNUMBER_FORMAT_VALIDATION && <p style={{ color: 'red' }}>{error}</p>}
 
               <CRow>
                 <CCol xs={6}>
@@ -382,8 +397,7 @@ const UpdateParcels = () => {
                           })
                         }
                       }}
-                      required
-                      disabled={!isEdit}
+                      disabled
                       defaultValue={parcel?.senderDetails.NIC}
                     />
                   </CInputGroup>
@@ -402,15 +416,14 @@ const UpdateParcels = () => {
                           })
                       }
                       }}
-                      required
-                      disabled={!isEdit}
+                      disabled
                       defaultValue={parcel?.recipientDetails.NIC}
                     />
                   </CInputGroup>
                 </CCol>
               </CRow>
-              {!isValid && error === PARCEL_ERRORS.NIC_LENGTH_VALIDATION && <p>{error}</p>}
-              {!isValid && error === PARCEL_ERRORS.NIC_FORMAT_VALIDATION && <p>{error}</p>}
+              {!isValid && error === PARCEL_ERRORS.NIC_LENGTH_VALIDATION && <p style={{ color: 'red' }}>{error}</p>}
+              {!isValid && error === PARCEL_ERRORS.NIC_FORMAT_VALIDATION && <p style={{ color: 'red' }}>{error}</p>}
 
               <CRow>
                 <CCol xs={6}>
@@ -426,8 +439,7 @@ const UpdateParcels = () => {
                           date: e.target.value
                         }
                       })}
-                      required
-                      disabled={!isEdit}
+                      disabled
                       defaultValue={parcel?.senderDetails.date}
                     />
                   </CInputGroup>
@@ -436,6 +448,7 @@ const UpdateParcels = () => {
                     <CFormInput
                       type='time'
                       value={parcel.senderDetails.time}
+                      disabled
                       onChange={(e) => setParcel({
                         ...parcel,
                         senderDetails: {
@@ -459,9 +472,7 @@ const UpdateParcels = () => {
                           date: e.target.value
                         }
                       })}
-                      required
                       disabled={!isEdit}
-                      defaultValue={parcel?.recipientDetails.date}
                       min={parcel.senderDetails.date}
                     />
                   </CInputGroup>
@@ -477,6 +488,7 @@ const UpdateParcels = () => {
                           time: e.target.value
                         }
                       })}
+                      disabled={!isEdit}
                     />
                   </CInputGroup>
                 </CCol>
@@ -493,8 +505,7 @@ const UpdateParcels = () => {
                           senderDetails: { ...parcel.senderDetails, branchProcessed: e.target.value }
                         })
                       }
-                      required
-                      disabled={!isEdit}
+                      disabled
                       value={parcel?.senderDetails.branchProcessed}
                     >
                       <option value=''>Please Select Branch</option>
@@ -513,8 +524,7 @@ const UpdateParcels = () => {
                           recipientDetails: { ...parcel.recipientDetails, branchProcessed: e.target.value }
                         })
                       }
-                      required
-                      disabled={!isEdit}
+                      disabled
                       value={parcel?.recipientDetails.branchProcessed}
                     >
                       <option value=''>Please Select Branch</option>
@@ -543,7 +553,7 @@ const UpdateParcels = () => {
                         <CTableHeaderCell>Due Amount</CTableHeaderCell>
                         <CTableHeaderCell>paymentMethod</CTableHeaderCell>
                         <CTableHeaderCell>Status</CTableHeaderCell>
-                        <CTableHeaderCell>Actions</CTableHeaderCell>
+                        {/* <CTableHeaderCell>Actions</CTableHeaderCell> */}
                       </CTableRow>
                     </CTableHead>
                     <CTableBody>
@@ -555,13 +565,12 @@ const UpdateParcels = () => {
                               name='referenceNumber'
                               value={parcel?.referenceNumbers[index]}
                               onChange={(e) => handleInputChange(index, e)}
-                              required
-                              readOnly = {true}
+                              disabled
                               defaultValue={parcel?.referenceNumbers[index]}
                             />
                           </CTableDataCell>
-                          {!isValid && error === PARCEL_ERRORS.NUMBER_LENGTH_VALIDATION && <p>{error}</p>}
-                          {!isValid && error === PARCEL_ERRORS.NUMBER_FORMAT_VALIDATION && <p>{error}</p>}
+                          {!isValid && error === PARCEL_ERRORS.NUMBER_LENGTH_VALIDATION && <p style={{ color: 'red' }}>{error}</p>}
+                          {!isValid && error === PARCEL_ERRORS.NUMBER_FORMAT_VALIDATION && <p style={{ color: 'red' }}>{error}</p>}
 
                           <CTableDataCell>
                             <CFormInput
@@ -569,8 +578,7 @@ const UpdateParcels = () => {
                               name='weight'
                               value={item.weight}
                               onChange={(e) => handleInputChange(index, e)}
-                              required
-                              disabled={!isEdit}
+                              disabled
                               defaultValue={parcel?.parcelDetails.weight}
                             />
                           </CTableDataCell>
@@ -581,8 +589,7 @@ const UpdateParcels = () => {
                               name='deliveryCharge'
                               value={item.deliveryCharge}
                               onChange={(e) => handleInputChange(index, e)}
-                              required
-                              disabled={!isEdit}
+                              disabled
                               defaultValue={parcel?.parcelDetails.deliveryCharge}
                             />
                           </CTableDataCell>
@@ -592,7 +599,7 @@ const UpdateParcels = () => {
                               type='number'
                               name='totalAmount'
                               value={item.totalAmount}
-                              readOnly
+                              disabled
                               defaultValue={parcel?.parcelDetails.totalAmount}
                             />
                           </CTableDataCell>
@@ -601,7 +608,7 @@ const UpdateParcels = () => {
                               type='number'
                               name='dueAmount'
                               value={item.dueAmount}
-                              readOnly
+                              disabled
                               defaultValue={parcel?.parcelDetails.dueAmount}
                             />
                           </CTableDataCell>
@@ -612,8 +619,7 @@ const UpdateParcels = () => {
                               name='paymentMethod'
                               value={item.paymentMethod}
                               onChange={(e) => handleInputChange(index, e)}                    
-                              required
-                              disabled={!isEdit}
+                              disabled
                               defaultValue={parcel?.parcelDetails.paymentMethod}
                             >
                                 <option value=''>Please Select Method</option>
@@ -628,7 +634,7 @@ const UpdateParcels = () => {
                             <CFormSelect  
                               type='select'
                               name='status'
-                              value={parcel?.statuses[index]}
+                              value={item.status}
                               onChange={(e) => handleInputChange(index, e)}                    
                               required
                               disabled={!isEdit}
@@ -636,23 +642,22 @@ const UpdateParcels = () => {
                             >
                                 <option value=''>Please Select Status</option>
                                 <option value='ACCEPTED'>Accepted</option>
-                                <option value='Parcel_Handed_over_to_Delivery'>Parcel_Handed_over_to_Delivery</option>
-                                <option value='SHIPPED'>Shipped</option>
-                                {/* <option value='IN-TRANSIT'>In-transit</option> */}
+                                <option value='Processed_and_Ready_to_Ship'>Processed_and_Ready_to_Ship</option>
+                                <option value='SHIPPING'>Shipping</option>
                                 <option value='DELIVERED'>Delivered</option>
                             </CFormSelect>
                           </CTableDataCell>
 
-                          <CTableDataCell>
+                          {/* <CTableDataCell>
                             <CButton
                               color='danger'
-                              variant='ghost'
+                              variant='outline'
                               disabled={!isEdit}
                               onClick={() => deleteItem(index)}
                             >
-                              <CIcon icon={cilTrash}/>
+                              <CImage src={delIcon} width={25} height={25}/>
                             </CButton>
-                          </CTableDataCell>
+                          </CTableDataCell> */}
                           
                         </CTableRow> )
                       })}
@@ -661,28 +666,31 @@ const UpdateParcels = () => {
 
                   { isEdit && <CRow className="mb-3">
                     <div className="d-grid gap-2 d-md-flex justify-content-md-end">
-                      <CButton type='button' className='me-md-2' color='primary' variant='outline' onClick={UpdateItem}>
-                        <CIcon icon={cilPlus}/>
+                      {/* <CButton type='button' className='me-md-2' color='primary' variant='outline' onClick={UpdateItem}>
+                      <CImage src={addImage} width={25} height={25}/>
                         {'  '}
                         Add more Parcel
-                      </CButton>
+                      </CButton> */}
                     </div>
                   </CRow>}
                 </CCol>
               </CRow>
 
               <div className='d-grid gap-2 d-md-flex'>
-                {isEdit && <CButton color='success' type='submit'>
-                  <CIcon icon={cilCheckAlt}/>
+                {isEdit && <CButton color='success' type='submit' variant='outline'>
+                  <CImage src={saveImage} width={25} height={25}/>
                   {'  '}
                   Update
                 </CButton>}
                 <CButton 
                   color='secondary' 
                   type='submit' 
-                  onClick={() => window.confirm('Are you sure you want to cancel this update form?') ? navigate('/parcels') : ''} 
+                  variant='outline'
+                  onClick={() => 
+                    (isEdit ? (window.confirm('Are you sure you want to cancel this update form?') ? navigate('/parcels') : '')  : navigate('/parcels'))
+                  }
                 >
-                  {isEdit? <CIcon icon={cilX}/> : <CIcon icon={cilCheckAlt}/>}
+                  {isEdit?  <CImage src={cancelImage} width={25} height={25}/> :  <CImage src={saveImage} width={25} height={25}/>}
                   {'  '}
                   {isEdit ? 'Cancel': 'Done'}
                 </CButton>
